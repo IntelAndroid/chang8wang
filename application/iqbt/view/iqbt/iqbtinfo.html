@@ -1,0 +1,424 @@
+{include file="index@public::header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script>
+	$(function(){
+		//地址栏获取id
+		var id=session('id');
+		//案例列表;
+		var param=new Object();
+		param._tm = new Date();
+		if(id!=""){
+			param.id=id;
+		}
+		var taburl="{:url('/iqbt/Iqbt/iqbtCase')}";
+		$('#caseList').bootstrapTable('refresh',{'url':taburl,query:param});
+		//获取数据
+		cstmpost('',"{:url('/iqbt/Iqbt/getIqbtInfo')}",{id:id},function(res){
+			//初始化环境图片
+			var html='';
+			if(res.data['img']){
+				for (var i = 0; i < res.data['img'].length; i++) {
+					if (res.data['img'][i]['savePath'] == '') {
+						html +='';
+					} else {
+						html += ['' +
+//						'	<a class="inline-block padding-right-10" href="__PUBLIC__/' + res.data['img'][i]['savePath'] + '" title="' + res.data['img'][i]['name'] + '" data-source="' + res.data['img'][0]['savePath'] + '">',
+						'<div class="inline-block padding-right-10" href="__PUBLIC__/' + res.data['img'][i]['savePath'] + '" title="' + res.data['img'][i]['name'] + '">',
+							'<img class="img-responsive" onclick="imgClick($(this))" src="__PUBLIC__/' + res.data['img'][i]['savePath'] + '" alt="' + res.data['img'][i]['name'] + '" width="220" data-target=".example-modal-lg" data-toggle="modal">',
+							'<p class="text-center">' + res.data['img'][i]['name'] + '</p>',
+							'</div>'
+						].join("");
+					}
+				}
+			}
+			$('#exampleZoomGallery').html(html);
+			var detail=res.data.detail;
+			delete res.data.detail;
+			assign(res);
+			//初始化空间详情
+			$('#detail').html(detail);
+			//如果封面不为空
+			if(res.data['poster']!=null && res.data['poster']!='') {
+				$('#poster').attr('src', "__PUBLIC__/" + res.data['poster']);
+			}else{
+				$('#poster').remove();
+			}
+			//logo
+			if(res.data['logo']!=null && res.data['logo']!='') {
+				$('#logo').attr('src', "__PUBLIC__/" + res.data['logo']);
+			}else{
+				$('#logo').remove();
+			}
+			//poster点击时候,填充弹出层图片
+			$('#poster').click(function(){
+				$('#buildPicUrl').attr('src', "__PUBLIC__/" + res.data['poster']);
+			})
+			//logo点击时候,填充弹出层图片
+			$('#logo').click(function(){
+				$('#buildPicUrl').attr('src', "__PUBLIC__/" + res.data['logo']);
+			})
+		},'JSON');
+		var pacturl="{:url('/iqbt/Iqbt/getIqbtPacts')}";
+		$('#iqbtTab2').bootstrapTable('refresh',{'url':pacturl,query:{iqbtId:id}});
+
+		$("#btnrenew").click(function () {
+			session("renewIqbtId",id);
+			var url="{:url('/iqbt/Iqbt/renewiqbt')}";
+			baseadd(url, "续约孵化器", "");
+		});
+	})
+	function imgClick(obj){
+		var src=obj.attr('src');
+		$('#buildPicUrl').attr('src',  src);
+	}
+	//bootstraptable   案例logo
+	function logoFmt(value, row, index) {
+		if(row.logo!=null&& row.logo!="图片不存在") {
+			return ['<a  onclick="caseLogo($(this))" title="'+ row.name+'" class="caselogo" id="caselogo" data-url="'+row.logo+'" data-target=".example-modal-lg" data-toggle="modal">',
+				'<img src="__PUBLIC__/'+row.logo+'"  width="40" >',
+				'</a>'].join("");
+		}
+//
+	}
+	//案例logo点击时候,填充弹出层图片
+	function caseLogo(obj){
+		var src=obj.attr('data-url');
+		$('#buildPicUrl').attr('src', "__PUBLIC__/" + src);
+	}
+	//营业执照下载
+	function downFile(id) {
+		var url = "{:url('/etprs/Etprs/download/id/" + id + "')}";
+		window.open(url, "_blank");
+	}
+	function initOther(){
+		var id=session('id');
+		var pacturl="{:url('/iqbt/Iqbt/getIqbtPacts')}";
+		$('#iqbtTab2').bootstrapTable('refresh',{'url':pacturl,query:{iqbtId:id}});
+	}
+</script>
+<!--海报弹出层-->
+<div class="modal fade example-modal-lg" aria-hidden="true" aria-labelledby="exampleOptionalLarge" role="dialog" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-body">
+				<img class="img-responsive width-full" src="" id="buildPicUrl">
+			</div>
+		</div>
+	</div>
+</div>
+<main class="site-page">
+	<div class="page-container" id="admui-pageContent">
+		<div class="page animation-fade page-forms">
+			<div class="page-header">
+				<h1 class="page-title">
+					空间信息
+					<span class="label label-success margin-left-20" id="iqbtstatus"></span>
+				</h1>
+			</div>
+			<div class="page-content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel">
+							<div class="panel-body nav-tabs-animate">
+								<div class="nav-tabs-horizontal" data-approve="nav-tabs">
+									<ul class="nav nav-tabs" role="tablist">
+
+										<li class="active" role="presentation">
+											<a data-toggle="tab" href="#exampleTabsOne" aria-controls="exampleTabsOne"
+											   role="tab">空间信息<span id="wait"></span></a>
+										</li>
+										<li role="presentation">
+											<a data-toggle="tab" href="#exampleTabsTwo" aria-controls="exampleTabsTwo"
+											   role="tab">签约信息<span id="settled"></span></a>
+										</li>
+
+									</ul>
+
+									<div class="tab-content padding-top-20">
+
+										<div class="tab-pane animation-slide-left active" id="exampleTabsOne"
+											 role="tabpanel">
+											<div class="panel">
+												<div class="panel-body container-fluid">
+
+													<div class="panel">
+														<div class="panel-body container-fluid padding-top-0">
+															<div class="row row-lg">
+																<div class="col-md-12">
+
+																	<a id="edithref" href="{:url('/iqbt/Iqbt/editIqbt')}"><button type="button" class="btn btn-info pull-right">&nbsp;&nbsp;<i class="fa fa-edit" aria-hidden="true"></i>&nbsp;编辑&nbsp;&nbsp;</button></a>
+
+																	<div class="example-wrap">
+																		<div class="example example-buttons">
+																			<h4 class="padding-bottom-10 btborder">基本信息</h4>
+
+																		</div>
+																		<div class="example">
+																			<form class="form-horizontal">
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label"><span class="required">*</span> 空间名称：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="name"></label>
+																					</div>
+																					<label class="col-sm-2 control-label">空间类型：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="typeText"></label>
+																					</div>
+																				</div>
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label"><span class="required">*</span> 联系人：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="contact"></label>
+																					</div>
+																					<label class="col-sm-2 control-label"><span class="required">*</span> 联系电话：</label>
+																					<div class="col-sm-4" >
+																						<label class="control-label" id="mobile" ></label>
+																					</div>
+																				</div>
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">空间位置：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label"><span  id="districtId"></span></label>
+																					</div>
+																					<label class="col-sm-2 control-label">详细地址：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" ><label id="address"></label></label></label>
+																					</div>
+																					<label class="col-sm-2 control-label">空间展示链接：</label>
+																					<div class="col-sm-10">
+																						<label class="control-label" ><label id="display"></label></label></label>
+																					</div>
+																				</div>
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">空间封面：</label>
+																					<div class="col-sm-4 padding-top-10" data-target=".example-modal-lg" data-toggle="modal">
+																						<img id="poster" class="img-responsive"  width="220">
+																					</div>
+																					<label class="col-sm-2 control-label">空间logo：</label>
+																					<div class="col-sm-4 padding-top-10" data-target=".example-modal-lg" data-toggle="modal">
+																						<img id="logo" class="img-responsive"   width="220">
+																					</div>
+																				</div>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="panel">
+														<div class="panel-body container-fluid padding-top-0">
+															<div class="row row-lg">
+																<div class="col-md-12">
+																	<div class="example-wrap">
+																		<div class="example example-buttons">
+																			<h4 class="padding-bottom-10 btborder">办公环境</h4>
+																		</div>
+																		<div class="example">
+																			<form class="form-horizontal">
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">环境照片：</label>
+																					<div class="col-sm-10">
+																						<div class="example spaceimg" id="exampleZoomGallery" >
+																						</div>
+																					</div>
+																				</div>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="panel">
+														<div class="panel-body container-fluid padding-top-0">
+															<div class="row row-lg">
+																<div class="col-md-12">
+																	<div class="example-wrap">
+																		<div class="example example-buttons">
+																			<h4 class="padding-bottom-10 btborder">详细介绍</h4>
+																		</div>
+																		<div class="example">
+																			<form class="form-horizontal">
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label"><span class="required">*</span> 提供服务：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label text-left" id="servicesText"></label>
+																					</div>
+																					<label class="col-sm-2 control-label">配套设施：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label "  ><label id="facilityText"></label></label>
+																					</div>
+																				</div>
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label"><span class="required">*</span> 办公方式：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="workstyleText"></label>
+																					</div>
+																					<label class="col-sm-2 control-label">是否提供注册：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="rgstsptText"></label>
+																					</div>
+																				</div>
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">政策支持：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="policysptname"></label>
+																					</div>
+																					<label class="col-sm-2 control-label">直投基金：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="isfundtionname"></label>
+																					</div>
+																				</div>
+																				<style>
+																					.iqbtdetail img{max-width:100%;}
+																				</style>
+																				<div class="form-group col-md-12 padding-0 iqbtdetail">
+																					<label class="col-sm-2 control-label"><span class="required">*</span> 空间详情：</label>
+																					<div class="col-sm-10">
+																						<label class="control-label text-left"  id="detail"></label>
+																					</div>
+																				</div>
+																				<div class="clearfix visible-sm-block"></div>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="panel">
+														<div class="panel-body container-fluid padding-top-0">
+															<div class="row row-lg">
+																<div class="col-md-12">
+																	<div class="example-wrap">
+																		<div class="example example-buttons">
+																			<h4 class="padding-bottom-10 btborder">招募要求</h4>
+																		</div>
+																		<div class="example">
+																			<form class="form-horizontal">
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">招募要求：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label text-left" id="require"></label>
+																					</div>
+																					<div class="clearfix visible-sm-block"></div>
+																				</div>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="panel">
+														<div class="panel-body container-fluid padding-top-0">
+															<div class="row row-lg">
+																<div class="col-md-12">
+																	<div class="example-wrap">
+																		<div class="example example-buttons">
+																			<h4 class="padding-bottom-10 btborder">资质材料</h4>
+																		</div>
+																		<div class="example">
+																			<form class="form-horizontal">
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">社会信用代码：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label text-left" id="credit"></label>
+																					</div>
+																					<label class="col-sm-2 control-label"> 营业执照：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label "  ><label id="buslic"></label></label>
+																					</div>
+																				</div>
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label">法人代表：</label>
+																					<div class="col-sm-4">
+																						<label class="control-label" id="lealperson"></label>
+																					</div>
+																				</div>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="panel">
+														<div class="panel-body container-fluid padding-top-0">
+															<div class="row row-lg">
+																<div class="col-md-12">
+																	<div class="example-wrap">
+																		<div class="example example-buttons">
+																			<h4 class="padding-bottom-10 btborder">孵化案例</h4>
+																		</div>
+																		<div class="example">
+																			<form class="form-horizontal">
+																				<div class="form-group col-md-12 padding-0">
+																					<label class="col-sm-2 control-label"></label>
+																					<div class="col-sm-10">
+																						<table id="caseList" class="table table-bordered text-center margin-bottom-20 casetable" data-toggle="table">
+																							<thead>
+																							<tr>
+																								<th class="text-center" data-field="name">案例名称</th>
+																								<th class="text-center"  data-field="url">案例链接</th>
+																								<th class="text-center" data-formatter="logoFmt">案例logo</th>
+																								<th class="text-center" data-field="desc">案例简介</th>
+																							</tr>
+																							</thead>
+																							<!--<img src="../public/images/products/iphone.png" width="40" alt="iPhone">-->
+																						</table>
+																					</div>
+																				</div>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane animation-slide-left" id="exampleTabsTwo" role="tabpanel">
+											<div class="panel">
+												<div class="panel-body container-fluid">
+													<div class="example" id="tolbar">
+														<button type="button" class="btn btn-info pull-right" id="btnrenew">&nbsp;&nbsp;<i class="fa fa-edit" aria-hidden="true"></i>&nbsp;续约&nbsp;&nbsp;</button>
+													</div>
+													<table id="iqbtTab2" class="table table-bordered text-center cdtable" data-toggle="table"  data-toolbar="#tolbar"
+														   data-side-pagination="" data-pagination="true">
+														<thead>
+														<tr>
+															<th class="text-center" data-field="name">合同名称</th>
+															<th class="text-center" data-field="pact_start">开始时间</th>
+															<th class="text-center" data-field="pact_end">结束时间</th>
+															<th class="text-center" data-field="total">合同金额（元）</th>
+															<th class="text-center" data-field="realname">对接人</th>
+														</tr>
+														</thead>
+
+													</table>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</main>
+
+{include file="index@public::footer"}

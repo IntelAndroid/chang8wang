@@ -1,0 +1,409 @@
+{include file="index@public/header"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script>
+    function posterFmt(value, row, index) {
+        if(row.poster ){
+            return['<div class="example margin-0" id="exampleZoomGallery" >',
+                '  <a class="inline-block"  style=" height:96px;width:200px;" title="'+row.name+'" data-source="__PUBLIC__/'+row.poster+'">',
+                '  <img  data-poster="'+row.poster+'" class="img-responsive" src="__PUBLIC__/'+row.poster+'" data-target="#roomPicForm" alt="..." style="width:90%;height:90%" data-id="'+row.id+'" data-toggle="modal" aria-hidden="true">',
+//                '  <img onclick="changeRid('+row.id+',$(this))" data-poster="'+row.poster+'" class="img-responsive" src="__PUBLIC__/'+row.poster+'" data-target="#roomPicForm" alt="..." width="120" data-id="'+row.id+'" data-toggle="modal" aria-hidden="true">',
+                '  </a>',
+                '  </div>'].join("");
+        }else{
+            return['<div class="example margin-0" id="exampleZoomGallery">',
+                '  <a class="inline-block" href="javascript:void(0)" style="cursor:default" title="'+row.name+'" data-source="__PUBLIC__/'+row.poster+'">',
+                '  <img class="img-responsive" data-target="#roomPicForm" data-id="'+row.id+'" data-toggle="modal" aria-hidden="true"  src="__PUBLIC__/images/default-iqbt.jpg" alt="点击上传空间封面" title="点击上传空间封面" width="150">',
+                '  </a>',
+                '  </div>'].join("");
+        }
+    }
+    function actFmt(value, row, index) {
+        var status=row.status;
+        var html=['<a onclick=" actInfo('+row.id+','+row.sign+',$(this))" value="'+status+'"><button type="button" class="btn btn-outline btn-success btn-xs">&nbsp;查看&nbsp;</button>&nbsp;',
+                '</a>'].join("");
+        if(row.status=="未开始"){
+            if(row.signstatus==undefined) {
+                html +=['<a onclick="sign('+row.id +','+row.audit+','+row.total+','+row.sign+')"><button type="button" class="btn btn-outline btn-xs btn-warning sign" id="sign" data-target="#logsForm"   role="button" aria-hidden="true" data-toggle="modal">&nbsp;报名&nbsp;</button></a>'].join("");
+            }
+
+        }
+        if(row.signstatus!=undefined){
+//                html +=['<a onclick="cancelSign(' + row.id + ')"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default sign" id="sign"  role="button" aria-hidden="true" data-toggle="modal" data-original-title="取消报名" title="取消报名">&nbsp;&nbsp;<i class="icon wb-close" aria-hidden="true"></i></button></a>'].join("");
+            html +=['<a onclick="getSignInfo('+row.signId+','+row.sign+','+row.total+',$(this))" value="'+status+'"><button type="button" class="btn btn-outline btn-xs btn-info sign" id="sign" data-target="#logsForm1" role="button" aria-hidden="true" data-toggle="modal">&nbsp;报名详情&nbsp;</button></a>'].join("");
+        }
+        return html;
+    }
+    //报名状态
+    function statusFmt(value,row){
+        if(row.sign) {
+            switch (row.sign) {
+                case"7001001":
+                        if(row.status=='已结束'){
+                            return '<span class="text-default">已过期</span>';
+                        }
+                    return '<span class="text-warning">待审核</span>';
+                    break;
+                case"7001002":
+                    return '<span class="text-success">报名成功</span>';
+                    break;
+                case"7001003":
+                    return '<span class="text-danger">已拒绝</span>';
+                    break;
+                case"":
+                    return '<span class="text-danger"></span>';
+                    break;
+                default:
+                    return '<span class="text-default">' + row.signstatus + '</span>';
+                    break;
+            }
+        }else{
+            return '';
+        }
+    }
+    //获取报名信息
+     function getSignInfo(signId,sign,total,status) {
+         //如果是审核中状态,将重新报名按钮改为取消报名
+         status = status.attr('value');
+         if (status != "已结束") {
+             if (sign == 7001001 ) {
+                 $('#cancelBtn').show();
+                 $('#cancelBtn').val(signId);
+                 $('#repeatBtn').hide();
+             } else if (sign == 7001002) {
+                 //报名成功 没有按钮
+                 $('#cancelBtn').hide();
+                 $('#repeatBtn').hide();
+             } else {
+                 //已拒绝 已取消  重新报名
+                 $('#repeatBtn').show();
+                 $('#cancelBtn').hide();
+                 $('#total').val(total);
+             }
+         }else{
+             $('#cancelBtn').hide();
+             $('#repeatBtn').hide();
+         }
+         var url="{:url('activity/activity/getSignInfo')}";
+         cstmpost('',url,{signId:signId},function(res){
+            if(res.code==1){
+                assign(res);
+            }
+         })
+     }
+
+
+    //查看活动详情按钮
+    function actInfo(id,sign,status){
+        session('status',status.attr('value'));
+        session('actId',id);
+        if(sign==undefined){
+            sign=7000000;
+        }
+        session('sign',sign);
+        location.href="{:url('activity/activity/actinfo')}";
+    }
+    //报名 保存活动id
+    function sign(id,audit,total,signstatus){
+        $('#actId').val(id);//保存活动id
+        $('#audit').val(audit);//保存活动审核状态
+        $('#total').val(total);//保存活动总人数
+        $('#signstatus').val(signstatus);//保存报名状态
+    }
+
+    //活动筛选查询start
+    function actInquiry() {
+        var status=$('#actstatus').val();
+        var search=$('#search').val();
+        var start=$('#start').val();
+        var end=$('#end').val();
+        var param = new Object();
+        param.status = status;
+        param.search = search;
+        param.start = start;
+        param.end = end;
+        var url="{:url('/activity/activity/getActList')}";
+        $('#actTable').bootstrapTable('refresh', {'url': url, query: param});
+    }
+    //取消提示框
+    function basedelete(tableId,url){
+        var id=$('#signId').val();
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要取消报名么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="common_delete(\''+url+'\',\''+id+'\',\''+tableId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("取消报名",data,"modal-sm");
+    }
+    //确定取消后的事件
+    function common_delete(url,id,tableId){
+        $.post(url, {id: id}, function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+                $("#" + tableId).bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+                $('#infoClose').click();
+            }else if(data.code == 0){
+                toastr.warning(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    //取消报名
+    function cancelSign(id) {
+        var url = "{:url('/activity/activity/cancelSign')}";
+        //调用删除提示功能将id传入,点击确定后则发送删除请求
+        basedelete("actTable",url,id);
+    }
+    $(function(){
+        //提交报名
+        $('#saveSign').click(function(){
+            var data=serializeData('signForm');
+            var url="{:url('activity/activity/saveSign')}";
+            cstmpost('#saveSign',url,data,function(res){
+                if(res.code==1){
+                    $('.close').click();
+                    toastr.success(res.msg);
+                    setTimeout(function(){
+                        $('#actTable').bootstrapTable('refresh');
+                    },500);
+                }else{
+                    toastr.error(res.msg);
+                }
+            });
+        })
+        //状态筛选
+        $('#actstatus').change(function(){
+            actInquiry();
+        })
+        //查询按钮
+        $('#searchAct').click(function(){
+            actInquiry();
+        })
+    })
+    function detailView(index, row){
+        var iqbt="";
+        var iqbtdata = row.iqbts;
+        if(iqbtdata.length>0){
+            $('#detailtable').bootstrapTable('destroy');
+            $('#detailtable').bootstrapTable({
+                data: iqbtdata
+            });
+            iqbt= $("#view_detail").html();
+        }
+        return iqbt;
+
+        /*var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+         '<li class="active"><a data-toggle="tab" href="#tab1">企业列表  </a> </li> '+
+         '<li class=""><a data-toggle="tab" href="#tab2">毕业企业 </a> </li> '+
+         '<li class=""><a data-toggle="tab" href="#tab3">退出企业  </a> </li> '+
+         '<li class=""><a data-toggle="tab" href="#tab4">导师简介  </a> </li> '+
+         '</ul>' +
+         '<div class="tab-content "> ' +
+         '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+etprslist+' </div> </div>' +
+         '<div id="tab2" class="tab-pane"><div class="panel-body"> '+gradetprslist+' </div> </div>' +
+         '<div id="tab3" class="tab-pane"><div class="panel-body"> '+quitetprslist+' </div> </div>' +
+         '<div id="tab4" class="tab-pane"><div class="panel-body"> '+desc+' </div> </div>' +
+         '</div></div>';
+         return html;*/
+    }
+
+</script>
+    <main class="site-page">
+        <div class="page-container" id="admui-pageContent">
+            <div class="page animation-fade page-account">
+
+                <div class="page-content">
+                    <div class="row row-lg">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-body nav-tabs-animate">
+                                    <div class="example">
+                                        <div class="form-group col-md-3 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">活动名称</span>
+                                                <input type="text" class="form-control" id="search" placeholder="请输入活动名称">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4 padding-left-0" title="活动开始时间">
+                                            <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="icon wb-calendar"></i></span>
+                                                    <input type="text" placeholder="开始时间" class="form-control" id="start" name="start">
+                                                </div>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">至</span>
+                                                    <input type="text" placeholder="结束时间"  class="form-control" id="end" name="end">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">活动状态</span>
+                                                <select data-plugin="selectpicker" id="actstatus">
+	                                            <option  value="">全部</option>
+	                                            <option value="0">未开始</option>
+	                                            <option value="1">进行中</option>
+	                                            <option value="2">已结束</option>
+	                                        </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-1 padding-left-0">
+                                            <div class="btn-actions">
+                                                <button type="button" class="btn btn-primary" id="searchAct">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <table id="actTable" class="table table-bordered text-center cdtable"  data-side-pagination="server" data-toggle="table"
+                                           data-url="{:url('/activity/Activity/getActList')}" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]"
+                                   data-striped="true">
+                                    <thead>
+                                            <tr>
+                                                <th class="text-center" data-formatter="posterFmt">活动海报</th>
+                                                <th class="text-center" data-field="name">活动名称</th>
+                                                <th class="text-center" data-field="status">活动状态</th>
+                                                <th class="text-center" data-formatter="statusFmt">报名状态</th>
+                                                <th class="text-center" data-field="starttime">活动开始时间</th>
+                                                <th class="text-center" data-field="endtime">活动结束时间</th>
+                                                <th class="text-center" data-formatter="actFmt">操作</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                    <!--报名详情弹出层-->
+                                    <div class="modal" id="logsForm1" aria-hidden="true" aria-labelledby="logsForm1" role="dialog" tabindex="-1">
+                                        <div class="modal-dialog modal-center">
+                                            <form class="modal-content " id="displayForm">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" aria-hidden="true" data-dismiss="modal" id="infoClose">
+                                                        <i class="icon wb-close" aria-hidden="true"></i>
+                                                    </button>
+                                                    <h4 class="modal-title">报名信息 </h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form form-horizontal logs-settings">
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">姓名：</label>
+                                                            <div class="col-xs-9">
+                                                                <label id="name" class="control-label"></label>
+                                                                <input id="id" name="actId" type="hidden"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">人数：</label>
+                                                            <div class="col-xs-9">
+                                                                <label id="num" class="control-label"></label>
+                                                            </div>
+                                                        </div>
+                                                        <!--<div class="form-group row">-->
+                                                            <!--<label class="col-xs-3 control-label">性别：</label>-->
+                                                            <!--<div class="col-xs-9">-->
+                                                                <!--<label id="sex" class="control-label"></label>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">联系方式：</label>
+                                                            <div class="col-xs-9">
+                                                                <label id="mobile" class="control-label"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <!--<div class="btn-actions pull-right margin-left-15">-->
+                                                        <!--<a class="btn btn-default" data-dismiss="modal">取消报名</a>-->
+                                                    <!--</div>-->
+                                                    <div class="btn-actions pull-right margin-left-15">
+                                                        <button class="btn btn-primary enterprise" data-target="#logsForm" role="button" aria-hidden="true" data-toggle="modal" type="button" id="repeatBtn">重新报名</button>
+                                                    </div>
+                                                    <div class="btn-actions pull-right margin-left-15">
+                                                        <a onclick="cancelSign()"><button class="btn btn-primary enterprise"  role="button" aria-hidden="true" data-toggle="modal" type="button" id="cancelBtn" style="display:none">取消报名</button></a>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!--报名弹出层-->
+                                    <div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+                                        <div class="modal-dialog modal-center">
+                                            <form class="modal-content " id="signForm">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                                                        <i class="icon wb-close" aria-hidden="true"></i>
+                                                    </button>
+                                                    <h4 class="modal-title">填写报名信息 </h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form form-horizontal logs-settings">
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">企业名称：</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="text" class="form-control" name="etprs" id="etprs" readonly value="{$Think.session.user.etprsName}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">姓名：</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="text" class="form-control name" name="name" placeholder="请输入姓名">
+                                                                <input type="hidden" id="actId" class="form-control name" name="actId" >
+                                                                <input type="hidden" id="audit" class="form-control name" name="audit" >
+                                                                <input type="hidden" id="total" class="form-control name" name="total" >
+                                                                <input type="hidden" id="signstatus" class="form-control name" name="signstatus" >
+                                                                <input type="hidden" id="signId" class="form-control name" name="signId" >
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">人数：</label>
+                                                            <div class="col-xs-9">
+                                                                <div class="input-group">
+                                                                    <input type="number" class="form-control peopleNum" name="num" placeholder="请输入参与人数">
+                                                                    <span class="input-group-addon">人</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--<div class="form-group row">-->
+                                                            <!--<label class="col-xs-3 control-label">性别：</label>-->
+                                                            <!--<div class="col-xs-9">-->
+                                                                <!--<div class="radio-custom radio-primary radio-inline">-->
+                                                                    <!--<input type="radio" id="man" name="sex" checked value='7003001' class='pay'>-->
+                                                                    <!--<label for="man">男</label>-->
+                                                                <!--</div>-->
+                                                                <!--<div class="radio-custom radio-primary radio-inline">-->
+                                                                    <!--<input type="radio" id="woman" name="sex"  value='7003002' class='pay'>-->
+                                                                    <!--<label for="woman">女</label>-->
+                                                                <!--</div>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">联系方式：</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="text" class="form-control tele" name="mobile" placeholder="请输入联系方式">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <div class="btn-actions pull-right margin-left-15">
+                                                        <a class="btn btn-default" data-dismiss="modal">取消</a>
+                                                    </div>
+                                                    <div class="btn-actions pull-right margin-left-15">
+                                                        <button class="btn btn-primary enterprise" type="button" id="saveSign">保存</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        $(".timebox").click(function () {
+            $(this).toggleClass("timeactive");
+        });
+    </script>
+{include file="index@public/footer"}

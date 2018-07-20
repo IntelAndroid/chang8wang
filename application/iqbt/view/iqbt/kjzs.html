@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" href="__PUBLIC__/kjzs/css/bootstrap.css">
+	<link rel="stylesheet" href="__PUBLIC__/kjzs/iconfont/demo.css">
+	<link rel="stylesheet" href="__PUBLIC__/kjzs/iconfont/iconfont.css">
+	<link href="__PUBLIC__/kjzs/css/style.css" rel="stylesheet" type="text/css">
+	<script src="__PUBLIC__/wechat/lib/jquery-2.1.4.js"></script>
+	<script src='__PUBLIC__/js/common.js'></script>
+	<script src="__PUBLIC__/plugins/toastr/toastr.js"></script>
+	<!--弹出层插件-->
+	<link rel="stylesheet" href="__PUBLIC__/vendor/toastr/toastr.css">
+</head>
+<style>
+	img {
+		border: 0;
+	}
+
+	.p3>p>img {
+		width: 100% !important;
+		height: 280px !important;
+	}
+
+	.box .content .rightword div.p3 {
+		width: 100%;
+		height: 192px;
+		color: #333;
+		font-size: 14px;
+		line-height: 24px;
+		margin-top: 30px;
+		overflow: hidden;
+		-webkit-line-clamp: 8;
+		-webkit-box-orient: vertical;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		overflow:auto;
+	}
+	.p3::-webkit-scrollbar {/*滚动条整体样式*/
+            width: 1px;  
+        }
+</style>
+
+<body>
+	<!--预约参观弹出层开始-->
+	<div class="theme-popover2">
+		<form name="" action="" method="">
+			<div class="yycg">
+				<div class="cgbt">
+					预约参观&nbsp;&nbsp;&nbsp;
+					<span>请正确填写信息，欢迎您的光临~</span>
+					<i class="fa fa-times closed" aria-hidden="true"></i>
+				</div>
+				<div class="row yycgtc">
+					<div class="col-md-12">
+						<div class="col-md-3">
+							<span>*</span> 企业名称</div>
+						<div class="col-md-9">
+							<input class="form-control bhd-name" type="text" placeholder="请输入">
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="col-md-3">
+							<span>*</span> 联系人</div>
+						<div class="col-md-9">
+							<input class="form-control bhd-man" type="text" placeholder="请输入">
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="col-md-3">
+							<span>*</span> 联系电话</div>
+						<div class="col-md-9">
+							<input class="form-control bhd-phone" type="text" placeholder="请输入">
+						</div>
+					</div>
+				</div>
+				<div class="bottombtn">
+					<input class="qx" type="button" value="取消">
+					<input class="fs" type="button" value="发送">
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="theme-popover-mask2"></div>
+	<!--预约参观弹出层结束-->
+	<!--大盒子-->
+	<div class="box">
+		<div class="topbt">
+			<div class="name" id="name"></div>
+			<div class="approve" id="iqbtstatus"></div>
+			<!--logo-->
+			<img  class='img' src='__PUBLIC__/images/default-iqbt.jpg'>
+		</div>
+		<div class="content">
+			<div class="leftpic">
+				<!--封面图-->
+				<img >
+				<div class="type" id="typeText"></div>
+			</div>
+			<div class="rightword">
+				<p class="p1">空间简介</p>
+				<p class="p2">
+					<i class="icon iconfont icon-map-b"></i>
+					<span id='districtId'></span>
+					<span id="address" style="color:#000"></span>
+				</p>
+				<p class="p2">
+					<i class="icon iconfont icon-account"></i>
+					<span id="contact" style="color:#000"></span>
+				</p>
+				<p class="p2">
+					<i class="icon iconfont icon-phone"></i>
+					<span id="mobile" style="color:#000"></span>
+				</p>
+				<div class="p3">
+
+				</div>
+				<input type="button" class="canguan" value="预约参观">
+			</div>
+		</div>
+		<div class="detail">
+			<div class="information">
+				<i class="icon iconfont icon-box"></i> 详细介绍</div>
+			<div class="space_info clearfix">
+				<div class="space_infoName">提供服务：</div>
+				<div class="spaceInfo_r clearfix" id="servicesText">
+
+				</div>
+			</div>
+			<div class="space_info clearfix">
+				<div class="space_infoName">配套设施：</div>
+				<div class="spaceInfo_r clearfix" id="facilityText">
+
+				</div>
+			</div>
+			<div class="space_info clearfix">
+				<div class="space_infoName">办公方式：</div>
+				<div class="spaceInfo_r clearfix" id="roomStr">
+
+				</div>
+			</div>
+			<div class="space_info clearfix">
+				<div class="space_infoName">直投基金：</div>
+				<div class="spaceInfo_r clearfix" id="fundtion">
+
+				</div>
+			</div>
+			<div class="space_info clearfix">
+				<div class="space_infoName">政策支持：</div>
+				<div class="spaceInfo_r clearfix" id="policysptname">
+
+				</div>
+			</div>
+			<div class="space_info clearfix">
+				<div class="space_infoName">是否提供注册：</div>
+				<div class="spaceInfo_r clearfix" id="rgstsptText">
+
+				</div>
+			</div>
+		</div>
+		<div class="detail">
+			<div class="tabbtn">
+				<span class="now">办公环境</span>
+				<span>招募要求</span>
+				<span>孵化案例</span>
+			</div>
+			<div class="tabcurrentbox">
+				<div class="tabcurrent">
+					<ul class='ambient'>
+
+					</ul>
+				</div>
+				<div class="tabcurrent">
+					<p id="require">
+
+					</p>
+				</div>
+				<div class="tabcurrent">
+					<ul class='example'>
+
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(function () {
+			//预约参观弹出层
+			$('.canguan').click(function () {
+				$('.theme-popover-mask2').fadeIn(100);
+				$('.theme-popover2').slideDown(200);
+			})
+			$('.closed').click(function () {
+				$('.theme-popover-mask2').fadeOut(100);
+				$('.theme-popover2').slideUp(200);
+			})
+			$('.qx').click(function () {
+				$('.theme-popover-mask2').fadeOut(100);
+				$('.theme-popover2').slideUp(200);
+			})
+		})
+	</script>
+	<script>
+		var titles = $("div.tabbtn >span");
+		var conts = $("div.tabcurrentbox > .tabcurrent");
+		var widthbri = '';
+		titles.first().addClass("now").siblings().removeClass("now");
+		conts.first().show().nextAll().hide();
+		titles.each(function (index) {
+			$(this).click(function () {
+				$(this).addClass("now").siblings().removeClass("now");
+				conts.eq(index).show().siblings().hide();
+				$.each($('.tabcurrent'),function(){
+					if($(this).css('display') == 'block'){
+						var width = $(this).height();
+						if(widthbri>width){
+							$(this).css('height',widthbri)
+						}
+					}
+				})
+			});
+		});
+	</script>
+</body>
+<script src='__PUBLIC__/js/base.js'></script>
+<script>
+	let iqbtId = '';
+	// 预约参观执行函数
+	$('.fs').click(function () {
+		let url = "{:url('iqbt/iqbt/visitIqbt')}";
+		let data = {
+			iqbtId:iqbtId,
+			name: $('.bhd-name').val(),
+			contact: $('.bhd-man').val(),
+			mobile: $('.bhd-phone').val()
+		}
+		cstmpost('.fs',url,data,function(res){
+			console.log(res)
+			if(res.code){
+				toastr.error(res.msg)
+				$('.theme-popover-mask2').fadeOut(100);
+				$('.theme-popover2').slideUp(200);
+			} else {
+				toastr.error(res.msg)
+			}
+			
+		})
+
+	})
+
+	// 页面初始化
+	let url = "{:url('iqbt/iqbt/shareIqbtInfo')}"
+	// "{:url('iqbt/iqbt/shareIqbtInfo')}";
+	let id = window.location.href.substr(window.location.href.indexOf('=')+1);
+	let data = {
+		id: id,
+	}
+	cstmpost('', url, data, function (res) {
+		if(res.code == '0'){
+			toastr.error(res.msg)
+		}
+		assign(res);
+		$('.p3').html(res.data.detail)
+		iqbtId = res.data.id;
+		console.log(res.data.poster);
+		// 添加logo
+		if(res.data.logo == ''){
+			$('.img').attr('src',"__PUBLIC__/images/default-iqbt.jpg")
+		} else {
+			$('.img').attr('src',"__PUBLIC__"+res.data.logo)
+		}
+		if(res.data.poster) {
+			$('.leftpic').find('img').attr('src', '/public/' + res.data.poster)
+		}
+		$.each(res.data.img, function (i) {
+			let li = '<li><img src="/public/' + res.data.img[i].savePath + '"><p>' + res.data.img[i].name + '</p></li>';
+			$('.ambient').append(li);
+		})
+		$.each(res.data.case, function (i) {
+				let li = '<li>' + res.data.case[i].url + '<p>' + res.data.case[i].name + '</p></li>';
+				$('.example').append(li);
+			if(res.data.case[i].logo!='图片不存在') {
+				$('.example').find('li:last').children('a').html('<img src="/public/' + res.data.case[i].logo + '"/>');
+			}else{
+				$('.example').find('li:last').children('a').html('<img src="/public/images/default-iqbt.jpg"/>');
+			}
+
+		})
+		$.each($('.tabcurrent'),function(){
+			if($(this).css('display') == 'block'){
+				var width = $(this).height();
+				widthbri = width + 40;
+				console.log(width) 
+			}
+		})
+	})
+	function sysData() {
+		return;
+	}
+</script>
+
+</html>

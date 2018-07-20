@@ -1,0 +1,237 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-panel {
+		margin: 0;
+		background: none;
+	}
+
+	.weui-panel ul {
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.weui-panel ul li {
+		width: 100%;
+		overflow: hidden;
+		margin-bottom: 15px;
+		padding-bottom: 10px;
+		background: #FFF;
+	}
+
+	.weui-panel ul li .title {
+		overflow: hidden;
+		padding: 10px 15px 5px 15px;
+	}
+
+	.weui-panel ul li .title h3 {
+		color: #666;
+	}
+
+	.weui-panel ul li .title h3 label {
+		color: #32adf8;
+		float: none
+	}
+
+	.weui-panel ul li .title span {
+		float: right;
+		font-size: 14px;
+		color: #999;
+	}
+
+	.weui-panel ul li .title span label {
+		color: #f39b0f;
+	}
+
+	.weui-panel ul li p {
+		padding: 0 15px;
+		color: #999;
+		font-size: 14px;
+	}
+
+	.weui-panel ul li p i {
+		margin-top: -2px;
+	}
+
+	.weui-panel ul li p.nr {
+		color: #999;
+		line-height: 24px;
+		margin-top: 10px;
+		padding-top: 10px;
+		border-top: 1px solid #f2f2f2;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
+
+	.weui-panel ul li p span {
+		float: right;
+		border: 1px solid #f39b0f;
+		color: #f39b0f;
+		padding: 2px 6px;
+		font-size: 12px;
+		border-radius: 2px;
+	}
+
+	.weui-panel ul li img {
+		width: 100%;
+		height: auto;
+	}
+
+	.weui-panel.weui-panel_access {
+		border-bottom: none;
+	}
+
+	.weui-panel:after {
+		border-bottom: none;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="navbox">
+		<a href="javascript:history.back(-1)">
+			<div class="left">
+				<i class="icon iconfont icon-back"></i>
+			</div>
+		</a>
+		<div class="center">公告</div>
+	</div>
+	<div class="choosebox first-header">
+		<div class="weui-row weui-no-gutter">
+			<div class="weui-col-50 active" value="6019001">
+				<a>孵化器公告</a>
+			</div>
+			<div class="weui-col-50" value="6019004">
+				<a>系统公告</a>
+			</div>
+		</div>
+	</div>
+	<div class="page__pd last-footer" style="padding:0 15px;">
+		<div class="weui-panel weui-panel_access">
+			<ul id="list" class='potentialUser'>
+
+			</ul>
+			<div class="weui-loadmore" style="margin:0 auto;">
+				<i class="weui-loading"></i>
+				<span class="weui-loadmore__tips">正在加载</span>
+			</div>
+		</div>
+	</div>
+	{include file="wechat@public/footer"}
+	<script>
+		$(function () {
+			$(".wx_items .item_cell").click(function () {
+				$(this).addClass('current').siblings().removeClass('current');
+			});
+		});  
+	</script>
+	<script>
+		// 公告页列表url
+		var potentialurl = "{:url('/user/notice/getAllNotice')}";
+		// 上拉加载
+		var numtotal = '';
+		var numlength = '';
+		// 上拉加载加载条数
+		var limit = 5;
+		// 公告页列表初始化start
+		cstmpost('', potentialurl, { limit: 10,source: 6019001 }, function (res) {
+			console.log(res)
+			numtotal = res.data.length + limit;
+			menuSum(res);
+		})
+		//公告页列表初始化end
+		$('.choosebox').on('click','.weui-col-50',function(){
+			if(!$(this).hasClass('active')){
+				$(this).addClass('active');
+				$(this).siblings().removeClass('active');
+				cstmpost('', potentialurl, { limit: 10,source: $(this).attr('value') }, function (res) {
+					numtotal = res.data.length + limit;
+					menuSum(res);
+				})
+			}
+		})
+		// 列表初始化函数start
+		function menuSum(res) {
+			$('.potentialUser').html('');
+			console.log(res)
+			var people = ''
+			$.each(res.data, function (i) {
+				let content = removeHTMLTag(res.data[i].content)
+				var $potentialUser =
+					'<li><a href="bhd-say-detail.html"><div class="title"><h3><label>▍</label>' + res.data[i].title +
+					'</h3></div><p><i class="icon iconfont icon-shijian"></i>' + res.data[i].addtime +
+					'<span>孵化器公告</span></p><p class="nr" style="height:74px" msgId='+ res.data[i].id +
+					' noticeId = "'+ res.data[i].noticeId +'">' + content + '</p></a></li>'
+				$('.potentialUser').append($potentialUser);
+				// 截取文本框中的文字
+				function removeHTMLTag(str) {
+					str = str == null? '未读取数据' : str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+					str = str == null? '未读取数据' : str.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+					//str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+					str = str == null? '未读取数据' : str.replace(/&nbsp;/ig,'');//去掉&nbsp;
+					str = str == null? '未读取数据' : str.replace(/\s/g,''); //将空格去掉
+					return str;
+				}
+			})
+			numlength = $('.potentialUser').children().length;
+			console.log(res.data.length)
+			if (res.data.length <= 10 || res.data.length == $('.potentialUser').children().length) {
+				$('.weui-loadmore').html('')
+			} else {
+				$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+			}
+		}
+		// 列表初始化函数end
+
+		// 点击时将id存储到session
+		$('#list').on('click','li',function(){
+			sessionStorage.setItem('msgId',$(this).find('.nr').attr('msgId'))
+			sessionStorage.setItem('noticeId',$(this).find('.nr').attr('noticeId'))
+		})
+		// infinite
+		var loading = false;
+		$(".weui-tab__bd-item").infinite().on("infinite", function () {
+			$('.weui-loadmore').css('display', 'block')
+			if (loading) return;
+			loading = true;
+			if (numtotal > numlength) {
+				$('.weui-loadmore').css('display', 'block')
+				// setTimeout(function () {
+				// if()
+				var signdata = {
+					offset: numlength,
+					limit: limit,
+				}
+				cstmpost('', potentialurl, signdata, function (res) {
+					menuSum(res)
+				})
+				// }, 1000)
+			} else {
+				$('.weui-loadmore').css('display', 'none')
+			}
+			numlength += limit;
+			loading = false;
+		});
+
+		// 存储搜索value
+		$('.numsear').click(function () {
+			sessionStorage.setItem('numsear', $(this).attr('value'))
+		})
+	</script>

@@ -1,0 +1,286 @@
+{include file="wechat@public/header"}
+<style>
+    a {
+        text-decoration: none;
+    }
+
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    a:active {
+        text-decoration: none;
+    }
+
+    .weui-panel {
+        margin: 0;
+    }
+
+    .weui-media-box {
+        padding: 8px 15px;
+    }
+
+    .weui-cell__bd .weui-media-box__hd {
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        color: #FFF;
+        font-size: 16px;
+        border-radius: 50%;
+        background: #32adf9;
+        text-align: center;
+        position: relative;
+    }
+
+    .weui-cell__bd .weui-media-box__hd1 {
+        background: #f39b0f;
+    }
+
+    .weui-media-box__desc {
+        -webkit-line-clamp: 1;
+    }
+
+    .weui-media-box__title {
+        margin-top: -4px;
+        font-size: 15px;
+        color: #595757;
+        font-weight: bold;
+    }
+
+    .weui-media-box__title-after {
+        color: #b7b7b7;
+        font-weight: 500;
+        float: right;
+    }
+
+    .weui-media-box__desc .call {
+        float: right;
+        color: #32adf9;
+    }
+
+    .weui-cell__ft {
+        font-size: 14px;
+    }
+
+    .weui-cell__ft .exit {
+        background: #32adf9;
+        line-height: 46px;
+    }
+
+    .weui-cell__ft .contract {
+        background: #f39b0f;
+        line-height: 46px;
+    }
+</style>
+</head>
+
+<body ontouchstart>
+    <script>
+        // 列表初始化函数start
+        function menuSum(res, that) {
+            $.each(res.rows, function (i) {
+                // 截取用户名字后两位
+                var contact = res.rows[i].contact.length > 2 ? res.rows[i].contact.substring(res.rows[i].contact.length - 2) : res.rows[i].contact;
+                // 用户创建时间初始化
+                re = new RegExp("-", "g");
+                var addtime = res.rows[i].addtime.replace(re, '/')
+                var $potentialUser =
+                    '<div class="weui-cell weui-cell_swiped"><div class="weui-cell__bd"><div class="weui-cell" \
+                    style="padding:0;"><a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" \
+                    style="width:100%;"><div class="weui-media-box__hd">' + contact +
+                    '</div><div class="weui-media-box__bd"><h4 class="weui-media-box__title">' + res.rows[i].name +
+                    '</h4><p class="weui-media-box__desc"><i class="icon iconfont icon-phone"></i> ' + res.rows[i].mobile +
+                    '<span class="weui-media-box__title-after">' + addtime +
+                    '</span></p></div></a></div></div><div class="weui-cell__ft">\
+                    <a class="weui-swiped-btn weui-swiped-btn_warn delete-swipeout exit"  onclick="exit('+ res.rows[i].id + ')">退租</a>\
+                    <a class="weui-swiped-btn weui-swiped-btn_default close-swipeout contract"  onclick="contract('+ res.rows[i].id + ')">续约</a></div></div>'
+                $('.potentialUser').append($potentialUser);
+                if (that == '3') {
+                    $('.weui-cell_swiped').swipeout();
+                }
+            })
+            numlength = $('.potentialUser').children().length;
+            if (res.total <= 10 || res.total == $('.potentialUser').children().length) {
+                $('.weui-loadmore').html('')
+            } else {
+                $('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+            }
+            $('.potentialUser').children('div:odd').find('.weui-media-box__hd').addClass('weui-media-box__hd1')
+            console.log('aaa')
+        }
+        // 列表初始化函数end
+
+        // 退租跳转
+        function exit(id) {
+            session("quitEtprsId", id);
+            window.location.href = "{:url('/wechat/test/exit')}";
+        }
+
+        // 续约跳转
+        function contract(id) {
+            session("renewEtprsId", id);
+            window.location.href = "{:url('/wechat/test/contract')}";
+        }
+
+    </script>
+    <div class="weui-tab">
+        <div class="weui-tab__bd">
+            <div class="weui-tab__bd-item weui-tab__bd-item--active">
+                <div class="navbox">
+                    <a href="index.html#entermange">
+                        <div class="left">
+                            <i class="icon iconfont icon-back"></i>
+                        </div>
+                    </a>
+                    <div class="center">入驻管理</div>
+                </div>
+                <div class="lr_nb first-header">
+                    <div class="slider_wrap line">
+                        <div class="wx_items menu">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="bd last-footer">
+                    <div class="page__bd">
+                        <div class="weui-cells" style="margin-top:0;">
+                            <div id="list" class='demos-content potentialUser'>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-loadmore" style="display:none">
+                        <i class="weui-loading"></i>
+                        <span class="weui-loadmore__tips">正在加载</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {include file="wechat@public/bottom"} {include file="wechat@public/footer"}
+        <script>
+
+            // 入驻管理页列表url
+            var potentialurl = "{:url('Etprs/Etprs/getEtprsList')}";
+            // 入驻管理页菜单url
+            var areaurl = "{:url('Etprs/Etprs/etprsListNum')}";
+            var numsign = '';
+            var numtotal = '';
+            var numlength = '';
+            // 上拉加载加载条数
+            var limit = 5;
+            // 入驻管理页菜单初始化start
+            cstmpost('', areaurl, '', function (res) {
+                // 入驻管理页菜单初始化start
+                var $menu = '<div class="item_cell" value="4"><span>待入驻(' + res.data.wait +
+                    ')</span></div><div class="item_cell" value="3"><span>已入驻(' + res.data.settled +
+                    ')</span></div><div class="item_cell" value="2"><span>已毕业(' + res.data.quit +
+                    ')</span></div><div class="item_cell" value="1"><span>全部(' + res.data.total + ')</span></div>'
+                $('.menu').append($menu);
+                $('.menu>.item_cell:first').addClass('current')
+                // 招商管理页菜单初始化end
+
+                if (window.location.href.indexOf('=') - (-1) == 0) {
+                    // 直接从入驻管理跳转时触发
+                    // 入驻管理页列表初始化start
+                    var data = {
+                        status: $('.menu>.item_cell:first').attr('value'),
+                        limit: 10
+                    }
+                    numsign = $('.menu>.item_cell:first').attr('value');
+                    cstmpost('', potentialurl, data, function (res) {
+                        numtotal = res.total + limit;
+                        menuSum(res);
+                        if ($('.menu>.item_cell:first').attr('value') == '3') {
+                            $('.weui-cell_swiped').swipeout();
+                        }
+                    })
+                    // 入驻管理页列表初始化end
+                } else {
+                    // 从待入住。已入驻等跳转时触发
+                    console.log($('.navbox>a:first').attr('href', 'index.html#entermange'))
+                    $.each($('.menu>.item_cell'), function (i) {
+                        console.log($(this).attr('value'))
+                        // console.log(window.location.href.substr(window.location.href.indexOf('=') - (-1)))
+                        if ($(this).attr('value') == window.location.href.substr(window.location.href.indexOf('=') - (-1))) {
+                            $('.potentialUser').html('')
+                            $(this).addClass('current').siblings().removeClass('current');
+                            var that = numsign = $(this).attr('value');
+                            var clickdata = {
+                                status: $(this).attr('value'),
+                                limit: 10
+                            }
+                            cstmpost('.item_cell', potentialurl, clickdata, function (res) {
+                                numtotal = res.total + limit;
+                                menuSum(res);
+                            })
+                        }
+                    })
+                }
+            })
+            // 入驻管理页菜单初始化end
+
+            // 菜单点击事件start
+            $(function () {
+                $(".menu").on('click', '.item_cell', function () {
+                    $('.potentialUser').html('')
+                    $(this).addClass('current').siblings().removeClass('current');
+                    var that = numsign = $(this).attr('value');
+                    cstmpost('.item_cell', potentialurl, { status: $(this).attr('value') }, function (res) {
+                        console.log(res)
+                        numtotal = res.total + limit;
+                        menuSum(res, that);
+                    })
+                });
+            });
+            // 菜单点击事件end
+
+
+            // infinite
+            var loading = false;
+            $(".weui-tab__bd-item").infinite().on("infinite", function () {
+                $('.weui-loadmore').css('display', 'block')
+                if (loading) return;
+                loading = true;
+                if (numtotal > numlength) {
+                    $('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+                    // setTimeout(function () {
+                    // if()
+                    var signdata = {
+                        status: numsign,
+                        offset: numlength,
+                        limit: limit,
+                    }
+                    cstmpost('', potentialurl, signdata, function (res) {
+                        menuSum(res)
+                    })
+                    // }, 1000)
+                } else {
+                    $('.weui-loadmore').html('')
+                }
+                numlength += limit;
+                loading = false;
+            });
+
+
+            $(function () {
+                $(".wx_items .item_cell").click(function () {
+                    $(this).addClass('current').siblings().removeClass('current');
+                });
+            });  
+            // 存储搜索value
+            $('.numsear').click(function(){
+                sessionStorage.setItem('numsear',$(this).attr('value'))
+            })
+        </script>
+        <script>
+            $('.delete-swipeout').click(function () {
+                $(this).parents('.weui-cell').remove()
+            })
+            $('.close-swipeout').click(function () {
+                $(this).parents('.weui-cell').swipeout('close')
+            })
+        </script>

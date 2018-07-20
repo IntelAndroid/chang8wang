@@ -1,0 +1,118 @@
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var iqbtId=session("renewIqbtId");
+        var url = "{:url('/iqbt/Iqbt/initRenew')}";
+        cstmpost("", url, {iqbtId:iqbtId}, function (data) {
+            if(data.code==1){
+                var sale=data.data.sale;
+                var html="<option value=''>请选择</option>";
+                for (var i = 0; i < sale.length; i++) {
+                    var obj = sale[i];
+                    if(obj.id==data.data.saleId){
+                        html+="<option value='"+obj["id"]+"' selected>"+obj["realname"]+"</option>";
+                    }else{
+                        html+="<option value='"+obj["id"]+"'>"+obj["realname"]+"</option>";
+                    }
+
+                }
+                $("#saleId").html(html);
+
+                $("#pact_start_lb").html(data.data.pact_start);
+                $("#pact_start").val(data.data.pact_start);
+                $("#iqbtId").val(data.data.iqbtId);
+            }
+
+
+
+        })
+
+        $("#btnsave").click(function () {
+            var data=serializeData("pdtform");
+            var dstburl="{:url('/iqbt/Iqbt/savepact')}";
+            var sale=$("#saleId").val();
+            if(sale==""){
+                toastr.warning("请选择一个销售人员");
+            }else{
+                cstmpost("#btnsave", dstburl, data, function (data) {
+                    if(data.code==1){
+                        toastr.success("续约成功");
+                        $('#iqbtTab2').bootstrapTable('refresh');
+                        if (typeof(eval("initOther")) == "function") {
+                            initOther();
+                        }
+                        $("#myModal").modal("hide");
+                    }else {
+                        toastr.error("续约失败");
+                    }
+                 })
+            }
+        });
+
+        $('.timepicker').datepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+    });
+
+</script>
+
+<form id="pdtform" method="post" tableId="aplpdtId" class="form-horizontal">
+    <div class="modal-body">
+        <div id="content">
+            <form id="NewQyq">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="name">合同名称<span class="required">*</span></label>
+                    <div class="col-sm-8">
+                        <input class="form-control"name="name" id="name" placeholder="合同名称" value="">
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="saleId">选择销售人员<span class="required">*</span></label>
+                    <div class="col-sm-8">
+                        <select class="form-control"  id="saleId" name="saleId">
+                            <option>请选择</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="saleId">合同金额<span class="required">*</span></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+
+                            <input class="form-control"name="total" id="total" placeholder="合同金额" value="">
+                            <span class="input-group-addon ">元</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="saleId">开始时间</label>
+                    <div class="col-sm-8">
+                        <label class="control-label" id="pact_start_lb"></label>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="saleId">结束时间<span class="required">*</span></label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control datepair-date datepair-end timepicker" id="pact_end" name="pact_end">
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <input type="hidden" id="iqbtId" name="iqbtId" value="">
+                <input type="hidden" id="pact_start" name="pact_start" value="">
+
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">续约</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span></button>
+    </div>
+</form>

@@ -1,0 +1,195 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+	.weui-input{text-align:right;}
+	.weui-label{width:120px;}
+	.weui-select{direction: rtl;color:#878787;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		//我的信息
+		var url = "{:url('/Etprs/Etprs/getRow')}";
+		var data = {};
+		data.id =session('etprsId');
+		cstmpost("#", url, data, function (res) {
+			assign(res)
+		});
+		//合同信息
+		cstmpost('',"{:url('iqbt/Iqbt/getMyIqbt')}",{},function(res){
+			res.data=res.rows[0];
+			assign(res)
+//			$('#room').html('<i class="icon iconfont icon-box"></i>'+res.rows[0].roomInfo);
+//			$('#starttime').html('<i class="icon iconfont icon-iconfontplay2"></i>'+res.rows[0].starttime);
+//			$('#endtime').html('<i class="icon iconfont icon-iconfontstop"></i>'+res.rows[0].endtime);
+		})
+		// 下一步,保存企业信息
+		$("#addEtprs").on("click", function () {
+			var url = "{:url('/etprs/Etprs/saveEditEtprs')}";
+			var data = serializeData("etprsForm");
+			data.id=session('etprsId');
+			cstmpost("#addEtprs", url, data, function (res) {
+				var jumpurl = "{:url('/Etprs/Etprs/etprsList')}";
+				if (res["code"] == '1') {
+					$.toptip(res["msg"],'success');
+					setTimeout(function () {
+						window.history.go(-1);
+					}, 500);
+				} else {
+					$.toptip(res["msg"],'warning');
+				}
+			});
+		});
+	})
+	function initBuild(){
+
+	}
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="navbox">
+				<a href="{:url('wechat/test/bhd-my-in')}"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">详细信息</div>
+			</div>
+		    <div class="choosebox first-header">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-50 active">
+				      	<a href="in-information.html">入驻信息</a> 
+				    </div>
+				    <div class="weui-col-50">
+				      	<a href="extendinformation.html">扩展信息</a>
+				    </div>
+			    </div>
+		    </div>
+			<form action="" id="etprsForm">
+			<div class="weui-cells weui-cells_form" style="margin-top:0;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">企业名称</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" name="name1" id="name1"><!--placeholder="新智能"-->
+			        </div>
+			    </div>
+			    <!--<div class="weui-cell weui-cell_select weui-cell_select-after">-->
+			        <!--<div class="weui-cell__hd">-->
+			            <!--<label for="" class="weui-label">客户类型</label>-->
+			        <!--</div>-->
+			        <!--<div class="weui-cell__bd">-->
+				        <!--<select class="weui-select">-->
+				            <!--<option value="1">企业</option>-->
+				            <!--<option value="2">团队</option>-->
+				        <!--</select>-->
+			        <!--</div>-->
+			    <!--</div>-->
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">联系人</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text"name="contact" id="contact">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd">
+			          <label class="weui-label">联系电话</label>
+			        </div>
+			        <div class="weui-cell__bd">
+			          <input class="weui-input" type="tel" name="mobile" id="mobile">
+			        </div>
+			    </div>
+			    <!--<div class="weui-cell weui-cell_select weui-cell_select-after">-->
+			        <!--<div class="weui-cell__hd">-->
+			            <!--<label for="" class="weui-label">来源渠道</label>-->
+			        <!--</div>-->
+			        <!--<div class="weui-cell__bd">-->
+				        <!--<select class="weui-select">-->
+				            <!--<option value="1">电话咨询</option>-->
+				            <!--<option value="2">主动联系</option>-->
+				        <!--</select>-->
+			        <!--</div>-->
+			    <!--</div>-->
+			    <!--<div class="weui-cell weui-cell_select weui-cell_select-after">-->
+			        <!--<div class="weui-cell__hd">-->
+			            <!--<label for="" class="weui-label">状态</label>-->
+			        <!--</div>-->
+			        <!--<div class="weui-cell__bd">-->
+				        <!--<select class="weui-select">-->
+				            <!--<option value="1">潜在客户</option>-->
+				            <!--<option value="2">意向客户</option>-->
+				            <!--<option value="3">拟入驻客户</option>-->
+				            <!--<option value="4">无效客户</option>-->
+				        <!--</select>-->
+			        <!--</div>-->
+			    <!--</div>-->
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__hd"><label class="weui-label">意向需求</label></div>-->
+			        <!--<div class="weui-cell__bd">-->
+			          	<!--<input class="weui-input" type="text" placeholder="D座/2层/2001房间">-->
+			        <!--</div>-->
+			    <!--</div>-->
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__hd"><label for="" class="weui-label">需求时间</label></div>-->
+			        <!--<div class="weui-cell__bd" style="direction: rtl;">-->
+			          	<!--<input class="weui-input" type="date" value="2018-08-04">-->
+			        <!--</div>-->
+			    <!--</div>-->
+		    </div>
+		    <!--<div class="weui-cells__title">详细需求</div>-->
+		    <!--<div class="weui-cells weui-cells_form">-->
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__bd">-->
+			            <!--<textarea class="weui-textarea" placeholder="请输入文本" rows="3"></textarea>-->
+			            <!--<div class="weui-textarea-counter"><span>0</span>/200</div>-->
+			        <!--</div>-->
+			    <!--</div>-->
+		    <!--</div>-->
+		    <div class="weui-cells weui-cells_form" style="margin-top:10px;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label for="" class="weui-label">合同开始时间</label></div>
+			        <div class="weui-cell__bd" style="direction: rtl;">
+			          	<input class="weui-input" id="starttime" readonly>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label for="" class="weui-label">合同结束时间</label></div>
+			        <div class="weui-cell__bd" style="direction: rtl;">
+			          	<input class="weui-input"  id="endtime" readonly>
+			          	<input class="weui-input" type="hidden" id="bp" name="bp" readonly>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">已分配房间</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" readonly id="roomInfo">
+			        </div>
+			    </div>
+		    </div>
+		    <div class="weui-cells weui-cells_form" style="margin-top:10px;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">法人或团队负责人</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="legalname" placeholder="" name="legalname">
+			        </div>
+			    </div>
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__hd"><label class="weui-label">合同编号</label></div>-->
+			        <!--<div class="weui-cell__bd">-->
+			          	<!--<input class="weui-input" type="text" placeholder="000000000">-->
+			        <!--</div>-->
+			    <!--</div>-->
+		    </div>
+			</form>
+		    <div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-100" style="background:none;">
+				      	<a class="weui-btn"id="addEtprs" href="javascript:" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;">保存</a>
+				    </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+{include file="wechat@public/footer"}

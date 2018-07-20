@@ -1,0 +1,349 @@
+/*登录页*/
+.page-locked1:before {
+	background-image: url(../images/lockscreen.jpg);
+}
+.loginbox h1{
+	color: #89bceb;
+	margin-bottom: 15px;
+	font-size: 36px;
+	font-weight: bold;
+	}
+@media (max-width:1920px) {
+	.loginbox h1 {margin-top: 200px;}	
+}
+@media (max-width:1680px) {
+	.loginbox h1 {margin-top: 170px;}	
+}
+@media (max-width:1680px) {
+	.loginbox h1 {margin-top: 170px;}	
+}
+@media (max-width:1366px) {
+	.loginbox h1 {margin-top: 100px;}	
+}
+.loginbox p.kouhao{
+	font-size: 20px;
+	margin-bottom: 40px;
+	}
+.loginbox p.forget,.register,.kouhao{
+	color: #c5c5c5;
+	}
+.loginbox button{
+	height: 50px;
+	font-size: 16px;
+	}
+.loginbox a{
+	text-decoration: none;
+	}
+.inputbox{
+	/*background: #FFF;*/
+	margin-bottom: 20px;
+	}
+.inputbox .inputbox1{
+	position: relative;
+	margin-bottom:10px;
+	}
+.inputbox .inputbox1 p.false{
+	position:absolute;
+	color: #f96868;
+	right: 6px;
+	font-size: 12px;
+	top: 0;
+	line-height: 50px;
+	}
+.inputbox input{
+	border: none;
+	height: 50px;
+	line-height: 50px;
+	}
+.inputbox input:first-child{
+	border-bottom: 1px solid #e4eaec;
+	}
+/*顶部logo*/
+.site-menubar-unfold .site-navbar .navbar-header{
+	width: 80px;
+	background: #273238;
+	}
+.navbar-brand{
+	padding-left: 10px;
+	padding-right: 10px;
+	}
+.site-menubar-unfold .site-navbar .navbar-container{
+	margin-left: 80px;
+	}
+.navbar-brand{
+	width: 80px;
+	padding: 0;
+	text-align: center;
+	}
+.navbar-brand span.logo{
+	display: inline-block;
+	width: 100%;
+	line-height: 60px;
+	font-size: 20px;
+	text-align: center;
+	color: #8d9dac;
+	}
+/*名称*/
+.navbar-inverse .navbar-toolbar > li.platname > a{
+	font-size: 18px;
+	background: none;
+	}
+/*左侧菜单样式修改*/
+.site-menubar-unfold .site-menubar{
+	width: 80px;
+	}
+.site-menubar-unfold .site-page, .site-menubar-unfold .site-footer {
+	margin-left: 80px;
+	}
+@media (max-width: 767px){
+.site-menubar-hide .site-menubar{
+	width: 80px;
+	}
+.site-menubar-hide .site-page, .site-menubar-hide .site-footer {
+	margin-left: 0;
+	}	
+.site-menubar-open .site-menubar{
+	width: 80px;
+	}
+.site-menubar-open .site-page, .site-menubar-open .site-footer {
+	margin-left: -140px;
+	}
+}
+
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu .active{
+	background: #191c1d;
+	}
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu .site-menu-item:hover{
+	background: #191c1d;
+	}
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu .site-menu-item{
+	border-bottom: 1px solid #5a5a5e;
+	text-align: center;
+	padding: 10px 0 0 0;
+	}
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu > .site-menu-item > a{
+	line-height: 20px;
+	}
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu .site-menu-item i{
+	font-size: 24px;
+	margin-right: 0;
+	padding-top: 10px;
+	}
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu .site-menu-item p{
+	margin-left: -5px;
+	}
+.site-menubar-unfold .site-menubar .site-menubar-body .site-menu .site-menu-item p span{
+	margin-left: 0;
+	font-size: 12px;
+	}
+/*场地列表中文字上下居中效果*/
+.cdtable > tbody > tr > td {
+	vertical-align: middle;
+	}
+/*跟进信息表格*/
+.followtable > tbody > tr > td {
+	width: 18%;
+	}
+.followtable > tbody > tr > td:last-child{
+	width: 28%;
+	}
+.followtable > tbody > tr > td:last-child span{
+	cursor: pointer;
+	display: inline-block;
+	width: 100%;
+	height: 35px;
+	line-height: 35px;
+	overflow: hidden;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	}
+/*添加房间表格中文本框宽度*/
+.addroomtable > tbody > tr > td {
+	width: 9%;
+	}
+.addroomtable > tbody > tr > td:nth-child(1)>p {
+	margin-bottom:0;
+	}
+.addroomtable > tbody > tr > td:nth-child(7) {
+	width: 9%;
+	}
+.addroomtable > tbody > tr > td:nth-child(8) {
+	width: 17%;
+	}
+.addroomtable > tbody > tr > td:last-child{
+	width: 5%;
+	}
+.leadrecordtable  > tbody > tr > td {
+	width: 25%;
+	}
+.leadrecordtable  > tbody > tr > td:nth-child(2) {
+	width: 50%;
+	text-align: left;
+	}
+/*添加空间多选下拉右上标签*/
+.addkj .badge {
+	position: absolute;
+	right: 10px;
+	z-index: 100;
+	}
+/*添加空间案例表格*/
+.casetable > tbody > tr > td {
+	vertical-align: middle;
+	}
+.casetable > tbody > tr > td:nth-child(1) {
+	width: 15%;
+	}
+.casetable > tbody > tr > td:nth-child(2) {
+	width: 30%;
+	}
+.casetable > tbody > tr > td:nth-child(3) {
+	width: 15%;
+	}
+.casetable > tbody > tr > td:nth-child(4) {
+	width: 30%;
+	text-align: left;
+	}
+.casetable > tbody > tr > td:nth-child(5) {
+	width: 10%;
+	}
+/*添加空间新增案例弹出层*/
+.modal-body{
+	background: #FFF;
+	}
+.modal-footer{
+	background: #FFF;
+	}
+/*房间分配左右布局*/
+.roomleft{
+	width: 74%;
+	line-height: 24px;
+	}
+.roomleft .colorgreen{
+	color: #46be8a;
+	}
+.roomleft .colorred{
+	color: #f96868;
+	}
+.roomleft .coloryellow{
+	color: #f2a654;
+	}
+.roomleft .colorblue{
+	color: #62a8ea;
+	}
+.roomleft .bg-grey-600{
+	background: #76838f;
+	background-color: #76838f !important;
+	}
+.roomleft .color-box{
+	height: 20px;
+	}
+.roomleft .showBuildPic{cursor:pointer;}
+.roomright{
+	width: 24%;
+	}
+/*鼠标移入显示房间信息*/
+.roomleft .color-box{width:20px;}
+.icon-box1{
+	width:180px;
+	overflow:hidden;
+	font-size:12px;
+	background:#f3f7f9;
+	position:absolute;
+	top:0;
+	left:50px;
+	z-index:10;
+	color:#666666;
+	padding:10px 5px;
+	display:none;
+}
+.icon-box1 p{line-height:18px;margin-bottom:15px;}
+.icon-box1 .col-sm-12{padding:0;margin:0;}
+.icon-box1 .col-sm-5{padding-left:0;padding-right:10px;margin:0;}
+.icon-box1 .col-sm-7{padding-left:0;padding-right:10px;margin:0;}
+/*分块展示下描边*/
+h4.btborder{
+	border-bottom: 1px solid #e4eaec;
+	}
+/*表单优化*/
+.form-horizontal {
+	color: #333;
+	}
+.form-horizontal .form-group > label.control-label{
+	color: #666;
+	}
+.form-horizontal .form-group input,textarea,select{
+	color: #333;
+	}
+.form-horizontal .form-group select.form-control{
+	color: #333;
+	}
+.form-horizontal .form-group textarea.form-control{
+	color: #333;
+	}
+.form-group > label.control-label{
+	color: #666;
+	}
+.form-group input,textarea,select{
+	color: #333;
+	}
+.form-group select.form-control{
+	color: #333;
+	}
+.form-group textarea.form-control{
+	color: #333;
+	}
+/*图片上传及截图（空间信息页）*/
+.pic{
+    width:140px;
+    height:80px;
+    color:#e0e0e0;
+    border:1px solid #e0e0e0;
+    cursor: pointer;
+	margin-bottom:25px;
+	padding-left:0;
+	padding-right:0;
+    }
+.pic>.fly>.add{
+    font-size:30px;
+    padding:0;   
+    margin-top:5px;
+}
+.pic>.fly>.name{ 
+    margin-top:-5px;
+}
+.pic>.fly>p{
+    text-align: center;
+    margin:0 auto;
+    padding:0;   
+}
+.mo-body{
+	margin-top:10px;
+}
+.fam{
+	border:1px dashed #e0e0e0;
+	padding-left:0;
+	margin-top: 10px !important;	
+}
+.fam>label{
+width:80px;
+text-align: center;
+
+}
+.addpicker{
+	margin-top:10px;
+}
+.roomRank{
+	display:none;
+}
+/*上传文件进度条*/
+.file-input{
+	position: relative;
+}
+.file-input .kv-upload-progress{
+	width:100%;z-index:1000;position:absolute;top:34px;left:0;
+}
+.addroomtable > tbody > tr > td:first-child {
+    width: 5%;
+}

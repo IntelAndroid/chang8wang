@@ -1,0 +1,901 @@
+{include file="index@public/header"}
+<!--时间滑动插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/animsition/animsition.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/toastr/toastr.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/slick-carousel/slick.css">
+<link rel="stylesheet" href="__PUBLIC__/css/examples/components/basic/carousel.css">
+
+<!--轮播插件 -->
+<script src="__PUBLIC__/vendor/slick-carousel/slick.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src='__PUBLIC__/js/meetingRoomAdmin.js'></script>
+
+<script>
+    $(document).ready(function () {
+        sum();
+        var myDate = new Date();
+        var year=myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+        var month=myDate.getMonth()+1;       //获取当前月份(0-11,0代表1月)
+        var date=myDate.getDate();        //获取当前日(1-31)
+        $('.datemt').val(year+'-0'+month+'-'+date);
+        // 添加表单不能用assign
+        // assign();
+        // 会议室相关
+        $('#acceptAdd').html(initSelect('accept', '6016', '2',''));
+        $('#mtrFacilityAdd').html(initCheckbox('facility', '6022', '2',''));
+        $("#freeAdd").html(initOneRadio('free', '7002002'));
+        $("#auditAdd").html(initOneRadio('audit', '7002002'));
+        $("#publishAdd").html(initOneRadio('publish', '7002001'));
+        if ($("body ").find(".rqst_build").length > 0) {
+            initBuild('rqst_build');
+        }
+        // 新增会议室效果
+        $(".togglefree").click(function () {
+            if ($(".free7002002").prop("checked") == true) {
+                $('.payprice').css('display', 'block')
+            } else {
+                $('.payprice').css('display', 'none');
+                $("input[name='price']").val('');
+            }
+        });
+
+        getAllMtroomName();
+
+        // 查询事件
+        $(".btn-searchmt").on('click', function () {
+            sum();
+        });
+        // 查询表单变化查询
+        $(".mtroomNameList,.rqst_build,.rqst_floor,.datemt").on('change',function(){
+            if($(this).hasClass("refresh")){
+                $('.roomleft').children('.roomRk').remove()
+                sum();
+            }
+        });
+        // 新增会议室前置事件
+        $("#addMtroom").click(function () {
+            // 清除session
+            sessionStorage.removeItem("mtRoomId");
+        });
+        // 点击新增会议室
+        $(".addddddMtroom").click(function(){
+            // 重置表单
+            $("#mtRoomForm")[0].reset();
+        });
+        // 新增保存会议室
+        $("#saveMtroom").click(function () {
+            // 判断是否收费以及单价
+            if ($("#mtRoomForm").find(".free7002002").prop("checked") == true) {
+                if ($("#mtRoomForm").find(".price").val() <= 0) {
+                    toastr.error('您好，此会议室为收费会议室，请输入金额')
+                    return
+                }
+                if ($(".audit7002002").prop("checked") == true) {
+                    toastr.error('您好，此会议室为收费会议室，请选择需要审核')
+                    $("#mtRoomForm").find('.keep').attr('data-dismiss', '')
+                    return;
+                } else {
+                    $("#mtRoomForm").find('.keep').attr('data-dismiss', 'modal')
+                }
+            } else {
+                $("#mtRoomForm").find('.keep').attr('data-dismiss', 'modal')
+            }
+
+
+            var url = "{:url('/meetroom/Meetroom/saveMtroom')}";
+            var data = serializeData("mtRoomForm");
+            var hideModal = $(this).attr("hide-modal");
+            var clearForm = $(this).attr("data-form");
+            cstmpost("#saveMtroom", url, data, function (res) {
+                if (res["code"] == '1') {
+                    toastr.success(res["msg"]);
+                    $("#" + hideModal).modal("hide");
+                    $("#" + clearForm)[0].reset();
+                    $('.roomleft').children('.roomRk').remove()
+                    sum();
+                    $('.payprice').css('display', 'block')
+                    getAllMtroomName();
+                } else {
+                    toastr.error(res["msg"]);
+                }
+            });
+        });
+        // 点击编辑事件
+        $(".goEdit").click(function () {
+            var curFloor = null;
+            var id = $(this).attr("data-id");
+            $("#mtroomId").attr('data-mtroomId', id);
+            session("editMtroomId", id);
+            $("#mtRoomFormEdit").removeClass("hidden");
+            $("#compileRoleForm2").addClass("hidden");
+            var url = "{:url('/Meetroom/Meetroom/getMtroomDetail')}";
+            var data = {};
+            data.mtroomId = id;
+            cstmpost("", url, data, function (res) {
+                if (res["code"] == '1') {
+                    assign(res);
+                    if (res['data']['free'] == '7002001') {
+                        $(".payprice").hide();
+                        $(".audit7002002").attr("checked", true);
+                    }else{
+                        $(".payprice").show();
+                    }
+                    setTimeout(function(){
+                        $("#editmtroom").find(".rqst_build").change();
+                    },200);
+                    curFloor = res['data']['rqst_floor'];
+                } else {
+                    toastr.error(res["msg"]);
+                }
+            });
+            setTimeout(function(){
+                $("#editmtroom").find(".curFloor").find("option").each(function(){
+                    if($(this).text() == curFloor){
+                        $(this).attr('selected',true);
+                    }
+                });
+
+            },300);
+            setTimeout(function(){
+                $(".needClear").find("option").each(function(){
+                    if($(this).val() == ''){
+                        $(this).attr("selected",true);
+                    }
+                });
+            },400);
+            setTimeout(function(){
+                $(".rqst_flooraaaaa").html('<option value="">选择楼座</option>');
+            },500);
+        });
+        $("#cancel").click(function () {
+            $("#compileRoleForm2").removeClass("hidden");
+            $("#mtRoomFormEdit").addClass("hidden");
+        });
+
+        // 保存会议室
+        $("#saveEditMtroom").click(function () {
+            if ($("#editmtroom").find(".free7002002").prop("checked") == true) {
+                if ($("#editmtroom").find("#price").val() <= 0) {
+                    toastr.error('您好，此会议室为收费会议室，请输入金额')
+                    return
+                }
+                if ($("#editmtroom").find(".audit7002002").prop("checked") == true) {
+                    toastr.error('您好，此会议室为收费会议室，请选择需要审核')
+                    $("#editmtroom").find('.keep').attr('data-dismiss', '')
+                    return;
+                } else {
+                    $("#editmtroom").find('.keep').attr('data-dismiss', 'modal')
+                }
+            } else {
+                $("#editmtroom").find('.keep').attr('data-dismiss', 'modal')
+            }
+            var url = "{:url('/meetroom/Meetroom/saveEditmtroom')}";
+            var data = serializeData("mtRoomFormEdit");
+            var hideModal = $(this).attr("hide-modal");
+            var clearForm = $(this).attr("data-form");
+            cstmpost("#saveEditMtroom", url, data, function (res) {
+                if (res["code"] == '1') {
+                    toastr.success(res["msg"]);
+                    $("#" + hideModal).modal("hide");
+                    $("#" + clearForm)[0].reset();
+                    $('.roomleft').children('.roomRk').remove()
+                    sum();
+                    getAllMtroomName();
+                } else {
+                    toastr.error(res["msg"]);
+                }
+            });
+        });
+    });
+
+    function getAllMtroomName()
+    {
+        $(".mtroomNameList").find('option').each(function(){
+            if($(this).index() != 0){
+                $(this).remove();
+            }
+        });
+        // 获取所有会议室
+        var url = "{:url('/meetroom/Meetroom/getAllname')}";
+        cstmpost("#", url, {}, function (res) {
+            if (res.code == '1') {
+                if (res.data) {
+                    for (var i = 0; i < res.data.length; i++) {
+                        var op = '<option value="' + res.data[i].id + '">' + res.data[i].name + '</option>';
+                        $(".mtroomNameList").append(op);
+                    }
+                }
+            } else {
+                toastr.error(res.msg);
+            }
+        });
+    }
+
+    function mtroomDetail(obj) {
+        $("#cancel").click();
+        // 会议室详情
+        var url = "{:url('/Meetroom/Meetroom/getMtroomDetail')}";
+        var data = {};
+        data.mtroomId = obj.attr("data-id");
+        $(".goEdit").attr("data-id", obj.attr("data-id"));
+        cstmpost("", url, data, function (res) {
+            if (res["code"] == '1') {
+                $("#dtName").text(res.data.name);
+                $("#dtBuildName").text(res.data.buildName);
+                $("#dtFloor").text(res.data.floor);
+                $("#dtAcceptName").text(res.data.acceptName);
+                $("#dtFacilityName").text(res.data.facilityName);
+                $("#dtDesc").text(res.data.desc);
+                $("#dtFreeName").text(res.data.freeName);
+                $("#dtPrice").text(res.data.price);
+                $("#dtAuditName").text(res.data.auditName);
+                $("#dtPublishName").text(res.data.publishName);
+                $('#goEdit').attr("data-id", res.data.id);
+            } else {
+                toastr.error(res["msg"]);
+            }
+        });
+
+    }
+
+    function collect(obj) {
+        var url = "{:url('/Meetroom/Meetroom/mtCollect')}";
+        var id = obj.attr("data-id");
+        var data = {};
+        data.mtroomId = id;
+        cstmpost("", url, data, function (res) {
+            if (res["code"] == '1') {
+                toastr.success(res["msg"]);
+                // 点击心形样式
+                obj.children('i').toggleClass("fa-heart-o").toggleClass("fa-heart")
+                if (obj.children('i').hasClass('fa-heart')) {
+                    $('.roomleft').prepend(obj.parents('.roomRk'))
+                } else {
+                    $('.roomleft').append(obj.parents('.roomRk'))
+                }
+            } else {
+                toastr.error(res["msg"]);
+            }
+        });
+    }
+
+    // 跳转会议室审核列表
+    function goAplList(obj) {
+        var id = obj.attr('data-id');
+        var url = "{:url('/meetroom/Meetroom/aplList')}";
+        session("mtRoomAplId", id);
+        location.href = url;
+    }
+
+
+    // 预定详情
+    function orderDetail(obj) {
+        var id = obj.attr("data-id");
+        var url = "{:url('/meetroom/Meetroom/orderDetail')}";
+        var data = {};
+        data.mtAplId = id;
+        cstmpost("", url, data, function (res) {
+            if (res["code"] == '1') {
+                assign(res);
+            } else {
+                toastr.error(res["msg"]);
+            }
+        });
+    }
+
+    // 楼层获取  id   默认值
+    function initBuild(domID, bdefault, floor) {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if ($("." + domID).attr('class') != 'control-label' && domID == 'rqst_build' ) {
+            bdefault = bdefault ? bdefault : '';
+            cstmpost('', url, {bd: bdefault}, function (res) {
+                var ophtml = '<option value="">选择楼座</option>';
+                for (var tmp in res) {
+                    if(tmp == bdefault){
+                        ophtml = ophtml + '<option value="'+tmp+'" selected>'+res[tmp]+'</option>';
+                    }else{
+                        ophtml = ophtml + '<option value="'+tmp+'">'+res[tmp]+'</option>';
+                    }
+                }
+                $("." + domID).html(ophtml);
+                $("." + domID).attr("data-default", floor);
+                /*setTimeout(function(){
+                    $("." + domID).change();
+                },300);*/
+            });
+
+        }
+    }
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-header">
+                <h1 class="page-title">会议室管理</h1>
+            </div>
+            <div class="page-content">
+                <div class="row row-lg">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <!--会议室查询表单-->
+                                <div class="example">
+                                    <form action="" id="mtroomSearch">
+                                        <div class="form-group col-md-2 padding-left-0">
+                                            <div class="input-group">
+		                                    <span class="input-group-addon">
+		                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+		                                    </span>
+                                                <input type="text" class="form-control datemt refresh" placeholder="选择日期"
+                                                       data-plugin="datepicker" data-language="zh-CN" name="date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">楼座</span>
+                                                <select class="form-control rqst_build needClear refresh" name="build"
+                                                        data-url="{:url('/etprs/Etprs/changeBuild')}">
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">楼层</span>
+                                                <select class="form-control rqst_floor refresh rqst_flooraaaaa" name="floor">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">会议室名称</span>
+                                                <select class="form-control mtroomNameList refresh" name="id">
+                                                    <option value="">选择会议室</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="form-group col-md-2 padding-left-0" style="display: none;">
+                                        <div class="btn-actions">
+                                            <button type="button" class="btn btn-primary btn-searchmt">&nbsp;&nbsp;<i
+                                                    class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <div class="btn-actions">
+                                            <button type="button" class="btn btn-primary btn-outline pull-right addddddMtroom"
+                                                    data-target="#logsForm" data-toggle="modal" aria-hidden="true">
+                                                &nbsp;&nbsp;<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;新增会议室&nbsp;&nbsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--新增会议室弹出层-->
+                                <div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm"
+                                     role="dialog" tabindex="-1">
+                                    <div class="modal-dialog modal-center">
+                                        <form class="modal-content " id="mtRoomForm">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-hidden="true"
+                                                        data-dismiss="modal">
+                                                    <i class="icon wb-close" aria-hidden="true"></i>
+                                                </button>
+                                                <h4 class="modal-title">新增会议室</h4>
+                                            </div>
+                                            <div id="addMtroom" class="modal-body">
+                                                <input type="hidden" name="id" >
+                                                <div class="form form-horizontal logs-settings">
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 会议室名称：</label>
+                                                        <div class="col-xs-9">
+                                                            <input type="text" class="form-control"
+                                                                   name="name"
+                                                                   placeholder="请输入会议室名称">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 楼座：</label>
+                                                        <div class="col-xs-9" id="buildId">
+                                                            <select class="form-control rqst_build " name="buildId"
+                                                                    data-url="{:url('/etprs/Etprs/changeBuild')}">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 楼层：</label>
+                                                        <div class="col-xs-9">
+                                                            <select class="form-control rqst_floor curFloor" name="floor" id="floor">
+                                                                <option value="">选择楼层</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 容纳人数：</label>
+                                                        <div class="col-xs-9">
+                                                            <select class="form-control" name="accept" id="acceptAdd">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">配套设施：</label>
+                                                        <div class="col-xs-9" id="mtrFacilityAdd">
+                                                            <!--<select class="width-full" multiple
+                                                                    data-plugin="selectpicker" data-max-options="10"
+                                                                    id="mtrFacility" name="facility">
+                                                            </select>-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">会议室介绍：</label>
+                                                        <div class="col-xs-9">
+                                                            <textarea class="form-control"
+                                                                      placeholder="输入详细会议室介绍" name="desc"
+                                                                      ></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row ">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 是否免费：</label>
+                                                        <div class="col-xs-9  togglefree" id="freeAdd">
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row payprice">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 收费单价：</label>
+                                                        <div class="col-xs-9">
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control price"
+                                                                       name="price"
+                                                                       placeholder="请输入单价金额">
+                                                                <span class="input-group-addon ">元/小时</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 是否需审核：</label>
+                                                        <div class="col-xs-9" id="auditAdd">
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label"><span
+                                                                class="required">*</span> 是否发布：</label>
+                                                        <div class="col-xs-9" id="publishAdd">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="btn-actions pull-right margin-left-15">
+                                                    <a class="btn btn-primary " hide-modal="logsForm"
+                                                       data-form="mtRoomForm" id="saveMtroom">保存</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!--已预订企业信息弹出层-->
+                                <div class="modal" id="logsForm1" aria-hidden="true" aria-labelledby="logsForm1"
+                                     role="dialog" tabindex="-1">
+                                    <div class="modal-dialog modal-center">
+                                        <form class="modal-content " id="compileRoleForm">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-hidden="true"
+                                                        data-dismiss="modal">
+                                                    <i class="icon wb-close" aria-hidden="true"></i>
+                                                </button>
+                                                <h4 class="modal-title">会议预定详情</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form form-horizontal logs-settings">
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">会议室名称：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="mtroomName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">是否免费：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="freeName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">收费单价：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="od-price"></label><span>元/小时</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">会议室状态：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="statusName">预定成功</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">会议名称：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="meetName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">申请企业：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="etprsName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">开始时间：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="starttime">2018-02-22
+                                                                10:00</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">结束时间：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="endtime">2018-02-22
+                                                                30:00</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">应缴金额：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="payable"></label><span>元</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">实缴金额：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="paid"></label><span>元</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="btn-actions pull-right margin-left-15">
+                                                    <a class="btn btn-primary" data-dismiss="modal">关闭</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- 会议室详情start -->
+                                <div class="modal" id="logsForma" aria-hidden="true" aria-labelledby="logsForm"
+                                     role="dialog" tabindex="-1">
+                                    <div class="modal-dialog modal-center">
+                                        <form class="modal-content form-horizontal" id="compileRoleForm2">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-hidden="true"
+                                                        data-dismiss="modal">
+                                                    <i class="icon wb-close" aria-hidden="true"></i>
+                                                </button>
+                                                <h4 class="modal-title">会议室详情 </h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form form-horizontal logs-settings">
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">会议室名称：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">楼座：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtBuildName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">楼层：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtFloor"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">容纳人数：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtAcceptName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">配套设施：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtFacilityName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">会议室介绍：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtDesc"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">是否免费：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtFreeName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">收费单价：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtPrice"></label><span>元/小时</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">是否审核：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtAuditName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-xs-3 control-label">是否发布：</label>
+                                                        <div class="col-xs-9">
+                                                            <label class="control-label" id="dtPublishName"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer col-md-7">
+
+                                                <div class="btn-actions pull-right margin-left-15">
+                                                    <button class="btn btn-primary goEdit" data-id="4" type="button">
+                                                        编辑
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form class="modal-content hidden" id="mtRoomFormEdit">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-hidden="true"
+                                                        data-dismiss="modal">
+                                                    <i class="icon wb-close" aria-hidden="true"></i>
+                                                </button>
+                                                <h4 class="modal-title">编辑会议室</h4>
+                                            </div>
+                                            <div class="modal-body" id="editmtroom">
+                                                    <input type="hidden" name="id" id="id">
+                                                    <div class="form form-horizontal logs-settings">
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 会议室名称：</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="text" class="form-control"
+                                                                       name="name" id="name"
+                                                                       placeholder="请输入会议室名称">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 楼座：</label>
+                                                            <div class="col-xs-9">
+                                                                <select class="form-control rqst_build " name="buildId"
+                                                                        data-url="{:url('/etprs/Etprs/changeBuild')}">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 楼层：</label>
+                                                            <div class="col-xs-9">
+                                                                <select class="form-control rqst_floor curFloor" name="floor">
+                                                                    <option value="">选择楼层</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 容纳人数：</label>
+                                                            <div class="col-xs-9">
+                                                                <select class="form-control" name="accept" id="accept">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">配套设施：</label>
+                                                            <div class="col-xs-9" id="mtrFacility">
+                                                                <!--<select class="width-full" multiple
+                                                                        data-plugin="selectpicker" data-max-options="10"
+                                                                        id="mtrFacility" name="facility">
+                                                                </select>-->
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label">会议室介绍：</label>
+                                                            <div class="col-xs-9">
+                                                            <textarea class="form-control"
+                                                                      placeholder="输入详细会议室介绍" id="desc" name="desc"
+                                                            ></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row ">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 是否免费：</label>
+                                                            <div class="col-xs-9  togglefree" id="free">
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row payprice">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 收费单价：</label>
+                                                            <div class="col-xs-9">
+                                                                <div class="input-group">
+                                                                    <input type="text" id="price" class="form-control"
+                                                                           name="price"
+                                                                           placeholder="请输入单价金额">
+                                                                    <span class="input-group-addon ">元/小时</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 是否需审核：</label>
+                                                            <div class="col-xs-9" id="audit">
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-xs-3 control-label"><span
+                                                                    class="required">*</span> 是否发布：</label>
+                                                            <div class="col-xs-9" id="publish">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="btn-actions pull-right margin-left-15">
+                                                    <a class="btn btn-primary" hide-modal="logsForma"
+                                                       data-form="mtRoomForm" id="saveEditMtroom">保存</a>
+                                                </div>
+                                                <div class="btn-actions pull-right margin-left-15">
+                                                    <a class="btn btn-default" hide-modal="logsForma"
+                                                       data-form="mtRoomForm" id="cancel">取消</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="example">
+                                    <style>
+                                        /*会议室选择时间*/
+                                        .meetingright {
+                                            width: 100%;
+                                        }
+                                        .meetingright .timebox {
+                                            border-bottom: 1px solid #c1d6e0;
+                                            text-align: left;
+                                            text-indent: 4px;
+                                            border-right: 1px solid #c1d6e0;
+                                            border-top: 1px solid #c1d6e0;
+                                            width: 30px;
+                                            height: 80px;
+                                            cursor: pointer;
+                                        }
+                                        /*.meetingright .timechoose {
+                                            background: #f3f7f9;
+                                            }*/
+                                        .meetingright .timeactive {
+                                            background: #46be8a;
+                                            color: #FFF;
+                                        }
+                                        .meetingright .timeactive1 {
+                                            background: #f2a654;
+                                            color: #FFF;
+                                        }
+                                        .slick-prev {
+                                            left: -40px;
+                                        }
+                                        .slick-next {
+                                            right: -40px;
+                                        }
+                                        .meetingright .introduce {
+                                            color: #FFF;
+                                            line-height: 32px;
+                                            padding-left: 37px;
+                                            padding-right: 37px;
+                                        }
+                                        .meetingright .introduce span{
+                                            padding-left:20px;
+                                        }
+                                    </style>
+                                    <div class="col-md-12 padding-0 roomleft meetingright">
+                                        <div class="col-md-12 padding-0 margin-top-10 margin-bottom-10 roomRank roomSpecial" style="display: none">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 padding-top-0 margin-0 RRKchildren">
+                                                <div class="slider margin-bottom-0" id="exampleResponsive">
+                                                    <div class="timebox padding-0" value = '00:00' id = '00'>00:00</div>
+                                                    <div class="timebox padding-0" value = '00:30' id = '01'></div>
+                                                    <div class="timebox padding-0" value = '01:00' id = '02'>01:00</div>
+                                                    <div class="timebox padding-0" value = '01:30' id = '03'></div>
+                                                    <div class="timebox padding-0" value = '02:00' id = '04'>02:00</div>
+                                                    <div class="timebox padding-0" value = '02:30' id = '05'></div>
+                                                    <div class="timebox padding-0" value = '03:00' id = '06'>03:00</div>
+                                                    <div class="timebox padding-0" value = '03:30' id = '07'></div>
+                                                    <div class="timebox padding-0" value = '04:00' id = '08'>04:00</div>
+                                                    <div class="timebox padding-0" value = '04:30' id = '09'></div>
+                                                    <div class="timebox padding-0" value = '05:00' id = '10'>05:00</div>
+                                                    <div class="timebox padding-0" value = '05:30' id = '11'></div>
+                                                    <div class="timebox padding-0" value = '06:00' id = '12'>06:00</div>
+                                                    <div class="timebox padding-0" value = '06:30' id = '13'></div>
+                                                    <div class="timebox padding-0" value = '07:00' id = '14'>07:00</div>
+                                                    <div class="timebox padding-0" value = '07:30' id = '15'></div>
+                                                    <div class="timebox padding-0" value='08:00' id='16'>08:00</div>
+                                                    <div class="timebox padding-0" value='08:30' id='17'></div>
+                                                    <div class="timebox padding-0" value='09:00' id='18'>09:00</div>
+                                                    <div class="timebox padding-0" value='09:30' id='19'></div>
+                                                    <div class="timebox padding-0" value='10:00' id='20'>10:00</div>
+                                                    <div class="timebox padding-0" value='10:30' id='21'></div>
+                                                    <div class="timebox padding-0" value='11:00' id='22'>11:00</div>
+                                                    <div class="timebox padding-0" value='11:30' id='23'></div>
+                                                    <div class="timebox padding-0 timeCenter" value='12:00' id='24'>
+                                                        12:00
+                                                    </div>
+                                                    <div class="timebox padding-0" value='12:30' id='25'></div>
+                                                    <div class="timebox padding-0" value='13:00' id='26'>13:00</div>
+                                                    <div class="timebox padding-0" value='13:30' id='27'></div>
+                                                    <div class="timebox padding-0" value='14:00' id='28'>14:00</div>
+                                                    <div class="timebox padding-0" value='14:30' id='29'></div>
+                                                    <div class="timebox padding-0" value='15:00' id='30'>15:00</div>
+                                                    <div class="timebox padding-0" value='15:30' id='31'></div>
+                                                    <div class="timebox padding-0" value='16:00' id='32'>16:00</div>
+                                                    <div class="timebox padding-0" value='16:30' id='33'></div>
+                                                    <div class="timebox padding-0" value='17:00' id='34'>17:00</div>
+                                                    <div class="timebox padding-0" value='17:30' id='35'></div>
+                                                    <div class="timebox padding-0" value='18:00' id='36'>18:00</div>
+                                                    <div class="timebox padding-0" value='18:30' id='37'></div>
+                                                    <div class="timebox padding-0" value='19:00' id='38'>19:00</div>
+                                                    <div class="timebox padding-0" value='19:30' id='39'></div>
+                                                    <div class="timebox padding-0" value='20:00' id='40'>20:00</div>
+                                                    <div class="timebox padding-0" value = '20:30' id = '41'></div>
+                                                    <div class="timebox padding-0" value = '21:00' id = '42'>21:00</div>
+                                                    <div class="timebox padding-0" value = '21:30' id = '43'></div>
+                                                    <div class="timebox padding-0" value = '22:00' id = '44'>22:00</div>
+                                                    <div class="timebox padding-0" value = '22:30' id = '45'></div>
+                                                    <div class="timebox padding-0" value = '23:00' id = '46'>23:00</div>
+                                                    <div class="timebox padding-0" value = '23:30' id = '47'></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 margin-0 introduce">
+                                                <div class="col-md-12 bg-grey-600 padding-0 margin-0">
+                                                    <button type="button" class="btn btn-sm btn-icon btn-flat fname"
+                                                            data-target="#logsForma" onclick="mtroomDetail($(this))"
+                                                            data-toggle="modal" aria-hidden="true"
+                                                            role="button" data-original-title="报名"
+                                                            style='color:#fff;background:#76838f'></button>
+                                                    <span class='pay'>价格：<span style='padding-left:0'>100元/0.5小时</span></span>
+                                                    <span class='peopleNum'>容纳人数：<span style='padding-left:0'>10人</span></span>
+                                                    <button type="button" class="btn btn-primary pull-right goAplList"
+                                                            onclick="goAplList($(this))">&nbsp;&nbsp;<i class="fa fa-check" aria-hidden="true"></i>&nbsp;预订审核 <label class="badge up aplNum"></label></button>
+                                                    <button type="button" class="btn btn-warning pull-right collect"
+                                                            onclick="collect($(this))">&nbsp;&nbsp;<i
+                                                            class="fa fa-heart-o" aria-hidden="true"></i>&nbsp;收藏&nbsp;&nbsp;
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="clearfix visible-sm-block"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!--会议室选择时间-->
+{include file="index@public/footer"}

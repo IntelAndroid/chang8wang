@@ -1,0 +1,216 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+	a:visited {
+		text-decoration: none;
+	}
+	a:hover {
+		text-decoration: none;
+	}
+	a:active {
+		text-decoration: none;
+	}
+	.weui-cell__hd .weui-label {
+		color: #595757;
+		font-size: 15px;
+	}
+	.weui-cell__bd {
+		color: #878787;
+		font-size: 15px;
+	}
+	.weui-input {
+		text-align: right;
+	}
+	.weui-select {
+		direction: rtl;
+		color: #878787;
+	}
+</style>
+</head>
+<body ontouchstart>
+	<script>
+		function initBuild() {
+		}
+		$(function () {
+			var id=session('etprsId');
+			/*初始化页面:赋值*/
+			var url = "{:url('customer/customer/cusInfo')}"
+			cstmpost('', url,{id:id}, function (res) {
+				if (res.code == 1) {
+					//保存客户状态到session
+					session('cstmstatus',res.data.cstmstatus);
+					assign(res);
+					
+					var mobile=$("#mobile").val();
+					$("#mobile").attr("href","tel:"+mobile);
+                    
+					$('.center').html(res.data.name);//页面标题
+					initCheckbox(6001,res.data.source);
+					initCheckbox(6002,res.data.cstmstatus);
+					initCheckbox(6003,res.data.type);
+				}
+			})
+			/*保存客户信息*/
+			$('.save-btn').click(function () {
+				var data = serializeData('etprsInfo');
+				data.id = id;
+				var saveurl = "{:url('customer/customer/saveCusInfo')}";
+				cstmpost('.save-btn', saveurl, data, function (res) {
+					if (res.code == 1) {
+						$.toptip('保存成功','success');
+						location.href="{:url('wechat/test/attract')}"
+					} else {
+						$.toptip(res.msg,'warning')
+					}
+				})
+			})
+		})
+	</script>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+				<div class="navbox">
+					<a href="attract.html">
+						<div class="left">
+							<i class="icon iconfont icon-back"></i>
+						</div>
+					</a>
+					<div class="center"></div>
+				</div>
+				<div class="choosebox first-header">
+					<div class="weui-row weui-no-gutter">
+						<div class="weui-col-50 active">
+							<a href="qzcstm.html">客户信息</a>
+						</div>
+						<div class="weui-col-50 infor">
+							<a href="flowlist.html" id="flowBtn">跟进记录</a>
+						</div>
+					</div>
+				</div>
+				<form action="" id="etprsInfo">
+					<div class="weui-cells weui-cells_form" style="margin-top:0;">
+						<div class="weui-cell">
+							<div class="weui-cell__hd">
+								<label class="weui-label">客户名称</label>
+							</div>
+							<div class="weui-cell__bd">
+								<div id="name" style="float:right"></div>
+							</div>
+						</div>
+						<div class="weui-cell">
+							<div class="weui-cell__hd">
+								<label class="weui-label">客户类型</label>
+							</div>
+							<div class="weui-cell__bd">
+								<div class="customerType weui-input" name='type'></div>
+							</div>
+						</div>
+						<div class="weui-cell">
+							<div class="weui-cell__hd">
+								<label class="weui-label">联系人</label>
+							</div>
+							<div class="weui-cell__bd">
+								<div class="weui-input" id="contact"></div>
+							</div>
+						</div>
+						<div class="weui-cell">
+							<div class="weui-cell__hd">
+								<label class="weui-label">联系电话</label>
+							</div>
+							<div class="weui-cell__bd">
+								<!-- <div class="weui-input" id="mobile" style="color:#1a8fd4"></div> -->
+								<a id="mobile" href="" style="color:#1a8fd4;margin-left:145px"></a>
+							</div>
+						</div>
+						<div class="weui-cell weui-cell_select-after">
+							<div class="weui-cell__hd">
+								<label for="" class="weui-label">来源渠道</label>
+							</div>
+							<div class="weui-cell__bd">
+								<div class="weui-input sourceCanal">
+								</div>
+							</div>
+						</div>
+						<div class="weui-cell weui-cell_select-after">
+							<div class="weui-cell__hd">
+								<label for="" class="weui-label">状态</label>
+							</div>
+							<div class="weui-cell__bd">
+								<div class="weui-input customerState">
+								</div>
+							</div>
+						</div>
+						<div class="weui-cell">
+							<div class="weui-cell__hd">
+								<label class="weui-label">意向需求</label>
+							</div>
+							<div class="weui-cell__bd">
+								<div id="rqst_room" style="float:right"></div>
+							</div>
+						</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label  class="weui-label">需求时间-起</label></div>
+						<div class="weui-cell__bd" style="direction: rtl;">
+							<div class="weui-input" id="rqst_start"></div>
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label  class="weui-label">需求时间-止 </label></div>
+						<div class="weui-cell__bd" style="direction: rtl;">
+							<div class="weui-input" id="rqst_end" ></div>
+						</div>
+					</div>
+				</div>
+					<div class="weui-cells__title">详细需求</div>
+					<div class="weui-cells weui-cells_form">
+						<div class="weui-cell">
+							<div class="weui-cell__bd">
+								<div class="weui-textarea"  id="rqst"></div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+					<div class="weui-row weui-no-gutter weui-tabbar" id='bottom-color'>
+						<div class="weui-col-50" style="background:none;">
+							<a class="weui-btn" href="qzcstmlook.html" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;">编辑</a>
+						</div>
+						<div class="weui-col-50" style="background:none;">
+							<a class="weui-btn save-btn" href="addflow.html" style="font-size:16px;background:#f39b0f;">跟进</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="wechat@public/footer"}
+		<script>
+			// 渲染checkbox  字典表数据
+			function initCheckbox(code,res) {
+				if (!code || code == 0 || code == undefined) {
+					return false;
+				}
+				for (var i = 0; i < sysData.length; i++) {
+					if (sysData[i].code.indexOf(code, 0) === 0) {
+						var $option='';
+						if(sysData[i].code==res) {
+							$option = sysData[i].name
+						}
+						if (code == '6001') {
+							if (sysData[i].level != '1') {
+								$('.sourceCanal').append($option);
+							}
+						} else if (code == '6002') {
+							if (sysData[i].level != '1' && sysData[i].level == '2') {
+								$('.customerState').append($option);
+							}
+						} else if (code == '6003') {
+							if (sysData[i].level != '1') {
+								$('.customerType').append($option);
+							}
+						}
+					}
+				}
+			};
+		</script>

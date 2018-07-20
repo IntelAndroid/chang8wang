@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html class="no-js css-menubar" lang="zh-cn">
+<head>
+<title>新建客户</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- 移动设备 viewport -->
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
+<meta name="author" content="admui.com">
+<!-- 360浏览器默认使用Webkit内核 -->
+<meta name="renderer" content="webkit">
+<!-- 禁止搜索引擎抓取 -->
+<meta name="robots" content="nofollow">
+<!-- 禁止百度SiteAPP转码 -->
+<meta http-equiv="Cache-Control" content="no-siteapp">
+<!-- Chrome浏览器添加桌面快捷方式（安卓） -->
+<link rel="icon" type="image/png" href="__PUBLIC__/images/favicon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<!-- Safari浏览器添加到主屏幕（IOS） -->
+<link rel="icon" sizes="192x192" href="__PUBLIC__/images/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Admui">
+<!-- Win8标题栏及ICON图标 -->
+<link rel="apple-touch-icon-precomposed" href="__PUBLIC__/images/apple-touch-icon.png">
+<meta name="msapplication-TileImage" content="__PUBLIC__/images/app-icon72x72@2x.png">
+<meta name="msapplication-TileColor" content="#62a8ea">
+<link rel="shortcut icon" href="__PUBLIC__/images/favicon.ico">
+<!-- 图标 CSS-->
+<link rel="stylesheet" href="__PUBLIC__/fonts/font-awesome/font-awesome.css">
+<link rel="stylesheet" href="__PUBLIC__/themes/font-awesome-4.7.0/css/font-awesome.css">
+<link rel="stylesheet" href="__PUBLIC__/fonts/web-icons/web-icons.css">
+<link rel="stylesheet" href="__PUBLIC__/themes/iconfont/demo.css"><!--阿里图库-->
+<link rel="stylesheet" href="__PUBLIC__/themes/iconfont/iconfont.css"><!--阿里图库-->
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="__PUBLIC__/themes/classic/global/css/bootstrap.css">
+<!-- Site CSS -->
+<link rel="stylesheet" href="__PUBLIC__/themes/classic/base/css/site.css" id="admui-siteStyle">
+<!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0; url='http://www.admui.com/ie'"/>
+<![endif]--><!--[if lt IE 10]>
+<script src="__PUBLIC__/vendor/media-match/media.match.min.js"></script>
+<script src="__PUBLIC__/vendor/respond/respond.min.js"></script>
+<![endif]-->
+<script src="__PUBLIC__/vendor/jquery/jquery.min.js"></script>
+<!--选择城市-->
+<link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+<script src="__PUBLIC__/themes/city-picker.data.js"></script>
+<script src="__PUBLIC__/themes/city-picker.js"></script>
+</head>
+<body>
+<style>
+	body{padding:0;}
+	.ibox-title1 {border:none;padding-left:0;padding-right:0;line-height:54px;}
+	.ibox-title1 h3{display:inline-block;color:#1ab394;}
+	.ibox-title1 button{float:right;margin-left:5px;margin-top:18px;}
+	.ibox-content1 .form-group {padding:20px 10px 20px 0;background:#F5F5F5;border:1PX solid #e2e2e2;margin-bottom:40px;}
+	.ibox-content1 .form-group .col-sm-1,.col-sm-2,.col-sm-5,.col-sm-11{margin:20px 0 30px 0;padding-right:0;}
+	.ibox-content1 .form-group .control-label{padding-left:0;}
+	.ibox-content1 .form-group .checkbox-inline{margin-right:30px;}
+</style>
+<div class="row">
+    <div class="ibox float-e-margins" style="padding:0 30px;">
+        <div class="ibox-title ibox-title1">
+			<h3>▋ 大智慧人工智能项目</h3>
+            <button type="button" class="btn btn-default btn-sm" id="">
+                <i class="fa fa-external-link" aria-hidden="true"></i> 导出word
+            </button>
+            <button type="button" class="btn btn-warning btn-sm" id="">
+                <i class="fa fa-undo" aria-hidden="true"></i> 返回
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> 保存
+            </button>
+        </div>
+        <div class="ibox-content ibox-content1" style="border:none;">
+            <form class="form-horizontal" id="researchform" action="" method="post" tableId="historytable">
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">孵化器名称</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入孵化器名称" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">法人代表</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入法人代表姓名" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">单位性质</label>
+                        <div class="col-sm-2">
+                            <select class="form-control opt-require" id="type" name="type">
+                               <option>请选择</option>
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">孵化器类型</label>
+                        <div class="col-sm-2">
+                            <select class="form-control opt-require" id="type" name="type">
+                               <option>请选择</option>
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">联系人</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入联系人姓名" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">移动电话</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">固定电话</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">传真</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">网址</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入正确的网址信息" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">电子邮箱</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入正确的邮箱信息" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">邮编</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">注册时间</label>
+                        <div class="col-sm-2">
+                            <input type="date" placeholder="入驻时间" class="form-control require" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">通讯地址</label>
+                        <div class="col-sm-5">
+                            <!--省市区联动开始-->
+				            <div class="docs-methods">
+								<div id="distpicker">
+									<input id="city-picker3" class="form-control" readonly type="text" value="山东省/青岛市/李沧区" data-toggle="city-picker">
+								</div>
+							</div>
+							<!--省市区联动结束-->
+                        </div>
+                        <label class="col-sm-1 control-label">详细地址</label>
+                        <div class="col-sm-5">
+                            <input type="text" placeholder="请输入详细地址信息" class="form-control require" name="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    	<label class="col-sm-1 control-label">占地面积（㎡）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">建筑面积（㎡）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">房间数（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-1 control-label">工位数（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    	<label class="col-sm-2 control-label">管理人员数量（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">管理人员中具有大专以上学历的数量（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">管理人员中具有大专以上学历的比例（%）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">可自主支配孵化场地使用面积（万平方米）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">在孵企业使用场地（含公共服务场地）面积（万平方米）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">在孵企业使用场地（含公共服务场地）占比（%）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">可自主支配场地内的在孵企业数量（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">已申请专利的在孵企业数量（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">已申请专利的在孵企业占比（%）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">累计毕业企业数量（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">毕业企业和在孵企业提供的就业岗位数量（个）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">在孵企业中的大专以上学历人数占企业总人数的比例（%）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">孵化器自有种子资金或孵化资金额（万元）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                        <label class="col-sm-2 control-label">接收孵化器专业培训人员的比例（%）</label>
+                        <div class="col-sm-2">
+                            <input type="text" placeholder="请输入数值" class="form-control require" id="" name="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    	<label class="col-sm-1 control-label">孵化器级别</label>
+                        <div class="col-sm-2">
+                            <select class="form-control opt-require" id="type" name="type">
+                               <option>请选择</option>
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">孵化器分类</label>
+                        <div class="col-sm-2">
+                            <select class="form-control opt-require" id="type" name="type">
+                               <option>请选择</option>
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">配套设施</label>
+                        <div class="col-sm-5">
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt1" checked="checked">
+                                <label for="pt1">服务商1</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt2">
+                                <label for="pt2">服务商2</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt3">
+                                <label for="pt3">服务商3</label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <label class="col-sm-1 control-label">基础服务</label>
+                        <div class="col-sm-11">
+                        	<div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt4" checked="checked">
+                                <label for="pt4">创业培训</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt5">
+                                <label for="pt5">创业咖啡</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt6">
+                                <label for="pt6">代理服务（工商、财务等）</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt7">
+                                <label for="pt7">咨询服务（法务等）</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt8">
+                                <label for="pt8">投融资</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt9">
+                                <label for="pt9">人力资源服务</label>
+                            </div>
+                            <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                <input type="checkbox" id="pt10">
+                                <label for="pt10">导师指导</label>
+                            </div>
+                        </div>
+                        <label class="col-sm-1 control-label">注册页是否开启短信验证</label>
+                        <div class="col-sm-2">
+                            <select class="form-control opt-require" id="type" name="type">
+                               <option>关闭</option>
+                               <option>开启</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+        $('[data-toggle="city-picker"]').citypicker();
+
+</script>
+</html>

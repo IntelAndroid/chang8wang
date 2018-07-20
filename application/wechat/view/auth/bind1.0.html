@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户绑定</title>
+
+</head>
+<body>
+<form action="{:url('/wechat/Auth/saveBind')}" method="post">
+    <input type="text" name="mobile" value="" placeholder="请输入您的手机号,系统会根据您的手机号来确定您的身份">
+    <input type="text" name="openId" value="{$openId}">
+    <!--<input type="hidden" name="tempId" value="|$tempId}">-->
+    <button type="button">确认绑定</button>
+</form>
+</body>
+</html>

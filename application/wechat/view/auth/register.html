@@ -1,0 +1,153 @@
+{include file="wechat@public/header"}
+<!--阿里图库-->
+    <link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/demo.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/iconfont.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/lib/weui.min.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/css/jquery-weui.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/css/demos.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/css/public.css">
+    <!--me  -->
+	    <link href="__PUBLIC__/plugins/toastr/toastr.css" rel="stylesheet" type="text/css">
+	    <script src="__PUBLIC__/plugins/toastr/toastr.js"></script>
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;width:150px;}
+	.weui-cell__hd .weui-label .require{color:#e64340;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+	.weui-row .weui-col-50{background:#3296fa;}
+	.weui-row .weui-col-50.active{background:#32adf9;}
+	/*单选框*/
+	.weui-cells_checkbox{margin-top:0;text-align:right;}
+	.weui-cells_checkbox .weui-check__label{display:inline-block;padding-right:0;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__hd{display:inline-block;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__bd{display:inline-block;}
+	.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#0193e8;}
+	.weui-cells:after{border-bottom:none;}
+</style>
+</head>
+<body ontouchstart>
+<div class="navbox">
+	<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+	<div class="center">申请试用</div>
+</div>
+<form id="registerForm" >
+<div class="weui-cells weui-cells_form first-header">
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label"><span class="require">*</span>姓名</label></div>
+        <div class="weui-cell__bd">
+          	<input class="weui-input" type="text" name="contact" id="contact" class="require contact" placeholder="请输入姓名">
+          	<!---->
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label"><span class="require">*</span>联系方式</label></div>
+        <div class="weui-cell__bd">
+          	<input class="weui-input" type="text" name="mobile" id="mobile" placeholder="手机号"><!--placeholder="新智能"-->
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label"><span class="require">*</span>空间名称</label></div>
+        <div class="weui-cell__bd">
+          	<input class="weui-input" type="text" name="name" id="name" placeholder="空间名称"><!--placeholder="新智能"-->
+        </div>
+    </div>
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__hd"><label for="" class="weui-label"><span class="require">*</span>空间类型</label></div>
+        <div class="weui-cell__bd">
+	        <select class="weui-select" id="iqbttype" name="type">
+	        	 {foreach $iqbttype as $k=>$v}	
+		         <option value="{$v.code}">{$v.name}</option>
+		         {/foreach}
+	        </select>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label for="name" class="weui-label"><span class="require">*</span>空间位置</label></div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" id="start" type="text" name='area' placeholder="请选择空间位置">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label"><span class="require">*</span>详细地址</label></div>
+        <div class="weui-cell__bd">
+          	<input class="weui-input" type="text" name="address" placeholder="请输入详细街道门牌号">
+        </div>
+    </div>
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__hd"><label for="" class="weui-label"><span class="require">*</span>了解渠道</label></div>
+        <div class="weui-cell__bd">
+	        <select class="weui-select" name='source'>
+	            <option value="1">朋友介绍</option>
+	            <option value="2">新闻网站</option>
+	        </select>
+        </div>
+    </div>
+</div>
+</form>
+<div class="choosebox" style="background:none;margin-top:20px;">
+    <div class="weui-row weui-no-gutter" style="padding:0 15px;">
+	    <div class="weui-col-100" style="background:none;">
+	      <input type="button" value="提交" class="weui-btn" id="subm-btn" style="font-size:16px;background:#0093e7;" />
+	    </div>
+    </div>
+</div>
+<script src="__PUBLIC__/wechat/lib/jquery-2.1.4.js"></script>
+<script src="__PUBLIC__/wechat/lib/fastclick.js"></script>
+<!--<script src="__PUBLIC__/wechat/js/city-picker.js"></script>-->
+<script>
+	$(function() {
+		FastClick.attach(document.body);
+		
+		var res={data:{iqbttype:'6004001',imgDiv:'',servicesCheck:'',facilityChecks:'',workstyle:'',rgstsptRadio:''}};
+		
+		$('#subm-btn').click(function(){
+            var url="{:url('/wechat/Auth/regSub')}";
+            var data=serializeData('registerForm');   // __PUBLIC__/js/base.js
+            // cstmpost()防止重复点击  __PUBLIC__/js/base.js
+            cstmpost('#subm-btn',url,data,function(res){  //?
+            	if(res.code==1){
+                	//toastr.error(res.msg);
+            		alert(res.msg);
+					setTimeout(function(){
+						//location.href="{:url('wechat/test/index')}"
+					},500)
+                }else{
+                	//toastr.error(res.msg);
+                	alert(res.msg);
+                }
+          });
+		});
+		
+	});
+</script>
+<script src="__PUBLIC__/wechat//js/jquery-weui.js"></script>
+<script>
+//    $("#years-monthes").datetimePicker({
+//	    title: '请选择时间',
+//	    onChange: function (picker, values, displayValues) {
+//	      console.log(values);
+//	    }
+//    });
+//    $("#years-monthes1").datetimePicker({
+//	    title: '请选择时间',
+//	    onChange: function (picker, values, displayValues) {
+//	      console.log(values);
+//	    }
+//    });
+</script>
+<script src="__PUBLIC__/wechat/js/city-picker.js"></script>
+<script>
+  $("#start").cityPicker({
+    title: "选择活动地点",
+    onChange: function (picker, values, displayValues) {
+      console.log(values, displayValues);
+    }
+  });
+</script>
+</body>
+</html>

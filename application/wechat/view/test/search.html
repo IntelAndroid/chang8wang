@@ -1,0 +1,143 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+					<div class="navbox">
+							<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+							<div class="center">搜索</div>
+						</div>
+				<div class="weui-search-bar first-header" id="searchBar">
+					<form class="weui-search-bar__form" action="#">
+						<div class="weui-search-bar__box">
+							<i class="weui-icon-search"></i>
+							<input type="text" autocomplete="off" class="weui-search-bar__input" placeholder="请输入客户名称" id="txt1">
+							<a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+							<!--模糊匹配窗口-->
+							<div id="div_items" style="width:100%;padding:0 0 0 30px;box-sizing:border-box;left:0;position:absolute;background:#FFF;display:none;border-radius:4px">
+
+							</div>
+						</div>
+						<label class="weui-search-bar__label" id="searchText" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
+							<i class="weui-icon-search"></i>
+							<span>搜索</span>
+						</label>
+					</form>
+					<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+				</div>
+				<div class="searchresult">
+					<img src="__PUBLIC__/wechat/images/noresultpic.png" class="noresultpic" alt="">
+					<p class="noresultword">没有搜到符合条件的内容</p>
+				</div>
+			</div>
+		</div>
+	{include file="wechat@public/footer"}
+	<script>
+		var numsear = sessionStorage.getItem('numsear');
+		// 根据不同页面决定搜索项的不同
+		if(numsear ==0)
+		{
+			var potentialurl = "{:url('customer/customer/getcusList')}";
+			$('.weui-search-bar__box').on('click','.div_item',function(){
+				sessionStorage.setItem('etprsId',$(this).attr('value'))
+				location.href="{:url('wechat/test/qzcstmadd')}"
+			});
+		}else if(numsear ==2){
+			var potentialurl = "{:url('activity/activity/getActList')}";
+			$('.weui-search-bar__box').on('click','.div_item',function(){
+				sessionStorage.setItem('actId',$(this).attr('value'))
+				location.href="{:url('wechat/test/activeunder')}";
+			});
+			$('.weui-search-bar__input').attr('placeholder','请输入活动名称')
+		} else if(numsear ==3){
+			var potentialurl = "{:url('Meetroom/Meetroom/getMtroomList')}";
+			$('.weui-search-bar__box').on('click','.div_item',function(){
+				sessionStorage.setItem('mtroomId',$(this).attr('value'))
+				location.href="{:url('wechat/test/meeting-detail')}"
+			});
+			$('.weui-search-bar__input').attr('placeholder','请输入会议室名称')
+		}
+		cstmpost('', potentialurl, '', function (res) {
+			if(numsear == 3){
+				$.each(res.data, function (i) {
+					var divbox = '<div class="div_item" value='+ res.data[i].id +'>' + res.data[i].mtrName + '</div>';
+					$('#div_items').append(divbox)
+				})
+			} else {
+				$.each(res.rows, function (i) {
+					var divbox = '<div class="div_item" value='+ res.rows[i].id +'>' + res.rows[i].name + '</div>';
+					$('#div_items').append(divbox)
+				})
+			}
+
+
+
+			//弹出列表框  
+		$("#txt1").change(function () {
+			$("#div_items").css('display', 'block');
+			return false;
+		});
+		//隐藏列表框  
+		$("body").click(function () {
+			$("#div_items").css('display', 'none');
+		});
+
+		//移入移出效果  
+		$(".div_item").hover(function () {
+			$(this).css('background-color', '#1C86EE').css('color', 'white');
+		}, function () {
+			$(this).css('background-color', 'white').css('color', 'black');
+		});
+
+		//文本框输入  
+		$("#txt1").keyup(function () {
+			$("#div_items").css('display', 'block');//只要输入就显示列表框  
+
+			if ($("#txt1").val().length <= 0) {
+				$(".div_item").css('display', 'none');//如果什么都没填，跳出，保持全部显示状态  
+				return;
+			}
+
+			$(".div_item").css('display', 'none');//如果填了，先将所有的选项隐藏  
+
+			for (var i = 0; i < $(".div_item").length; i++) {
+				//模糊匹配，将所有匹配项显示  
+				if ($(".div_item").eq(i).text().substr(0, $("#txt1").val().length) == $("#txt1").val()) {
+					$(".div_item").eq(i).css('display', 'block');
+				}
+			}
+		});
+
+		//项点击  
+		$(".div_item").click(function () {
+			$("#txt1").val($(this).text());
+		});
+		// 键盘摁下事件触发
+		$("#txt1").keyup(function () {
+			console.log($('#txt1').val().length)
+			if ($('#txt1').val().length == 0) {
+				$("#div_items").css('display', 'none');
+			}
+		});
+		})
+
+	</script>

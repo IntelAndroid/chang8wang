@@ -1,0 +1,91 @@
+{include file="wechat@public/header"}
+<!--阿里图库-->
+<link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/demo.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/iconfont.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/lib/weui.min.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/css/jquery-weui.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/css/demos.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/css/public.css">
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;width:80px;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		//确认绑定
+		$('#bind-btn').click(function(){
+			var url="{:url('/wechat/Auth/saveBind')}";
+			var data=serializeData('loginForm');
+			cstmpost('#bind-btn',url,data,function(res){
+				if(res.code==1){
+					var type=res.type.user.type;
+					$.toptip(res.msg,'success');
+					setTimeout(function(){
+						if(type==6019001){
+							location.href = "{:url('/wechat/test/index')}";
+						}else if(type==6019002) {
+							session('etprsName',res.type.etprsName)
+							session('iqbtName',res.type.iqbtName)
+							location.href = "{:url('/wechat/test/bhd-index')}";
+						}
+					},500)
+				}else{
+					$.toptip(res.msg,'warning');
+				}
+			})
+		})
+	})
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">绑定账号</div>
+			</div>
+			<form id="loginForm">
+				<div class="weui-cells weui-cells_form first-header">
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label class="weui-label">账号</label></div>
+						<div class="weui-cell__bd">
+							<input class="weui-input" name="mobile" type="text" maxlength="11" placeholder="请输入账号">
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label class="weui-label">密码</label></div>
+						<div class="weui-cell__bd">
+							<input class="weui-input" type="password" name="password" placeholder="请输入密码">
+							<input class="weui-input" type="hidden" name="openId" value="{$openId}">
+						</div>
+					</div>
+				</div>
+			</form>
+		    <div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-100" style="background:none;padding:0 15px;">
+				      	<a class="weui-btn" href="javascript:" style="font-size:16px;background:#0093e7;" id="bind-btn">确认绑定</a>
+				    </div>
+				    <div class="weui-col-100" style="background:none;padding:0 15px;margin-top:10px;">
+				      	<a class="weui-btn" href="{:url('wechat/user/register')}" style="font-size:16px;background:#f39b0f;color:#FFF;">没有账号？申请使用</a>
+				    </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/wechat/lib/jquery-2.1.4.js"></script>
+<script src="__PUBLIC__/wechat/lib/fastclick.js"></script>
+<script>
+	$(function() {
+		FastClick.attach(document.body);
+	});
+</script>
+<script src="__PUBLIC__/wechat/js/jquery-weui.js"></script>
+</body>
+</html>

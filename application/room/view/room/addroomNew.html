@@ -1,0 +1,360 @@
+<script src="__PUBLIC__/js/roomPrice.js"></script> <!--联动效果 /iqbt/public/js/roomPrice.js -->
+<script>
+    $(function(){
+
+//    	assign()
+        // 根据楼座名称检索 并且把基本数据带入
+      /*  $("#buildName").bind('input propertychange',function(){
+            var curInput = $(this).val();
+            var url = "{:url('/room/room/searchbuild')}";
+            var data = {};
+            data.name = curInput;
+            cstmpost("#",url,data, function (res) {
+                $("#browsers").html("");
+                if(res.data){
+                    for(var i=0;i<res.data.length;i++){
+                        var html = '<option onchange="getData('+res.data[i].id+')" value="'+res.data[i].name+'">';
+                        $("#browsers").append(html);
+                    }
+                }
+            });
+        });*/
+
+    	assign()  // iqbt/public/js/common.js   给select使用
+
+    	// 保存房间
+        $("#saveRoom-btn").on("click", function () {
+            var url = "{:url('/room/Room/roomAddSaveNew')}";
+            var data=serializeData('dataform');   // __PUBLIC__/js/base.js
+
+            cstmpost('#saveRoom-btn',url,{list:data},function(res){
+                var jumpurl = "{:url('/room/Room/roomInfo')}";
+                if (res["code"] == '1') {
+                    toastr.success(res["msg"]);
+                    setTimeout(function () {
+                        location.href = jumpurl;
+                    }, 500);
+                } else {
+                    toastr.error(res["msg"]);
+                }
+            })
+    	
+        });
+    	
+    	//初始状态
+    	$("#roomType").find("option[value = '6011001']").attr("selected","selected");
+    	$(".dis-unit").css("display","none"); 
+        $("#divtotal").css("display","none"); //月租
+    	
+    	//房间类型
+        var type=$("select[name='type']:checked").val();  //select  input
+        roomchange(type);
+//        $("input[name='type']").change();
+		//房间类型
+        $("select[name='type']").change(function () {   //select  input
+            var type=$(this).val();
+            roomchange(type);
+        });
+        function roomchange(type){
+            switch (type){
+                case '6011002':  //6011002：开放工位  6011001: 办公室   6011003: 办公室(工位)
+                    $("#desc").val("");  $("#unitarea").html(''); $("#roomNos").val('')
+                    
+                    $("#area").val("0");  $("#area").attr('readonly', 'readonly'); //面积为0
+                    $("#divarea").css("display","none"); 
+                    
+                    $("#num").val("1");   //$("#num").attr('readonly', 'readonly');  //开放工位工位数只能为1
+                    $(".dis-unit").css("display","none"); //工位数#num ，工位编号区域 #unitarea -隐藏
+                    
+                    //开放工位：单价单位
+                    var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009003">元/工位/天</option><option value="6009004">元/工位/月</option><option value="6009005">元/间/月</option></select>';
+                    $('#unit').html(unitOp);
+                    //$(".dis-room").css("display","none");  //房间用途
+                    break;
+                case '6011001':  //6011001: 办公室
+                	$("#area").val("");  $("#area").removeAttr("readOnly"); //面积
+                    $("#num").val("");   
+                    $(".dis-unit").css("display","none"); //工位数#num ，工位编号区域 #unitarea -隐藏
+                    $("#divarea").css("display","block"); 
+                    // 办公室：单价单位
+                    var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option></select>';
+                    $('#unit').html(unitOp);
+                    break;
+                case '6011003':   //6011003: 办公室(工位)
+                     $(".dis-unit").css("display","block");  ////工位数#num ，工位编号区域 #unitarea -显示
+                     $("#area").removeAttr("readOnly");
+                     $("#num").removeAttr("readOnly");
+                     $("#divarea").css("display","block"); 
+                     var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option><option value="6009003">元/工位/天</option><option value="6009004">元/工位/月</option><option value="6009005">元/间/月</option></select>';
+                     $('#unit').html(unitOp);
+                     break;
+                case '6011004':   //6011004: 自用面积
+                    $(".dis-unit").css("display","none");  //工位数#num ，工位编号区域 #unitarea 
+                    $("#area").removeAttr("readOnly");
+                    $("#num").removeAttr("readOnly");
+                    $("#divarea").css("display","block"); 
+                    var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option></select>';
+                    $('#unit').html(unitOp);
+                   break;
+                case '6011005':   //6011005: 公用面积
+                    $(".dis-unit").css("display","none");  ////工位数#num ，工位编号区域 #unitarea 
+                    $("#area").removeAttr("readOnly");
+                    $("#num").removeAttr("readOnly");
+                    var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option></select>';
+                    $('#unit').html(unitOp);
+                   break;
+                default:
+                    //$("#num").val(0);
+                    $("#unitarea").html("");  //工位编号（具体 ）
+                    //$(".dis-room").css("display","block"); //房间用途
+                    //$(".dis-unit").css("display","none");	 //工位数  工位编号
+                    break;
+            }
+        }
+
+		//工位数   房间编号
+        $("#num,#roomno").change(function () {
+            var num=$("#num").val();
+            var roomNo=$("#roomno").val();
+            if(/^[0-9]*$/.test(num)&&roomNo!=''){
+                var nostr='';
+                for (var i = 1; i <= num; i++) {
+                    nostr=nostr==""?roomNo+"-"+i:nostr+","+roomNo+"-"+i;
+                }
+                if($('#roomType').val()==6011003){   // 办公室(工位)
+                    $("#unitarea").html(nostr);  //工位编号（具体 ）
+                    $("#roomNos").val(nostr)     //工位编号（具体 ）
+                }else{
+                	$("#unitarea").html('');
+                	$("#roomNos").val('')
+                }
+            }
+        });
+        
+        $('.btn-del').click(function(){
+            if(confirm('确定要删除吗?')){
+                var id = $("#id").val();
+                var url = "{:url('///')}";
+                $.post(url,{"id":id},function(data){
+                    if(data.code==1){
+                        toastr.success(data.msg);
+                        $('#myModal').modal('hide');
+                        initOther();
+                    }else{
+                        toastr.error(data.msg);
+                    }
+                })
+            }else{
+                return false;
+            }
+        })
+    })
+
+    //字段改变    面积
+    $("#area").change(function(){
+    	var num= $("#num").val();
+    	if(num>0){
+    		if($("#area").val()>0){
+        		//$("#area").val(0);
+                //工位：单价单位
+                //var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009003">元/工位/天</option><option value="6009004">元/工位/月</option><option value="6009005">元/间/月</option></select>';
+                //$('#unit').html(unitOp);	
+        		//toastr.error('面积和工位数量只能有一个大于0');
+    		}else{
+                //工位：单价单位
+                //var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009003">元/工位/天</option><option value="6009004">元/工位/月</option><option value="6009005">元/间/月</option></select>';
+                //$('#unit').html(unitOp);	
+    		}
+    	}else{
+       	 	//面积：单价单位
+            //var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option></select>';
+         	//$('#unit').html(unitOp);
+    	}  
+    });
+    
+    //字段改变    工位
+    $("#num").change(function(){
+    	var area= $("#area").val(); 
+    	if(area>0){
+    		if($("#num").val()>0){
+        		//$("#num").val(0);   
+        		//$("#unitarea").html("");  
+          	    //面积：单价单位
+                //var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option></select>';
+                //$('#unit').html(unitOp);
+       		    //toastr.error('面积和工位数量只能有一个大于0');
+    		}else{
+          	    //面积：单价单位
+                //var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009001">元/平米/天</option><option value="6009002">元/平米/月</option></select>';
+                //$('#unit').html(unitOp);
+    		}
+    	}else{
+            //工位：单价单位
+            //var unitOp = '<select class="form-control inline unitsel" id="unit" name="unit"><option value="">请选择</option><option value="6009003">元/工位/天</option><option value="6009004">元/工位/月</option><option value="6009005">元/间/月</option></select>';
+            //$('#unit').html(unitOp);
+    	}
+    });
+    
+    ///算出月租
+    $('form').on('change', '.area,.price,.unit', function () {
+    	 var targ = $('#total');    //月租
+    	 
+    	 var $area = $('#area');    //面积
+    	 var $num = $('#num');      //工位数
+    	 var $unitP = $('#price');  //单价
+    	 var $unit = $('#unit');    //单价单位
+    	 
+    	    // 根据单位value判断月租
+    	    switch ($unit.find("option:selected").val()) {
+    	        case '6009001': //元/平米/天
+    	            targ.val('' + ($area.val() * $unitP.val() * 30).toFixed(2));
+    	            break;
+    	        case '6009002': //元/平米/月
+    	            targ.val('' + ($area.val() * $unitP.val()).toFixed(2));
+    	            break;
+    	        case '6009003': //元/工位/天
+    	            targ.val('' + ($num.val() * $unitP.val() * 30).toFixed(2));
+    	            break;
+    	        case '6009004': //元/工位/月
+    	            targ.val('' + ($num.val() * $unitP.val()));
+    	            break;
+    	        case '6009005': //元/间/月
+    	            targ.val('' + ($num.val() * $unitP.val()));
+    	            break;
+    	        case '':
+    	            targ.val('0');
+    	            break;
+    	    }
+    	    //alert($('#total').val());
+    })
+    
+</script>
+<form id="dataform" action="" tableId="roomTable" method="post" class="form-horizontal">
+    <!--me  -->
+    <div class="modal-header">
+          <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                  <i class="icon wb-close" aria-hidden="true"></i>
+          </button>
+          <h4 class="modal-title">添加房间</h4>
+    </div>
+    <!--  -->
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">楼座：</label>
+            <div class="col-sm-8">
+                <select class="form-control rqst_build" name="buildId" id="buildS">
+                </select>
+
+              <!--  <input type="text" name="buildName" id="buildName" list="browsers" class="form-control require" placeholder="楼座">
+                <datalist id="browsers">
+                </datalist>-->
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">楼层：</label>
+            <div class="col-sm-8">
+                <input type="text" name="floor" id="floor" class="form-control require" value="" placeholder="楼层">
+            </div>
+        </div>
+        
+        <div class="form-group">
+
+            <label class="col-sm-4 control-label" style="text-align:right;">房间类型：</label>
+            <div class="col-sm-8">
+                <select class="form-control inline" id="roomType" name="type" onchange="listenType($(this))">
+                </select>
+
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">房间/工位编号：</label>
+            <div class="col-sm-8">
+                <input type="text" name="roomNo" id="roomno" class="form-control require" value="" placeholder="房间/工位编号">
+            </div>
+        </div>
+        
+        <div class="form-group" id="divarea">
+            <label class="col-sm-4 control-label" style="text-align:right;">面积（m<sup>2</sup>）：</label>
+            <div class="col-sm-8">
+                <input type="text" name="area" id="area" class="form-control require decimal" value="" placeholder="面积">
+            </div>
+        </div>
+
+        <div class="form-group dis-unit" style="display:block;">
+            <label class="col-sm-4 control-label" style="text-align:right;">工位数量：</label>
+            <div class="col-sm-8">
+                <input type="text" name="num" id="num" class="form-control number" value="" placeholder="工位数">
+            </div>
+        </div>
+        
+        <div class="form-group dis-unit" style="display: block;"><!-- none -->
+            <label class="col-sm-4 control-label" style="text-align:right;">工位编号：</label>
+            <div class="col-sm-8" id="unitarea">
+            </div>
+            <input type="hidden" name="roomNos" value="" id="roomNos"/>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">单价：</label>
+            <div class="col-sm-8">
+            	<input type="text" class="form-control unit-price price" name="price" id="price" value="" placeholder="单价" autocomplete="off">
+            </div>
+        </div>
+        
+        <div class="form-group">
+        	<label class="col-sm-4 control-label" style="text-align:right;">单价单位：</label>
+        	<div class="col-sm-8">
+        		<select class="form-control inline unitsel unit" id="unit" name="unit"></select>
+        	</div>
+        </div>
+        
+        <div class="form-group"  id="divtotal" style="display:block">
+            <label class="col-sm-4 control-label" style="text-align:right;">月租：</label>
+            <div class="col-sm-8">
+         		<input type="text" class="form-control monthPay total" name="total" id="total"
+                       placeholder="月租" autocomplete="off" readOnly='readOnly'>
+        	</div>
+        </div>
+        
+        <div class="form-group">
+        	<label class="col-sm-4 control-label" style="text-align:right;">装修：</label>
+        	<div class="col-sm-8">
+       			<select class="form-control" id="dection" name="dection"></select>
+        	</div>
+        </div>
+        
+<!--        <div class="form-group" style="display: none;">
+        	<label class="col-sm-4 control-label" style="text-align:right;">是否自用：</label>
+        	<div class="col-sm-8">
+       			<div class="checkbox-custom checkbox-primary checkbox-inline" id="selfusebak">
+                	<div class="checkbox-custom checkbox-primary checkbox-inline">
+                    	<input type="checkbox" name="status" id="inputUnchecked3" value="3">
+                        <label for="inputUnchecked3">&nbsp;</label>
+                   	</div>
+            	</div>
+        	</div>
+        </div> -->
+
+       <!--  <div class="form-group dis-room">
+            <label class="col-sm-4 control-label" style="text-align:right;">房间用途：</label>
+            <div class="col-sm-8">
+                <input type="text" name="desc" id="desc" class="form-control" value="" placeholder="房间用途">
+            </div>
+        </div> -->
+    </div>
+
+    <div class="modal-footer">
+       <div class="modal-footer">
+	       <div class="btn-actions pull-right margin-left-15">
+	            <a class="btn btn-default" data-dismiss="modal">取消</a>
+	            <!--<span class="badge up badge-primary">2</span>-->
+	       </div>
+	       <div class="btn-actions pull-right margin-left-15">
+	            <button class="btn btn-primary" id="saveRoom-btn" hide-modal="logsForm" data-form="uploadBuildPicForm">保存 </button>
+	            <!--<span class="badge up badge-primary">1</span>-->
+	       </div>
+       </div>
+    </div>
+</form>

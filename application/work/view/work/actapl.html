@@ -1,0 +1,127 @@
+{include file="index@public/header"} {include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script><!--me +  -->
+<script src="__PUBLIC__/js/bootstrap_validate.js"></script> 
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script>
+    Breakpoints();
+    //审核操作 列表填充
+    function check(value,row,index){
+//        var audit=session('audit');
+        if(row.status=="已提交" ){
+            return['<a onclick="passWin('+row.id+',7001002,'+row.num+','+row.actId+')"><button type="button" class="btn  btn-outline btn-xs btn-success pass" >',
+                ' &nbsp;通过&nbsp;</button>&nbsp;',
+                '</a>',
+                '<a onclick="refuse('+row.id+',7001003,'+row.num+','+row.actId+')">&nbsp;<button type="button" class="btn  btn-outline btn-xs btn-danger refuse" >',
+                '&nbsp;拒绝&nbsp;',
+                '</button></a>'].join("");
+        }
+    }
+    //企业入驻状态名称转化
+    function enterStatusEx(value,row,index){
+        if(row.enterstatus==6008005){
+            return '正式入驻'
+        }else{
+            return '未入驻'
+        }
+    }
+    //状态名称转化
+    function statusEx(value,row,index){
+        switch(row.status){
+            case"已提交":
+                return '<span class="text-warning">待审核</span>'
+                break;
+            case"通过":
+                return'<span class="text-success">报名成功</span>';
+                break;
+            case"拒绝":
+                return '<span class="text-danger">已拒绝</span>';
+                break;
+            default:
+                return row.status;
+                break;
+        }
+    }
+    
+    //通过窗口
+    function passWin(id,status,num,actId){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要通过申请么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="changeStatus(\''+id+'\',\''+status+'\',\''+num+'\',\''+actId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    //拒绝窗口
+    function refuse(id,status,num,actId){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要拒绝申请么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="changeStatus(\''+id+'\',\''+status+'\',\''+num+'\',\''+actId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    //审核
+    function changeStatus(id,status,num,actId){
+        var url="{:url('activity/activity/saveSign')}";
+        if(status==7001002){
+            var eid=".pass";  //class=' pass' 
+        }else{
+            var eid=".refuse"; //class=' refuse'
+        }
+        //eid 禁用效果
+        cstmpost(eid,url,{id:id,status:status,num:num,actId:actId},function(res){
+//            alert(JSON.stringify(res));
+            if(res.code==1){
+                toastr.success(res.msg);
+//                var id=session('actId');
+                var tableurl="{:url('activity/activity/getAllActApl')}";
+                var param=new Object();
+//                param.id=id;
+                param.status=7002001;
+                param._tm=new Date();
+//                $('#signTable').bootstrapTable('refresh',{'url':tableurl,query:param});
+                $('#signTable').bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(res.msg);
+            }
+        })
+    }
+	
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">待办事项 / 活动申请</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                    	<div class="row row-lg">
+                            <div class="col-md-12 margin-bottom-20">
+		                    </div>
+		                </div>
+                       <table class="table table-bordered text-center" id="signTable" data-side-pagination="server" data-toggle="table" data-url="{:url('/activity/activity/getAllActApl',array('status'=>'7001001'))}"
+                              data-show-refresh="false" data-show-toggle="false" data-show-columns="false"
+                              data-toolbar="true" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                          <thead>
+                          <tr>
+                          	  <th class="text-center" data-field="addtime">报名时间</th>
+                             <!--  <th class="text-center" data-field="serialNo">订单编号</th> -->
+                              <th class="text-center" data-field="actName">活动名称</th>
+                             <!--  <th class="text-center" data-field="etprs" >所属企业</th> -->
+                              <!-- <th class="text-center" data-formatter="enterStatusEx" >入驻状态</th> -->
+                              <th class="text-center" data-field="name" >报名人</th>
+                              <th class="text-center" data-field="mobile">联系方式</th>
+                              <th class="text-center" data-field="num">人数</th>
+                              <!-- <th class="text-center" data-field="free">是否免费</th> -->
+                              <th class="text-center" data-field="price">收费标准</th>
+                              <th class="text-center" data-field="total">应缴金额（元）</th>
+                             <!--  <th class="text-center" data-formatter="statusEx">报名状态</th> -->
+                              <th class="text-center" data-formatter="check">操作</th></tr>
+                          </thead>
+                       </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

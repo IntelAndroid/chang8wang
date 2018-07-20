@@ -1,0 +1,50 @@
+{include file="index@public/header"}
+<script>
+    $(function(){
+        //活动总结数据
+        var url = "{:url('/activity/activity/getActSum')}";
+        var id=session('actId');
+        cstmpost("", url, {id:id}, function (res) {
+            if (res["code"] == '1') {
+                $('.panel-body').html(res.data[0].summary);
+                $('#sumtitle').html(res.data[0].sumtitle);
+                $('#time').html(res.data[0].lastupdateTime);
+            }else{
+                toastr.warning(res.msg);
+            }
+        })
+    })
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+        	<div class="page-header">
+                <h1 class="page-title">活动总结详情</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-heading text-center margin-bottom-20">
+                        <h3 class="panel-title" id="sumtitle"></h3>
+                        <p id="time"></p>
+                    </div>
+                    <div class="panel-body">
+
+                    </div>
+                </div>
+            </div>
+            <div class="btn-actions text-center">
+                <!--<div class="btn-actions margin-left-5 inline-block">-->
+                <!--<button type="button" class="btn btn-primary margin-3" id="">&nbsp;&nbsp;<i class="fa fa-bullhorn" aria-hidden="true"></i>&nbsp;发布&nbsp;&nbsp;</button>-->
+                <!--</div>-->
+                <div class="btn-actions margin-left-5 inline-block">
+                    <a href="{:url('activity/activity/summary')}"><button type="button" class="btn btn-primary margin-3" id="submit">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;编辑&nbsp;&nbsp;</button></a>
+                </div>
+                <div class="btn-actions margin-left-5 inline-block">
+                    <a href="javascript:history.back(-1)"><button type="button" class="btn btn-danger margin-3" id="">&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;返回&nbsp;&nbsp;</button></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+{include file="index@public/footer"}

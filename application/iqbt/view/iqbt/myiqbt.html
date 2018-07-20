@@ -1,0 +1,89 @@
+{include file="index@public::header"}
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__JS__/common.js"></script>
+<script src="__JS__/base.js"></script>
+<script>
+    function actFmt(value, row, index) {
+        return['<div class="btn-actions margin-left-5 inline-block">',
+            '<a onclick=" iqbtInfo('+row.id+','+row.etprsId+')"><button type="button" class="btn btn-outline btn-info">&nbsp;&nbsp;<i class="icon iconfont icon-tijikongjian-xianxing"></i>&nbsp;入驻信息&nbsp;&nbsp;</button></a>',
+            '</div>'].join("");
+    }
+    function posterFmt(value, row, index) {
+        if(row.poster ){
+            return['<div class="example margin-0" id="exampleZoomGallery">',
+                '  <a class="inline-block" href="javascript:void(0)" style="cursor:default" title="'+row.name+'" data-source="__PUBLIC__/'+row.poster+'">',
+                '  <img data-poster="'+row.poster+'" class="img-responsive" src="__PUBLIC__/'+row.poster+'" data-target="#roomPicForm" alt="..." width="120" data-id="'+row.id+'" data-toggle="modal" aria-hidden="true">',
+                '  </a>',
+                '  </div>'].join("");
+        }else{
+            return['<div class="example margin-0" id="exampleZoomGallery">',
+            '  <a class="inline-block" href="javascript:void(0)" style="cursor:default" title="'+row.name+'" data-source="__PUBLIC__/'+row.poster+'">',
+            '  <img class="img-responsive" data-target="#roomPicForm" data-id="'+row.id+'" data-toggle="modal" aria-hidden="true"  src="__PUBLIC__/images/default-iqbt.jpg" alt="点击上传空间封面" title="点击上传空间封面" width="150">',
+                    '  </a>',
+                    '  </div>'].join("");
+        }
+    }
+    //状态
+    function statusFmt(value, row, index) {
+        if(row.statusText=='正式入驻'){
+            return '<span class="text-success">正式入驻</span>';
+        }else{
+            return row.statusText;
+        }
+    }
+
+    //房间信息 点击事件
+    function roomInfo(id,etprsId){
+        session('iqbtId',id);
+        location.href="{:url('/room/Room/roomInfo')}";
+    }
+    //入驻信息 点击事件
+    function iqbtInfo(id,etprsId){
+        session('detailViewId',etprsId);
+        session('id',id);
+        location.href="{:url('/iqbt/Iqbt/myenterinfo')}";
+    }
+    $(function(){
+        //保存id
+
+    })
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">我的入驻</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                        <table id="iqbtTab"class="table table-bordered text-center cdtable" data-toggle="table" data-toolbar="false" data-url="{:url('/iqbt/Iqbt/getMyIqbt')}"
+                               data-side-pagination="server" data-pagination="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th class="text-center" data-formatter="posterFmt">空间图片</th>
+                                <th class="text-center" data-field="name">空间名称</th>
+                                <th class="text-center" data-field="statusText" data-formatter="statusFmt">状态</th>
+                                <th class="text-center" data-field="roomInfo">房间信息</th>
+                                <th class="text-center" data-field="starttime">合同开始时间</th>
+                                <th class="text-center" data-field="endtime">合同结束时间</th>
+                                <th class="text-center" data-field="action" data-formatter="actFmt">操作</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/vendor/webui-popover/webui-popover.css">
+<script src="__PUBLIC__/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script src="__PUBLIC__/js/examples/components/advanced/lightbox.js"></script>
+{include file="index@public::footer"}

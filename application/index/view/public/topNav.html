@@ -1,0 +1,155 @@
+<script type="text/javascript">
+    $(function(){
+        //初始化用户信息
+        var avatar=localStorage.getItem("user_avatar");
+        if(avatar!=''&&avatar!=null&&avatar!=undefined){
+            $("#user_avatar").find('img').attr('src', "__PUBLIC__"+avatar);
+//            alert(avatar);
+        }else{
+            var url="{:url('/index/Index/initinfo')}";
+            cstmpost("",url,{}, function (data) {
+//                alert(data["data"].status);
+                if(data["data"].avatarpath!=''&&data["data"].avatarpath!=undefined&&data["data"].avatarpath!=null){
+                    $("#user_avatar").find('img').attr('src', "__PUBLIC__"+data["data"].avatarpath);
+                    localStorage.setItem("user_avatar",data["data"].avatarpath);
+                }
+                /*else{
+                    $("#user_avatar").find('img').attr('src', '__PUBLIC__/images/portraits/5.jpg');
+                }*/
+
+                if(data["data"].status=="6018005"){
+                    initUserInfo(data["data"].iqbtId);
+                }
+            });
+        }
+
+        $("#admui-signOut").click(function () {
+            localStorage.setItem("user_avatar","");
+            sessionStorage.clear();
+            location.href="{:url('/user/Login/logout')}";
+        });
+
+
+    });
+
+    function initUserInfo(iqbtId){
+        var url="{:url('/user/User/initiqbtinfo')}";
+//        baseadd(url, "完善信息", "");
+        session("restIqbtId",iqbtId);
+        $.post(url, function(data) {
+//            show_modal("完善信息",data,"");
+            $('#myModal').remove();
+            if($('#myModal').length == 0) {
+                $('body').append('<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog "><div class="modal-content"></div></div></div>');
+            }
+            $('#myModal .modal-content').html(data);
+            $('#myModalLabel').html("请先完善信息");
+            $('#myModal').modal({backdrop: 'static', keyboard: false});
+        });
+    }
+</script>
+
+<!--top nav-->
+<nav class="site-navbar navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle hamburger hamburger-close navbar-toggle-left hided" data-toggle="menubar">
+            <span class="sr-only">切换菜单</span> <span class="hamburger-bar"></span>
+        </button>
+        <button type="button" class="navbar-toggle collapsed" data-target="#admui-navbarCollapse" data-toggle="collapse">
+            <i class="icon wb-more-horizontal" aria-hidden="true"></i>
+        </button>
+        <div class="navbar-brand navbar-brand-center site-gridmenu-toggle" data-toggle="gridmenu">
+            <!--<img class="navbar-brand-logo visible-lg visible-xs navbar-logo" src="../public/images/logo.png" title="创8网">-->
+            <span class="logo" title="创8助手">创8助手</span>
+        </div>
+    </div>
+    <div class="navbar-container container-fluid">
+        <div class="collapse navbar-collapse navbar-collapse-toolbar" id="admui-navbarCollapse">
+            <ul class="nav navbar-toolbar navbar-left">
+                <li class="navbar-menu nav-tabs-horizontal nav-tabs-animate is-load" id="admui-navMenu">
+                    <ul class="nav navbar-toolbar">
+                        <li class="dropdown" id="admui-navbarSubMenu">
+                            <a class="dropdown-toggle font-size-18" style="background:none;" data-toggle="dropdown" href="#" data-animation="slide-bottom" aria-expanded="true" role="button">
+                                <span>{if condition="$Think.session.user.type==6019004"}{$Think.session.user.name|default=''}{elseif condition="$Think.session.user.type==6019002"/} {$Think.session.user.etprsName}{else/}{$Think.session.iqbtName|default=''}{/if}</span>
+                                <!--{if condition="$Think.session.user.type==6019001"} <i class="icon iconfont icon-moreunfold font-weight-bold"></i>{/if}-->
+                            </a>
+                            {if condition="$Think.session.user.type==6019001"}
+                            <ul class="dropdown-menu width-full" role="menu">
+                                <!--<li class="no-menu" role="presentation">-->
+                                    <!--<a href="" role="menuitem">-->
+                                        <!--<i class="icon wb-list-numbered"></i><span>孵化器1</span>-->
+                                    <!--</a>-->
+                                <!--</li>-->
+                                <!--<li class="no-menu" role="presentation">-->
+                                    <!--<a href="" role="menuitem">-->
+                                        <!--<i class="icon wb-list-numbered"></i><span>孵化器2</span>-->
+                                    <!--</a>-->
+                                <!--</li>-->
+
+                            </ul>
+                            {/if}
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-toolbar nav-tabs" role="tablist" id="tablistul">
+
+                        <li role="presentation"></li>
+                    </ul>
+                </li>
+            </ul>
+            <!--<ul class="nav navbar-toolbar navbar-left">
+                <li class="hidden-float platname">
+                    <a href="javascript:;">{if condition="$Think.session.user.type==6019004"}{$Think.session.user.name|default=''}{elseif condition="$Think.session.user.type==6019002"/} {$Think.session.user.etprsName}{else/}{$Think.session.iqbtName|default=''}{/if}</a>
+                </li>
+            </ul>-->
+            <ul class="nav navbar-toolbar navbar-right navbar-toolbar-right">
+                <li class="dropdown">
+                    <a class="navbar-avatar" href="{:url('/user/User/userinfo')}">
+		                <span class="avatar avatar-online" id="user_avatar">
+		                    <img src="__PUBLIC__/images/user.png" alt="...">
+                            <script>
+                                var avatar=localStorage.getItem("user_avatar");
+                                if(avatar!=''&&avatar!=null&&avatar!=undefined) {
+                                    $("#user_avatar").find('img').attr('src', "__PUBLIC__" + avatar);
+                                }
+                            </script>
+		                    <i></i>
+		                </span>
+                    </a>
+                </li>
+                <li class="dropdown" id="admui-navbarMessage">
+                    <!--xiaoxilingdnag -->
+                    <!--<a data-toggle="dropdown" href="javascript:;" class="msg-btn" aria-expanded="false" data-animation="scale-up" role="button">-->
+                        <!--<i class="icon wb-bell" aria-hidden="true"></i>-->
+                        <!--<span class="badge badge-danger up msg-num"></span>-->
+                    <!--</a>-->
+                    <ul class="dropdown-menu dropdown-menu-right dropdown-menu-media" role="menu">
+                        <li class="dropdown-menu-header" role="presentation">
+                            <h5>最新消息</h5>
+                            <span class="label label-round label-danger"></span>
+                        </li>
+                        <li class="list-group" role="presentation">
+                            <div class="navbar-message-content" id="admui-messageContent" data-height="220px" data-plugin="slimScroll"></div>
+
+                        </li>
+                        <li class="dropdown-menu-footer" role="presentation">
+                            <a href="">
+                                <i class="icon fa-navicon"></i> 所有消息
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="hidden-xs" id="admui-navbarFullscreen" data-toggle="tooltip" data-placement="bottom" title="全屏">
+                    <a class="icon icon-fullscreen" data-toggle="fullscreen" href="#" role="button">
+                        <span class="sr-only">全屏</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="icon fa-sign-out" id="admui-signOut" data-user="5" href="#" role="button">
+                        <span class="sr-only">退出</span>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="no-js css-menubar height-full" lang="zh-cn">
+<head>
+<title>注册</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- 移动设备 viewport -->
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
+<meta name="author" content="admui.com">
+<!-- 360浏览器默认使用Webkit内核 -->
+<meta name="renderer" content="webkit">
+<!-- 禁止搜索引擎抓取 -->
+<meta name="robots" content="nofollow">
+<!-- 禁止百度SiteAPP转码 -->
+<meta http-equiv="Cache-Control" content="no-siteapp">
+<link rel="shortcut icon" href="__PUBLIC__/images/favicon.ico">
+<!-- 图标 CSS -->
+<link rel="stylesheet" href="__PUBLIC__/themes/font-awesome-4.7.0/css/font-awesome.css">
+<link rel="stylesheet" href="__PUBLIC__/fonts/web-icons/web-icons.css">
+<link rel="stylesheet" href="__PUBLIC__/themes/iconfont/demo.css"><!--阿里图库-->
+<link rel="stylesheet" href="__PUBLIC__/themes/iconfont/iconfont.css"><!--阿里图库-->
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="__PUBLIC__/themes/classic/global/css/bootstrap.css">
+<!-- Site CSS -->
+<link rel="stylesheet" href="__PUBLIC__/themes/classic/base/css/site.css" id="admui-siteStyle">
+<!-- 插件 CSS -->
+<link rel="stylesheet" href="__PUBLIC__/vendor/animsition/animsition.css">
+<!-- page CSS -->
+<link rel="stylesheet" href="__PUBLIC__/css/locked.css">
+<!--独立样式-->
+<link rel="stylesheet" href="__PUBLIC__/themes/theme.css">
+<!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0; url='http://www.admui.com/ie'"/>
+<![endif]--><!--[if lt IE 10]>
+<script src="__PUBLIC__/vendor/media-match/media.match.min.js"></script>
+<script src="__PUBLIC__/vendor/respond/respond.min.js"></script>
+<![endif]-->
+	<script src="__PUBLIC__/vendor/jquery/jquery.min.js"></script>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/js/base.js"></script>
+	<!--toastr-->
+	<link href="__VD__/toastr/toastr.css" rel="stylesheet">
+	<script src="__VD__/toastr/toastr.js"></script>
+</head>
+<body class="page-locked1 layout-full page-dark">
+<script>
+	var i;
+	function getCode(){
+		$("#code").attr("disabled",'disabled');
+		i = self.setInterval("countdown()", 1000);
+	}
+
+	var int = 59;
+	function countdown() {
+		$('#code').text(int + "秒后重新发送");
+		int--;
+		if(int<0){
+			i=window.clearInterval(i)//结束
+			int = 59; //重新赋值
+			$("#code").removeAttr("disabled").html("重新获取校验码");//将按钮可用
+			$('#code').removeClass("disabled");
+		}
+	}
+	$(function(){
+		//点击获取验证码时校验手机号
+		$('#code').click(function(){
+			var account=$('#account').val();
+			var url="{:url('user/rgst/createMobileCode')}";
+			if($(this).hasClass('disabled')){
+				toastr.warning('请稍后再试');
+			}else {
+				cstmpost('#code', url, {mobile: account,isReg:2}, function (res) {
+					if (res.code == 1) {
+						$('#code').text('60秒后重新发送');
+						$('#code').addClass("disabled");
+						toastr.success('短信发送成功');
+						getCode();
+					} else {
+						toastr.error(res.msg);
+					}
+				})
+			}
+		})
+		//提交表单
+		$(".submit-btn").click(function(){
+			//表单地址
+			var url = "{:url('user/rgst/reg')}";
+			//表单字段
+			var fields= serializeData('reg');
+			fields.action='forget';
+			cstmpost('.submit-btn',url,fields,function(res){
+				if(res.code == 1){
+					session('userId',res.data.id);
+					session('mobile',res.data.mobile);
+					toastr.success(res.msg+'正在跳转至登录页~');
+					setTimeout(function(){
+						location.href="{:url('user/login/login')}";
+					},1000);
+				}else{
+					toastr.warning(res.msg);
+				}
+			},'JSON');
+		});
+	})
+</script>
+<div class="container loginbigbox">		
+	<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<div class="col-lg-3 col-md-3 col-sm-12"></div>
+				<div class="col-lg-6 col-md-6 col-sm-12">
+					<div class="col-md-2"></div>
+					<div class="col-md-8 col-sm-12">
+							<div class="col-md-12 col-sm-12 loginbox">
+								<h1 class="text-center">创8管家</h1>
+								<p class="text-center kouhao">专业的空间运营工具</p>
+								<div class="form-group">
+									<form class="form-horizontal" id="reg">
+										<div class="col-md-12 col-sm-12 padding-0 inputbox">
+											<div class="col-md-12 col-sm-12 padding-0 inputbox1">
+					                        	<input type="text" class="form-control "name="mobile" maxlength="11" placeholder="用户名/手机号码" id="account">
+					                        	<p class="false ename">手机号格式错误！</p>
+					                        </div>
+					                        <div class="col-md-6 col-sm-6 padding-0 inputbox1 padding-right-5">
+					                        	<input type="text" class="form-control password" name="code" placeholder="验证码">
+					                        </div>
+					                        <div class="col-md-6 col-sm-6 padding-0 inputbox1 padding-left-5">
+					                        	<button type="button" class="btn btn-block btn-primary" id="code">点击获取</button>
+					                        </div>
+					                        <div class="col-md-12 col-sm-12 padding-0 inputbox1">
+					                        	<input type="password" class="form-control password" placeholder="密码" name="password">
+					                        	<p class="false epassword">请输入6-12位登录密码！</p>
+					                        </div>
+					                        <div class="col-md-12 col-sm-12 padding-0 inputbox1">
+					                        	<input type="password" class="form-control password" placeholder="再次输入密码" name="repassword">
+					                        	<p class="false epassword">请输入6-12位登录密码！</p>
+					                        </div>
+					                    </div>
+				                        <button type="button" class="btn btn-block btn-primary submit-btn" submit-table="reg">找回密码</button>
+				                	</form>	
+								</div>
+							</div>	
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-12"></div>
+			</div>
+	</div>
+</div>
+<script>
+	$('.ename').css('display','none');
+	$('.epassword').css('display','none');
+	$('.name').on('blur',function(){
+	    var phone = /^1[3|4|5|7|8][0-9]{9}$/;
+	    if(!phone.test($('.name').val())){
+	        $('.ename').css('display','block')
+	    }else{
+	        $('.ename').css('display','none')
+	    }
+	});
+	$('.password').on('blur',function(){
+	    var pho = /^[\w]{6,12}$/;
+//	    console.log(pho.test($('.name').val())) //调试
+//	    console.log($('.name').val()) //调试
+	    if(!pho.test($('.password').val())){
+	        $('.epassword').css('display','block');
+	    }else{
+	        $('.epassword').css('display','none');
+	    }
+	});
+</script>
+</body>
+</html>

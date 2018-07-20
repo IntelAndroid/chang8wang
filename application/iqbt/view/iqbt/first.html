@@ -1,0 +1,125 @@
+{include file="index@public/header"} {include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script><!--me +  -->
+<script src="__PUBLIC__/js/bootstrap_validate.js"></script> 
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">首页</h1>
+            </div>
+            <div class="page-content">
+            	<style>
+            		.customerkind {width:20%;overflow:hidden;}
+            		.customerkind .panel a{text-decoration: none;}
+            		.customerkind .panel-body{padding:15px;text-align:center;}
+            		.customerkind .panel-body p{margin-bottom:15px;color:#FFF;font-size:16px;font-weight:bold;}
+            		.customerkind .panel-body .label-content i{font-size:40px;color:#FFF;}
+            	</style>
+            	<div class="panel">
+                    <div class="panel-body">
+                        <div class="col-md-12 padding-0">
+                        	<div class="col-md-2 customerkind"></div>
+		                    <div class="col-md-2 customerkind">
+		                        <div class="panel" style="background: #f49c45;margin-bottom:0;">
+		                        	<a href="">
+			                            <div class="panel-body">
+			                                <p>通知公告（{$data['tzcount']}）</p>
+			                                <div class="label-content">
+			                                	<i class="icon iconfont icon-remind"></i>
+			                                </div>
+			                            </div>
+		                            </a>
+		                        </div>
+		                    </div>
+		                    <div class="col-md-2 customerkind">
+		                        <div class="panel" style="background: #4cb556;margin-bottom:0;">
+		                        	<a href="">
+			                            <div class="panel-body">
+			                                <p>企业信息维护</p>
+			                                <div class="label-content">
+			                                	<i class="icon iconfont icon-survey"></i>
+			                                </div>
+			                            </div>
+			                        </a>    
+		                        </div>
+		                    </div>
+		                    <div class="col-md-2 customerkind">
+		                        <div class="panel" style="background: #e85656;margin-bottom:0;">
+		                        	<a href="">
+			                            <div class="panel-body">
+			                                <p>数据统计</p>
+			                                <div class="label-content">
+			                                	<i class="icon iconfont icon-shujubaobiao"></i>
+			                                </div>
+			                            </div>
+			                        </a>    
+		                        </div>
+		                    </div>
+		                    <div class="col-md-2 customerkind"></div>
+		                </div>    
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-body container-fluid padding-top-0">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                	<div class="example example-buttons">
+                                        <h4 class="padding-bottom-10 btborder">入驻信息</h4>
+                                    </div>
+                                    <div class="example">
+                                        <form class="form-horizontal">
+                                        	<div class="form-group col-md-12"> <!--警告：has-warning 成功：has-success 出错：has-error-->
+                                        		<label class="col-sm-2 control-label padding-bottom-20">空间名称：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                	<label class="control-label">海创汇</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">房间信息：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">金鹰-301；金鹰-402</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">联系人：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">张三</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">联系方式：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">15806553265</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同编号：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">09876543247781</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">入孵合同入孵合同</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同开始日期：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">2017-09-12</label>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同结束日期：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <label class="control-label">2018-09-12</label>
+                                                </div>
+				                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{include file="index@public/footer"}

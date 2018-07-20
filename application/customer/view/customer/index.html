@@ -1,0 +1,496 @@
+{include file="index@public::header"}
+{include file="index@public/search"}
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/themes/echarts.js"></script>
+
+<script>
+	Breakpoints();
+	function actFmt(value, row, index) {
+//		return '<a href={:url("/customer/Customer/editcustomer/id/'+row.id+'")} onClick="editCstm()" class="rapass ml10"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="编辑" title="编辑">'+
+//		return '<a  onclick="editCstm('+row.id+','+row.cstmstatus+')" class="rapass ml10"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="编辑" title="编辑">'+
+//				'<i class="icon wb-edit" aria-hidden="true"></i>'+
+//				'</button></a>'+
+//				'<a onclick="editFlow('+row.id+','+row.cstmstatus+')" class="rapass ml10"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="跟进" title="跟进">'+
+//				'<i class="icon wb-flag" aria-hidden="true"></i>'+
+//				'</button></a>';
+
+
+		return '<a  onclick="editCstm('+row.id+','+row.cstmstatus+')" class="rapass ml10">' +
+				'<button type="button" class="btn btn-outline btn-primary btn-xs">&nbsp;编辑&nbsp;</button>&nbsp;'+
+				'</a>'+
+				'<a onclick="editFlow('+row.id+','+row.cstmstatus+')" class="rapass ml10">' +
+				'&nbsp;<button type="button" class="btn btn-outline btn-info btn-xs">跟进&nbsp;</button>'+
+				'</button></a>';
+
+
+	}
+	function nameFmt(value, row, index) {
+		if (row.backlog==0) {
+			return '<a href="javascript:void(0)" onclick="detail('+row.id+')" >' + row.name + '</a>';
+		}else{
+			return '<a href="javascript:void(0)" onclick="detail('+row.id+')" ><b>' + row.name + '</b></a>';
+		}
+	}
+	//	编辑按钮点击事件
+	function editCstm(id,cstm){
+		session('id',id);
+		session('cstmstatus',cstm);
+		location.href="{:url('/customer/Customer/editcustomer')}";
+	}
+	//	跟进按钮点击事件
+	function editFlow(id,cstm){
+		session('id',id);
+		session('cstmstatus',cstm);
+		location.href="{:url('/customer/Customer/addflow')}";
+	}
+	//客户名称 点击事件
+	function detail(id){
+		session('id',id);
+		location.href="{:url('/customer/Customer/detail')}";
+	}
+	$(function () {
+/*		var id=location.href.substr(location.href.indexOf('id=')+3);
+		alert(id);
+		var needle=id.indexOf('.');
+		id=id.substr(0,needle);//地址栏取id
+		alert(id);*/
+		//test
+		/*$('#searchname').on('input',function(){
+			var value=$(this).val();
+			$("input[name='start']").val(value);
+		})*/
+		//获取角标/数量数据
+		cstmpost('',"{:url('/customer/Customer/cusNumber')}",{},function(res){
+			assign(res);
+			//潜在客户的角标
+			var text=$('#newnum').text();
+			$('#newnum2').text(text);
+		},'JSON');
+		//excel导入
+		$("#xlsIn").click(function () {
+			location.href="{:url('/index/Index/customerXlsData')}";
+		});
+		//excel导出
+		$('.btn-xls').click(function(){
+			var form=$(this).attr('data-form');
+			var table=$(this).prev().attr('feresh-table');
+			var postUrl=$('#'+table).attr('data-url');
+			var search=$("#"+form+ " input[name='search']").val();
+			var start=$("#"+form+ " input[name='start']").val();
+			var end=$("#"+form+ " input[name='end']").val();
+			var url=$(this).attr('data-url');
+			//检测是否有数据要下载
+			cstmpost('.btn-xls',postUrl,{search:search,start:start,end:end},function(res){
+				if(res.total==0){
+					toastr.warning('没有相关数据');
+				}else{
+					url=url.replace('/.html','');
+					if(search!='') {
+						url += "/search/" + search;
+					}
+					if(start!=''){
+						url+= "/start/" + start;
+					}
+					if(end!=''){
+						url+= "/end/" + end;
+					}
+					location.href=url;
+				}
+			})
+
+		})
+	});
+
+
+</script>
+
+<main class="site-page">
+	<div class="page-container" id="admui-pageContent">
+		<div class="page animation-fade page-account">
+			<div class="page-content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel">
+							<div class="panel-body nav-tabs-animate">
+								<ul class="nav nav-tabs nav-tabs-line" role="tablist">
+									<li class="news accout-msg active" role="presentation">
+										<a href="#message" aria-controls="message" role="tab" data-toggle="tab">
+                                           	全部<span>（<span id="totalnum"></span>）</span>
+                                            <span class="badge up badge-warning" id="newnum"></span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-log">
+                                        <a href="#log" aria-controls="log" role="tab" data-toggle="tab">
+                                            潜在客户<span>（<span id="qnum"></span>）</span>
+                                            <span class="badge up badge-warning" id="newnum2"></span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-extend">
+                                        <a href="#extend" aria-controls="extend" role="tab" data-toggle="tab">
+                                    		意向客户<span>（<span id="ynum"></span>）</span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-virtual">
+                                        <a href="#virtual" aria-controls="virtual" role="tab" data-toggle="tab">
+                                    		拟入驻客户<span>（<span id="nnum"></span>）</span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-invalid">
+                                        <a href="#invalid" aria-controls="invalid" role="tab" data-toggle="tab">
+                                    		无效客户<span>（<span id="wnum"></span>）</span>
+                                        </a>
+                                    </li>
+									<li role="presentation" class="account-picTable">
+										<a href="#picTable" aria-controls="picTable" role="tab" data-toggle="tab" onclick='preserved()'>
+											图表统计
+										</a>
+									</li>
+									<div class="btn-actions pull-right margin-left-15">
+										<a href="{:url('/customer/Customer/addCustomer')}"><button type="button" class="btn btn-outline btn-info">&nbsp;&nbsp;<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;新建客户&nbsp;&nbsp;</button></a>
+									</div>
+									<div class="btn-actions pull-right margin-left-15">
+										<button type="button" class="btn btn-outline btn-primary" id="xlsIn">&nbsp;&nbsp;<i class="fa fa-share" aria-hidden="true"></i>&nbsp;批量导入&nbsp;&nbsp;</button>
+									</div>
+                                </ul>
+                                <div class="tab-content margin-top-15">
+                                	<!--全部-->
+                                    <div class="tab-pane animation-slide-left tab-message active" role="tabpanel" id="message">
+                                        <div class="row row-lg">
+				                            <div class="col-md-12">
+			                                    <div class="example">
+													<form action="" id="waitForm">
+														<div class="form-group col-md-3 padding-left-0">
+															<div class="input-group">
+																<span class="input-group-addon">客户名称</span>
+																<input id='searchname' name="search" type="text" class="form-control"  placeholder="请输入客户名称或电话">
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+																<div class="input-group">
+																	<span class="input-group-addon"><i class="icon wb-calendar"></i></span>
+																	<input type="text" class="form-control" placeholder="开始时间" name="start">
+																</div>
+																<div class="input-group">
+																	<span class="input-group-addon">至</span>
+																	<input type="text" class="form-control" placeholder="结束时间" name="end" >
+																</div>
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="btn-actions">
+																<button type="button" class="btn btn-primary btn-search" feresh-table="FacTable" data-form="waitForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+																<!--<a href="{:url('customer/Customer/exportCus')}"><button type="button" class="btn btn-info" >&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button></a>-->
+																<button type="button" class="btn btn-info btn-xls" data-form="waitForm" data-url="{:url('/customer/Customer/exportCus/')}">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+															</div>
+														</div>
+													</form>
+					                            </div>
+						                    </div>
+						                </div>
+											<table id="FacTable" class="table table-bordered text-center" data-keywords="" data-side-pagination="server" data-toolbar="false" data-show-toggle="false" data-toggle="table"  data-search="false"
+												    data-url="{:url('/customer/Customer/getCusList')}" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                        	<thead>
+	                                            <tr>
+	                                                <th  class="text-center"  data-formatter="nameFmt">客户名称</th>
+	                                                <th class="text-center" data-field="addtime" data-sortable="true">创建时间</th>
+	                                                <th class="text-center" data-field="contact">联系人</th>
+	                                                <th class="text-center" data-field="mobile">联系电话</th>
+	                                                <th class="text-center" data-field="sourceText" data-sortable="true">来源渠道</th>
+	                                                <th class="text-center" data-field="cstmstatusText" data-sortable="true">客户状态</th>
+													<th class="text-center" data-field="realname" >跟进人</th>
+													<th class="text-center" data-field="flowtime" data-sortable="true">跟进时间</th>
+	                                                <th class="text-center" data-formatter="actFmt" data-events="actEvt">操作</th>
+	                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <!--潜在-->
+                                    <div class="tab-pane animation-slide-left tab-log" role="tabpanel" id="log">
+                                    	<div class="row row-lg">
+				                            <div class="col-md-12">
+			                                    <div class="example">
+													<form action="" id="qForm">
+														<div class="form-group col-md-3 padding-left-0">
+															<div class="input-group">
+																<span class="input-group-addon">客户名称</span>
+																<input name="search" type="text" class="form-control"  placeholder="请输入客户名称或电话">
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+																<div class="input-group">
+																	<span class="input-group-addon"><i class="icon wb-calendar"></i></span>
+																	<input type="text" class="form-control" placeholder="开始时间" name="start">
+																</div>
+																<div class="input-group">
+																	<span class="input-group-addon">至</span>
+																	<input type="text" class="form-control" placeholder="结束时间" name="end">
+																</div>
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="btn-actions">
+																<button type="button" class="btn btn-primary btn-search" feresh-table="qTable" data-form="qForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+																<!--<a href="{:url('/customer/Customer/exportCus/status/6002001')}"><button type="button" class="btn btn-info" data-url="">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button></a>-->
+																<button type="button" class="btn btn-info btn-xls" data-form="qForm" data-url="{:url('/customer/Customer/exportCus/status/6002001/')}">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+															</div>
+														</div>
+													</form>
+					                            </div>
+						                    </div>
+						                </div>
+										<table id="qTable" class="table table-bordered text-center"  data-side-pagination="server" data-pagination="true" data-toggle="table"
+											  data-url="{:url('/customer/Customer/getCusList',array('status'=>6002001))}">
+											<thead>
+												<tr>
+													<th  class="text-center"  data-formatter="nameFmt">客户名称</th>
+													<th class="text-center" data-field="addtime" >创建时间</th>
+													<th class="text-center" data-field="contact">联系人</th>
+													<th class="text-center" data-field="mobile">联系电话</th>
+													<th class="text-center" data-field="sourceText">来源渠道</th>
+													<th class="text-center" data-field="cstmstatusText">客户状态</th>
+													<th class="text-center" data-field="flowtime">跟进时间</th>
+													<th class="text-center" data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+												</tr>
+											</thead>
+                                        </table>
+                                    </div>
+                               		<!--意向-->
+									<div class="tab-pane animation-slide-left tab-extend" role="tabpanel" id="extend">
+										<div class="row row-lg">
+				                            <div class="col-md-12">
+			                                    <div class="example">
+													<form action="" id="yForm">
+														<div class="form-group col-md-3 padding-left-0">
+															<div class="input-group">
+																<span class="input-group-addon">客户名称</span>
+																<input name="search" type="text" class="form-control"  placeholder="请输入客户名称或电话">
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+																<div class="input-group">
+																	<span class="input-group-addon"><i class="icon wb-calendar"></i></span>
+																	<input type="text" class="form-control" placeholder="开始时间" name="start" >
+																</div>
+																<div class="input-group">
+																	<span class="input-group-addon">至</span>
+																	<input type="text" class="form-control" placeholder="结束时间" name="end">
+																</div>
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="btn-actions">
+																<button type="button" class="btn btn-primary btn-search" feresh-table="yTable" data-form="yForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+																<button type="button" class="btn btn-info btn-xls" data-form="yForm" data-url="{:url('/customer/Customer/exportCus/status/6002002/')}">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+															</div>
+														</div>
+													</form>
+					                            </div>
+						                    </div>
+						                </div>
+										<table  id="yTable" class="table table-bordered text-center" data-side-Pagination="server" data-pagination="true" data-toggle="table"
+												data-url="{:url('/customer/Customer/getCusList',array('status'=>6002002))}" data-page-list="[5, 10, 20, 50, 100, 200]">
+											<thead>
+											<tr>
+												<th  class="text-center"  data-formatter="nameFmt">客户名称</th>
+												<th class="text-center" data-field="addtime" >创建时间</th>
+												<th class="text-center" data-field="contact">联系人</th>
+												<th class="text-center" data-field="mobile">联系电话</th>
+												<th class="text-center" data-field="sourceText">来源渠道</th>
+												<th class="text-center" data-field="cstmstatusText">客户状态</th>
+												<th class="text-center" data-field="flowtime">跟进时间</th>
+												<th class="text-center" data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+											</tr>
+											</thead>
+                                        </table>
+                               		</div>
+                                	<!--拟入驻-->
+									<div class="tab-pane animation-slide-left tab-virtual" role="tabpanel" id="virtual">
+										<div class="row row-lg">
+				                            <div class="col-md-12">
+			                                    <div class="example">
+													<form action="" id="nForm">
+														<div class="form-group col-md-3 padding-left-0">
+															<div class="input-group">
+																<span class="input-group-addon">客户名称</span>
+																<input name="search" type="text" class="form-control"  placeholder="请输入客户名称或电话">
+															</div>
+														</div>
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+																<div class="input-group">
+																	<span class="input-group-addon"><i class="icon wb-calendar"></i></span>
+																	<input type="text" class="form-control" placeholder="开始时间" name="start" id="start">
+																</div>
+																<div class="input-group">
+																	<span class="input-group-addon">至</span>
+																	<input type="text" class="form-control" placeholder="结束时间" name="end" id="end">
+																</div>
+															</div>
+														</div>
+				                                    <div class="form-group col-md-4 padding-left-0">
+				                                    	<div class="btn-actions">
+															<button type="button" class="btn btn-primary btn-search" feresh-table="nTable" data-form="nForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+															<button type="button" class="btn btn-info btn-xls" data-form="nForm" data-url="{:url('/customer/Customer/exportCus/status/6002003/')}">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+														</div>
+				                                    </div>
+													</form>
+					                            </div>
+						                    </div>
+						                </div>
+										<table id="nTable" class="table table-bordered text-center" data-side-Pagination="server" data-pagination="true" data-toggle="table"
+											   data-url="{:url('/customer/Customer/getCusList',array('status'=>6002003))}" data-page-list="[5, 10, 20, 50, 100, 200]">
+											<thead>
+											<tr>
+												<th  class="text-center"  data-formatter="nameFmt">客户名称</th>
+												<th class="text-center" data-field="addtime" >创建时间</th>
+												<th class="text-center" data-field="contact">联系人</th>
+												<th class="text-center" data-field="mobile">联系电话</th>
+												<th class="text-center" data-field="sourceText">来源渠道</th>
+												<th class="text-center" data-field="cstmstatusText">客户状态</th>
+												<th class="text-center" data-field="flowtime">跟进时间</th>
+												<th class="text-center" data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+											</tr>
+											</thead>
+                                        </table>
+                               		</div>
+                                	<!--无效客户-->
+									<div class="tab-pane animation-slide-left tab-invalid" role="tabpanel" id="invalid">
+										<div class="row row-lg">
+				                            <div class="col-md-12">
+			                                    <div class="example">
+													<form action="" id="wForm">
+		                                        	<div class="form-group col-md-4 padding-left-0">
+		                                        		<div class="input-group">
+						                                    <span class="input-group-addon">客户名称</span>
+						                                    <input type="text" class="form-control"  name="search" id="" placeholder="请输入客户名称或电话">
+						                                </div>
+		                                        	</div>
+		                                        	<div class="form-group col-md-4 padding-left-0">
+				                                        <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+															<div class="input-group">
+																<span class="input-group-addon"><i class="icon wb-calendar"></i></span>
+																<input type="text" class="form-control" placeholder="开始时间" name="start" >
+															</div>
+															<div class="input-group">
+																<span class="input-group-addon">至</span>
+																<input type="text" class="form-control" placeholder="结束时间" name="end" >
+															</div>
+				                                        </div>
+				                                    </div>
+				                                    <div class="form-group col-md-4 padding-left-0">
+				                                    	<div class="btn-actions">
+															<button type="button" class="btn btn-primary btn-search" feresh-table="wTable" data-form="wForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+															<button type="button" class="btn btn-info btn-xls" data-form="wForm" data-url="{:url('/customer/Customer/exportCus/status/6002004/')}">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+														</div>
+				                                    </div>
+													</form>
+					                            </div>
+						                    </div>
+						                </div>
+										<table  id="wTable" class="table table-bordered text-center" data-side-Pagination="server" data-pagination="true" data-toggle="table"
+												data-url="{:url('/customer/Customer/getCusList',array('status'=>6002004))}">
+											<thead>
+											<tr>
+												<th  class="text-center"  data-formatter="nameFmt">客户名称</th>
+												<th class="text-center" data-field="addtime" >创建时间</th>
+												<th class="text-center" data-field="contact">联系人</th>
+												<th class="text-center" data-field="mobile">联系电话</th>
+												<th class="text-center" data-field="sourceText">来源渠道</th>
+												<th class="text-center" data-field="cstmstatusText">客户状态</th>
+												<th class="text-center" data-field="flowtime">跟进时间</th>
+												<th class="text-center" data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+											</tr>
+											</thead>
+                                        </table>
+                               		</div>
+									<input id="url" type="hidden" value="{:url('customer/Customer/getCstmData')}">
+									<!--图表-->
+									<div class="tab-pane animation-slide-left tab-picTable" role="tabpanel" id="picTable">
+										<!--<div class="page-container" id="admui-pageContent">-->
+											<!--<div class="page animation-fade page-forms">-->
+												<div class="page-content">
+													<div class="row">
+														<div class="col-md-12">
+															<style>
+																.panel0{border:1px solid #d6d6d8;}
+																.panel0 h4 span{color:#2f84c5;}
+																.customerkind {width:20%;overflow:hidden;}
+																.customerkind .panel-body{padding:15px;}
+																.customerkind .panel-body > p{margin-bottom:15px;color:#FFF;}
+																.customerkind .col-md-9 p {color:#FFF;line-height:40px;}
+																.customerkind p span {color:#FFF;font-size:36px;font-weight:bold;}
+															</style>
+															<div class="panel panel0">
+																<h4 class="padding-top-10 margin-0"><span>▋</span> 客户状态</h4>
+																<div class="panel-body">
+																	<div class="col-md-12 padding-0 customerStatus">
+
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-3">
+															<div class="panel introduce-info panel0">
+																<h4 class="padding-top-10 margin-0"><span>▋</span> 客户转化率</h4>
+																<div class="panel-body height-200" id="doug">
+
+																</div>
+															</div>
+														</div>
+														<div class="col-md-9">
+															<div class="panel changelog-info panel0">
+																<h4 class="padding-top-10 margin-0"><span>▋</span> 无效客户分析</h4>
+																<div class="panel-body height-200" id="douga">
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-12">
+															<div class="panel panel0">
+																<h4 class="padding-top-10 margin-0"><span>▋</span> 客户趋势</h4>
+																<div class="panel-body height-300" id="basic">
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<!--&lt;!&ndash; 入驻管理数据模拟 &ndash;&gt;-->
+													<!--<div class="row">-->
+														<!--<div class="col-md-12">-->
+															<!--<div class="panel panel0">-->
+																<!--<h4 class="padding-top-10 margin-0"><span>▋</span> 入驻管理</h4>-->
+																<!--<div class="panel-body height-300" id="enter">-->
+
+																<!--</div>-->
+															<!--</div>-->
+														<!--</div>-->
+													<!--</div>-->
+												</div>
+											<!--</div>-->
+										<!--</div>-->
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="__PUBLIC__/themes/chart.js"></script>
+
+{include file="index@public::footer"}

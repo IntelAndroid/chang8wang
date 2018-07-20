@@ -1,0 +1,85 @@
+{include file="index@public/header"} {include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script><!--me +  -->
+<script src="__PUBLIC__/js/bootstrap_validate.js"></script> 
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script>
+Breakpoints();
+
+	$(function () {
+		$("#btnDispose").click(function(){
+	        var url=$(this).attr("data-url");
+	        id = mulitecheck("visit");  //提示至少选择一条记录
+	        if (id != null) {
+	               tc(id);
+	        }
+	    });
+	});	
+    
+	//操作(列表填充)-完成
+    function read(value,row,index){
+    	return['<a onclick="tc('+row.id+')"><button type="button" class="btn  btn-outline btn-xs btn-success pass" >',
+               ' &nbsp;完成&nbsp;</button>&nbsp;','</a>'].join("");
+    }
+    //弹窗 ： 确定/取消
+    function tc(id){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定完成么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="changeStatus(\''+id+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    
+   //弹窗 ：点击确定
+   function changeStatus(id){
+	   //alert(id);
+       var url="{:url('work/work/dispose')}";
+       //eid 禁用效果
+       cstmpost('.pass',url,{id:id},function(res){
+           if(res.code==1){
+               toastr.success(res.msg);
+                setTimeout(function(){
+               		location.href = "{:url('/work/work/visit')}"
+                },500);
+           }else{
+               toastr.error(res.msg);
+           }
+       })
+  }
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">待办事项 / 预约参观</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                    	<div class="row row-lg">
+                            <div class="col-md-12 margin-bottom-20">
+			                	<button type="button" class="btn btn-outline btn-info pull-right" id="btnDispose">&nbsp;&nbsp;批量处理&nbsp;&nbsp;</button>
+		                    </div>
+		                </div>
+		                <table class="table table-bordered text-center" id="visit" data-side-pagination="server" data-toggle="table" data-url="{:url('/work/Work/getVisitList',array('status'=>6024003))}"
+                               data-show-refresh="false" data-show-toggle="false" data-show-columns="false"
+                               data-toolbar="true" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]"
+                               data-striped="true">
+                            <thead>
+                               <tr>
+                               <th data-field="isCheck" data-checkbox="true"></th>
+                               <th data-field="addtime" class="text-center">申请时间</th>
+                               <th data-field="name" class="text-center">公司名称</th>
+                               <th data-field="contact" class="text-center">联系人</th>
+                               <th data-field="mobile" class="text-center">联系方式</th>
+                               <th data-field="action" class="text-center" data-formatter="read">操作</th>
+                               </tr>
+                            </thead>
+                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

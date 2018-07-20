@@ -1,0 +1,188 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<style>
+    .kv-upload-progress{
+        display: none;
+    }
+</style>
+<script>
+    $(document).ready(function(){
+        // 当页面存在初始数据   编辑入驻客户信息时候
+        var id = session("aplDetailId");
+        var url = "{:url('/Meetroom/Meetroom/review')}";
+        var data = {};
+        data.mtAplId = id;
+        cstmpost("#",url,data, function (res) {
+            assign(res)
+        });
+
+    });
+
+    // 楼层获取  id   默认值
+    function initBuild(domID,bdefault,floor)
+    {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if($("."+domID).attr('class') != 'control-label'&&domID == 'rqst_build') {
+            bdefault = bdefault ? bdefault : '';
+            var ophtml = '';
+            cstmpost('',url, {bd: bdefault},function (res) {
+                ophtml = res
+                $("." + domID).html(res);
+                $("."+domID).attr("data-default",floor);
+                $("."+domID).change();
+            });
+        }
+    }
+</script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-header">
+                <h1 class="page-title">会议室预定详情</h1>
+            </div>
+            <div class="page-content">
+                <div class="row">
+                    <form id="aplStatusForm" class="form-horizontal" >
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-body container-fluid padding-top-0">
+                                    <div class="row row-lg">
+                                        <div class="col-md-12">
+                                            <div class="example-wrap">
+                                                <div class="example example-buttons">
+                                                    <h4 class="padding-bottom-10 btborder">会议室信息</h4>
+                                                </div>
+                                                <div class="example">
+                                                    <input type="hidden" name="id" value="" id="id">
+                                                    <input type="hidden"  name="free" value="" id="free">
+                                                    <input type="hidden" name="price" value="" id="price">
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 会议室名称：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="mtroomName"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 楼座：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="buildName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 楼层：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="floor"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 容纳人数：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="acceptName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 是否显示：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="publishName"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 是否免费：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="freeName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 收费单价：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="od-price"></label><span>元/小时</span>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 是否需要审核：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="auditName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 配套设施：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="facilityName"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 会议室介绍：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="desc"></label>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="clearfix visible-sm-block"></div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-body container-fluid padding-top-0">
+                                    <div class="row row-lg">
+                                        <div class="col-md-12">
+                                            <div class="example-wrap">
+                                                <div class="example example-buttons">
+                                                    <h4 class="padding-bottom-10 btborder">申请信息</h4>
+                                                </div>
+                                                <div class="example">
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 申请企业名称：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="etprsName"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 申请人：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="realname"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 提交申请时间：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="addtime"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 会议名称：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="meetName"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 padding-0">
+                                                        <label class="col-sm-2 control-label"> 开始时间：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="starttime"></label>
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"> 结束时间：</label>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label" id="endtime"></label>
+                                                        </div>
+                                                        <!--<label class="col-sm-2 control-label"> 实缴金额：</label>
+                                                        <div class="col-sm-1" style='display:flex;padding-top:18px'>
+                                                            <input type="text" name="paid" id="od-payable" class="form-control control-label" style='padding-top:0'><label style='margin-top:4px;margin-left:10px;'> 元</label>
+                                                        </div>-->
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!--<div class="btn-actions text-center">
+                    <button type="button" class="btn btn-primary margin-3 pass changeAplStatus" data-form="aplStatusForm" data-status="7001002">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;通过&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-danger margin-3 refuse changeAplStatus" data-form="aplStatusForm" data-status="7001003">&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;拒绝&nbsp;&nbsp;</button>
+                </div>-->
+            </div>
+        </div>
+    </div>
+    </div>
+</main>
+{include file="index@public/footer"}

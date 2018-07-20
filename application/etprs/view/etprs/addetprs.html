@@ -1,0 +1,218 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script>
+    $(document).ready(function(){
+        // 下一步,保存企业信息
+        $("#addEtprs").on("click", function () {
+            var url="{:url('/Etprs/Etprs/saveEtprsInfo')}";
+            var data=serializeData("etprsForm");
+            console.log()
+            cstmpost("#addEtprs",url,data, function (data) {
+                if(data["code"]=='1'){
+                    toastr.success(data["msg"]);
+                    setTimeout(function(){
+                        location.href=data["url"];
+                    },500);
+                }else{
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+        var url="{:url('/etprs/Etprs/uploadFile')}";
+        var oFileInput = new FileInput();
+        var heaaderText=$("#huserheader").attr('data-path');
+        if(heaaderText==""||heaaderText==undefined||heaaderText==null){
+            oFileInput.Init("userheader",url,[],"huserheader","buslicpreview");
+        }else{
+            oFileInput.Init("userheader",url,["<img src='__PUBLIC__/"+heaaderText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"huserheader","buslicpreview2");
+        }
+
+        var heaaderText2=$("#huserheader2").attr('data-path');
+        if(heaaderText2==""||heaaderText2==undefined||heaaderText2==null){
+            oFileInput.Init("userheader2",url,[],"huserheader2","buslicpreview2");
+        }else{
+            oFileInput.Init("userheader2",url,["<img src='__PUBLIC__/"+heaaderText2+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"huserheader2","buslicpreview2");
+        }
+    });
+
+
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">发起入驻</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                    <div class="example example-buttons">
+                                        <button type="button" class="btn btn-primary">基本信息</button>
+                                    </div>
+                                    <form class="form-horizontal" id="etprsForm">
+                                    <div class="example">
+                                            <div class="form-group col-md-6"> <!--警告：has-warning 成功：has-success 出错：has-error-->
+                                                <label class="col-sm-3 control-label">客户类型：</label>
+                                                <div class="col-sm-9">
+                                                    {:widget("common/HtmlWidget/initDictRedio",['iptname'=>'type','con'=>['code'=>array('like','6003%'),'level'=>'2'],'default'=>isset($data['sex'])?$data['sex']:'6003001'])}
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 客户名称：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="name" value="{$current.name|default=''}"  placeholder="客户名称" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 联系人：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="contact" placeholder="联系人" value="{$current.contact|default=''}" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label tele"><span class="required">*</span> 联系电话：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="mobile" placeholder="联系电话" value="{$current.mobile|default=''}" autocomplete="off" id="inputPhone" data-plugin="formatter" data-pattern="[[999]]-[[9999]]-[[9999]]">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 来源渠道：</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="source">
+                                                        {:widget("common/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','6001%'),'level'=>'2'),'default'=>isset($current.source) ? $current.status : ''])}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 客户状态：</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="status">
+                                                        {:widget("common/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','6008%'),'level'=>'2'),'default'=>isset($current.status) ? $current.status : ''])}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">意向需求：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="col-sm-4 padding-0">
+                                                        <select class="form-control changeBuildFloor" name="rqst_build" data-url="{:url('/etprs/Etprs/changeBuild')}">
+                                                            <option>选择空间</option>
+                                                            {:widget("common/HtmlWidget/initBuildFloor",['isBuild'=>'1','default'=>isset($current.rqst_build) ? $current.rqst_build : ''])}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4 padding-0">
+                                                        <select class="form-control" id="floorSelect" name="rqst_floor" data-default="{$current.rqst_floor|default=''}">
+                                                            <option>选择楼层</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4 padding-0">
+                                                        <input type="text" class="form-control" name="" placeholder="填写房间" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">需求时间：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                        <div class="input-group">
+					                                        <span class="input-group-addon">
+					                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+					                                        </span>
+                                                            <input type="text" class="form-control" name="rqst_start" value="{$current.rqst_start|default=''}">
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"> 至 </span>
+                                                            <input type="text" class="form-control" name="rqst_end" value="{$current.rqst_end|default=''}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">详细需求：</label>
+                                                <div class="col-sm-9">
+                                                    <textarea class="form-control" placeholder="简介" name="rqst" >{$current.rqst|default=''}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                    </div>
+                                    <div class="example example-buttons">
+                                        <button type="button" class="btn btn-primary">企业信息</button>
+                                    </div>
+                                    <div class="example">
+                                            <div class="form-group col-md-12 padding-0">
+                                                <div class="col-md-6">
+                                                    <label class="col-sm-3 control-label"><span class="required">*</span> 法人或团队负责人：</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" name="legalname" placeholder="法人或团队负责人姓名" autocomplete="off" value="{$current.legalname|default=''}">
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix visible-sm-block"></div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">营业执照上传：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="userheader" value="">
+                                                            <input type="hidden" data-placeholder="营业执照上传"  name="bp" id="huserheader" class="opt-require" value='{$current.buslic|default=""}'>
+                                                        </span>
+                                                                                                            <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu buslicpreview" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过2M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">项目计划书：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="userheader2" value="">
+                                                            <input type="hidden" data-placeholder="项目计划书"  name="bp" id="huserheader2" class="opt-require" value='{$current.bp|default=""}'>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu buslicpreview2" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'ppt','pptx','pdf'，不能超过50M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                            <input type="hidden" name="id" value="{$current.id|default=0}">
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-actions text-center">
+                            <button type="button" class="btn btn-primary" id="addEtprs">下一步</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

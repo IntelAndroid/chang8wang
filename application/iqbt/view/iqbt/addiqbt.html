@@ -1,0 +1,936 @@
+{include file="index@public:header"}
+<!--弹出层插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/webui-popover/webui-popover.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/alertify-js/alertify.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/formvalidation/formValidation.css">
+
+
+<!-- 插件 CSS -->
+<link rel="stylesheet" href="__PUBLIC__/vendor/select2/select2.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/icheck/icheck.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/switchery/switchery.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/clockpicker/clockpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-colorpicker/colorpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-touchspin/bootstrap-touchspin.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/card/card.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/fontawesome-iconpicker/iconpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jt-timepicker/jquery-timepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-strength/jquery-strength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/multi-select/multi-select.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/typeahead-js/typeahead.css">
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<!--图片裁剪插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/cropper/cropper.css">
+<link rel="stylesheet" href="__PUBLIC__/css/examples/forms/image-cropping.css">
+<link rel="stylesheet" href="__PUBLIC__/css/main.css">
+
+<!-- page CSS-->
+<link rel="stylesheet" href="__PUBLIC__/css/examples/forms/layouts.css">
+
+<!--图片裁切-->
+<!--<script src="__PUBLIC__/js/cropper.js"></script>-->
+<script src="__PUBLIC__/js/main.js"></script>
+
+<script>
+    Breakpoints();
+</script>
+
+
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/vendor/select2/select2.full.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="__PUBLIC__/vendor/icheck/icheck.min.js"></script>
+<script src="__PUBLIC__/vendor/switchery/switchery.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.min.js"></script>
+<script src="__PUBLIC__/vendor/clockpicker/bootstrap-clockpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-colorpicker/bootstrap-colorpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-knob/jquery.knob.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="__PUBLIC__/vendor/card/jquery.card.js"></script>
+<script src="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/jt-timepicker/jquery.timepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/datepair-js/jquery.datepair.min.js"></script>
+<script src="__PUBLIC__/vendor/fontawesome-iconpicker/fontawesome-iconpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-strength/jquery-strength.min.js"></script>
+<script src="__PUBLIC__/vendor/multi-select/jquery.multi-select.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/bloodhound.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/typeahead.jquery.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/advanced.js"></script>
+<!--编辑器-->
+<link href="__VD__/summernote/summernote.css" rel="stylesheet">
+<script src="__VD__/summernote/summernote.min.js"></script>
+
+</head>
+<body>
+<script>
+    //提供服务渲染checkbox
+    function servicesCheck(fname, code, level, sdefault) {
+        if (!code || code == 0 || code == undefined) {
+            return false;
+        }
+        var selhtml= ['<div class="checkbox-custom checkbox-primary checkbox-inline">',
+            '<input type="checkbox"  id="sfull" value="1" >',
+            '<label for="sfull">全选</label>',
+            '</div>'].join("");
+        for (var i = 0; i < sysData.length; i++) {
+            if (sysData[i].code && sysData[i].code.indexOf(code, 0) === 0 && sysData[i].level == level) {
+                if (sdefault.includes(sysData[i].code)) {
+                    selhtml += ['<div class="checkbox-custom checkbox-primary checkbox-inline">',
+                        '				                                        <input type="checkbox" name="' + fname + '" id="' + sysData[i].code + '" value="' + sysData[i].code + '" checked>',
+                        '				                                        <label for="' + sysData[i].code + '">' + sysData[i].name + '</label>',
+                        '				                                    </div>'].join("");
+                } else {
+                    selhtml += ['<div class="checkbox-custom checkbox-primary checkbox-inline">',
+                        '				                                        <input type="checkbox" name="' + fname + '" id="' + sysData[i].code + '" value="' + sysData[i].code + '" >',
+                        '				                                        <label for="' + sysData[i].code + '">' + sysData[i].name + '</label>',
+                        '				                                    </div>'].join("");
+
+                }
+            }
+        }
+        return selhtml;
+    }
+    //配套设施渲染checkbox
+    function facilityChecks(fname, code, level, sdefault) {
+        if (!code || code == 0 || code == undefined) {
+            return false;
+        }
+        var selhtml= ['<div class="checkbox-custom checkbox-primary checkbox-inline">',
+            '<input type="checkbox" id="ffull" value="1" >',
+            '<label for="ffull">全选</label>',
+            '</div>'].join("");
+        for (var i = 0; i < sysData.length; i++) {
+            if (sysData[i].code && sysData[i].code.indexOf(code, 0) === 0 && sysData[i].level == level) {
+                if (sdefault.includes(sysData[i].code)) {
+                    selhtml += ['<div class="checkbox-custom checkbox-primary checkbox-inline">',
+                        '				                                        <input type="checkbox" name="' + fname + '" id="' + sysData[i].code + '" value="' + sysData[i].code + '" checked>',
+                        '				                                        <label for="' + sysData[i].code + '">' + sysData[i].name + '</label>',
+                        '				                                    </div>'].join("");
+                } else {
+                    selhtml += ['<div class="checkbox-custom checkbox-primary checkbox-inline">',
+                        '				                                        <input type="checkbox" name="' + fname + '" id="' + sysData[i].code + '" value="' + sysData[i].code + '" >',
+                        '				                                        <label for="' + sysData[i].code + '">' + sysData[i].name + '</label>',
+                        '				                                    </div>'].join("");
+
+                }
+            }
+        }
+        return selhtml;
+    }
+    //编辑器上传图片
+    function uploadPic(files){
+        var smnturl="{:url('/index/Index/smntUpload',array('dir'=>'notice'))}";
+        var smnt = $('#detail');
+        smntUploadFile(files, smnt, smnturl, "__PUBLIC__");
+    }
+    $(document).ready(function() {
+        //初始化编辑器
+        $(".summernote").summernote({
+            lang:"zh-CN",
+            height: 400
+        });
+        var taburl="{:url('/iqbt/Iqbt/iqbtCase')}";
+        //初始化字典
+        var res={data:{iqbttype:'6004001',imgDiv:'',servicesCheck:'',facilityChecks:'',workstyle:'',rgstsptRadio:''}};
+        assign(res);
+        //初始化时间选择控件(数据初始化之后再初始化控件)
+        $('[data-toggle="city-picker"]').citypicker();
+            //如果营业执照为空,禁用下载按钮
+//            if(res.data['busneslic']=='') {
+//                $('.dropdown-toggle').attr('disabled','disabled');
+//            }
+//        }, 'JSON');
+        //保存新增案例
+        window.param=new Object();
+        param.caseId='';
+        $("#addCase").on("click", function () {
+            var url = "{:url('/iqbt/iqbt/savecase')}";
+            var data = serializeData("caseForm");
+            cstmpost("#addCase", url, data, function (data) {
+                if (data["code"] == '1') {
+                    toastr.success(data["msg"]);
+                    //清空新增case框
+                    $('#newname').val('');
+                    $('#newurl').val('http://');
+                    $('#newdesc').val('');
+                    $('#caselogo').val('');
+                    $('.dropify-preview').html('');
+                    setTimeout(function () {
+                        param.caseId+=data.data+',';
+                        var url="{:url('/iqbt/Iqbt/iqbtCase')}";
+                        $('#cancel').click();
+                        $('#caseList').bootstrapTable('refresh',{'url':url,query:param});
+                    }, 500);
+                } else {
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+        //保存编辑案例
+        $("#saveCase").click( function () {
+            var url = "{:url('/iqbt/iqbt/savecase')}";
+            var data = serializeData("editcaseForm1");
+            cstmpost("#saveCase", url, data, function (data) {
+                if (data["code"] == '1') {
+                    toastr.success(data["msg"]);
+                    alert(1)
+                    setTimeout(function () {
+                        $('.close').click();//关闭弹窗
+                        $('#caseList').bootstrapTable('refresh',{'url':taburl,query:param});//刷新案例列表
+                    }, 500);
+                } else {
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+        // 保存空间信息
+        $("#saveIqbt").on("click", function () {
+            var url = "{:url('/iqbt/iqbt/saveiqbt')}";
+            var data = serializeData("iqbtInfo");
+            //案例id
+            data.caseId=param.caseId;
+            //添加编辑器内容
+            var content = $('#detail').code();
+            content = $.trim(content);
+            data["detail"]=content;
+            cstmpost("#saveIqbt", url, data, function (data) {
+                if (data["code"] == '1') {
+                    toastr.success(data["msg"]);
+                    setTimeout(function () {
+                        location.href="{:url('iqbt/Iqbt/iqbtlist')}";
+                    }, 500);
+                } else {
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+        var url = "{:url('/etprs/Etprs/ajaxUploads')}";
+        var oFileInput = new FileInput();
+        var heaaderText = $("#huserheader").attr('data-path');
+        if (heaaderText == "" || heaaderText == undefined || heaaderText == null) {
+            oFileInput.Init("userheader", url, [], "huserheader", "buslicpreview");
+        } else {
+            oFileInput.Init("userheader", url, ["<img src='/public/" + heaaderText + "' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"], "huserheader", "buslicpreview2");
+        }
+
+        var heaaderText2 = $("#huserheader2").attr('data-path');
+        if (heaaderText2 == "" || heaaderText2 == undefined || heaaderText2 == null) {
+            oFileInput.Init("userheader2", url, [], "huserheader2", "buslicpreview2");
+        } else {
+            oFileInput.Init("userheader2", url, ["<img src='/public/" + heaaderText2 + "' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"], "huserheader2", "buslicpreview2");
+        }
+//        var city=$("span[data-count='city']").text('武汉市');
+    });
+    //下载图片
+    function downFile(id){
+        var url="{:url('/etprs/Etprs/download/id/"+id+"')}";
+        window.open(url,"_blank");
+    }
+    //三级联动
+    function initDistinct(code,title){
+//            alert(code+"----"+title);
+        $("input[name='districtId']").val(code);
+    }
+    function logoFmt(value, row, index) {
+        if(row.logo!=null&& row.logo!="图片不存在") {
+            return '<img src="__PUBLIC__' + row.logo + '"  width="40">';
+        }
+    }
+    //案例操作
+    function actFmt(value, row, index){
+        return['<button onclick="editCase('+row.id+')" id="editcase" type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-target="#editcaseForm" data-toggle="modal" aria-hidden="true" role="button" data-toggle="tooltip" data-original-title="编辑">',
+            '<i class="icon wb-edit" aria-hidden="true" title="编辑"></i>',
+            '</button>',
+            '</span>',
+            '<span>',
+            '<button onclick="deleteCase('+row.id+')" id="delBtn" type="button" data-id="'+row.id+'" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="删除">',
+            '<i class="icon wb-close" aria-hidden="true" title="删除"></i>',
+            '</button>',
+            '</span>'].join("");
+    }
+    //编辑案例按钮点击事件
+    function editCase(id){
+        var url = "{:url('/iqbt/iqbt/getCaseInfo')}";
+        cstmpost("", url, {id:id}, function (res) {
+            if (res["code"] == '1') {
+                assign(res)
+                //初始化案例图片
+                if (res.data['casesavepath']!=null){
+                    var htmll ="<img src=__PUBLIC__"+res.data['casesavepath']+">";//封面
+                    $('#input-file-now03').next().next().children('span').html(htmll);
+                    $('#input-file-now03').next().next().css('display','block');
+                }
+            } else {
+                toastr.error(res["msg"]);
+            }
+        });
+
+    }
+    //删除案例 点击时间
+    function deleteCase(id) {
+        var url = "{:url('/iqbt/Iqbt/deleteCase')}";
+        //调用删除提示功能将id传入,点击确定后则发送删除请求
+        basedelete("caseList",url,id);
+    }
+    //删除案例弹窗
+    function basedelete(tableId,url,id){
+        var data='<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                '<h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                '<div class="modal-body">确定要删除么？</div>' +
+                '<div class="modal-footer">' +
+                '<button class="btn btn-primary" id="conDelBtn" onclick="confirmdelete(\''+url+'\',\''+id+'\',\''+tableId+'\')">确定</button>' +
+                '<button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button>' +
+                '</div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    //确认删除
+    function confirmdelete(url,id,tableId){
+        $.post(url, {id: id}, function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+                param.caseId=param.caseId.replace(id+',','');
+                //案例列表;
+                var query=new Object();
+                query.caseId=param.caseId;
+                var taburl="{:url('/iqbt/Iqbt/iqbtCase')}";
+                $('#caseList').bootstrapTable('refresh',{'url':taburl,query:query});
+                $('#myModal').modal('hide');
+            }else if(data.code == 0){
+                toastr.warning(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+
+</script>
+<input type="hidden" id="cutimgurl" value="{:url('/etprs/Etprs/cutImg')}" />
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">新增空间</h1>
+            </div>
+            <div class="page-content">
+                <form class="form-horizontal" id="iqbtInfo">
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">基本信息</h4>
+                                        </div>
+                                        <div class="example">
+                                            <!--<form class="form-horizontal" id="iqbtForm">-->
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 空间名称：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="name" name="name" placeholder="建议以品牌-楼宇名称命名，如海创汇-红岛孵化器" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">空间类型：</label>
+                                                <div class="col-sm-4 padding-bottom-20" >
+                                                    <select class="form-control" id="iqbttype" name="type">
+                                                    </select>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系人：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="contact" name="contact" placeholder="联系人" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系电话：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="联系电话" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 空间位置：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="col-sm-12">
+                                                        <!--省市区联动开始-->
+                                                        <link rel="stylesheet" href="__PUBLIC__/themes/theme.css">
+                                                        <link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+                                                        <div class="docs-methods">
+                                                            <div id="distpicker">
+                                                                <div class="form-group width-full">
+                                                                    <input id="districtId" class="form-control"  type="text"  data-toggle="city-picker" value="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <script src="__PUBLIC__/themes/city-picker.data.js"></script>
+                                                        <script src="__PUBLIC__/themes/city-picker.js"></script>
+                                                        <!--省市区联动结束-->
+                                                        <input  id="districtCode" type="hidden" name="districtId">
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 详细地址：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control"  id="address" name="address" placeholder="输入详细街道门牌号" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">空间展示链接：</label>
+                                                <div class="col-sm-10 padding-bottom-40">
+                                                    <input type="text" class="form-control"  id="display" name="display" placeholder="输入空间展示链接" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">空间封面 <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i>：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="hidden" name="poster" id="posterId">
+                                                    <input type="file" class="form-control" id="input-file-now01"  data-id="posterId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-dir="buildpic" data-size="0.5" data-plugin="dropify" data-default-file="">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">空间logo <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i>：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="hidden" name="logo" id="logoId">
+                                                    <input type="file" class="form-control" id="input-file-now02"  data-id="logoId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-dir="buildpic"  data-size="0.5" data-plugin="dropify" data-default-file="">
+                                                </div>
+                                            </div>
+                                            <!--</form>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">办公环境</h4>
+                                        </div>
+                                        <div class="example">
+                                            <!--<form class="form-horizontal">-->
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label  padding-bottom-20">环境照片：</label>
+                                                <div class="col-sm-10 padding-0 app-picker box">
+                                                    <div class="col-sm-2" id='aa'>
+                                                        <div class="col-sm-12 pic" data-target="#logsForm1" data-toggle="modal" aria-hidden="true" style='padding-left:0'>
+                                                            <div class='fly' value="6005015">
+                                                                <p class='add'>+</p >
+                                                                <p class='name'>外景</p >
+                                                            </div>
+                                                            <p style="display:none" class = 'content'></p >
+                                                        </div>
+                                                        <input type="hidden" id="v6005015" name="6005015">
+                                                        <input id="upload" name="file" accept="image/*" type="file" style="display: none" />
+                                                    </div>
+                                                    <div class="col-sm-2 " id='aa'>
+                                                        <div class="col-sm-12 pic" data-target="#logsForm1" data-toggle="modal" aria-hidden="true">
+                                                            <div class='fly' value="6005016">
+                                                                <p class='add'>+</p >
+                                                                <p class='name'>前台</p >
+                                                            </div>
+                                                            <p style="display:none" class = 'content'></p >
+                                                        </div>
+                                                        <input type="hidden" id="v6005016" name="6005016">
+                                                        <input id="upload" name="file" accept="image/*" type="file" style="display: none" />
+                                                    </div>
+                                                    <div class="col-sm-2" id='aa'>
+                                                        <div class="col-sm-12 pic" data-target="#logsForm1" data-toggle="modal" aria-hidden="true">
+                                                            <div class='fly' value="6005017">
+                                                                <p class='add'>+</p >
+                                                                <p class='name'>独立办公室</p >
+                                                            </div>
+                                                            <p style="display:none" class = 'content'></p >
+                                                        </div>
+                                                        <input type="hidden" id="v6005017" name="6005017">
+                                                        <input id="upload" name="file" accept="image/*" type="file" style="display: none" />
+                                                    </div>
+                                                    <div class="col-sm-2" id='aa'>
+                                                        <div class="col-sm-12 pic" data-target="#logsForm1" data-toggle="modal" aria-hidden="true">
+                                                            <div class='fly' value="6005018">
+                                                                <p class='add'>+</p >
+                                                                <p class='name'>开放工位</p >
+                                                            </div>
+                                                            <p style="display:none" class = 'content'></p >
+                                                        </div>
+                                                        <input type="hidden" id="v6005018" name="6005018">
+                                                        <input id="upload" name="file" accept="image/*" type="file" style="display: none" />
+                                                    </div>
+
+                                                </div>
+                                                <label class="col-sm-2 control-label  padding-bottom-20">更多配套：</label>
+                                                <div class="col-sm-10 padding-bottom-20 addpicker" id="imgDiv">
+
+                                                </div>
+                                                <label class="col-sm-2 control-label  padding-bottom-20"></label>
+                                                <div class="col-sm-10 padding-bottom-20">提示:点击选择更多配套设施全面展示空间风采。建议为每个设施上传照片（可选）提升空间吸引力</div>
+                                            </div>
+                                            <!--</form>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">详细介绍</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label  padding-bottom-20"><span class="required">*</span> 提供服务：</label>
+                                                <div class="col-sm-10 padding-bottom-20" id="servicesCheck">
+                                                </div>
+                                                <label class="col-sm-2 control-label  padding-bottom-20">配套设施：</label>
+                                                <div class="col-sm-10  padding-bottom-20" id="facilityChecks">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 办公方式：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="workstyle">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">是否提供注册：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="rgstsptRadio">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">政策支持：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="policy" id="policyspt" placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20" id="unpolicy">直投基金：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="fundtion" id="isfundtion" placeholder="请输入基金名称" autocomplete="off" >
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 空间详情：</label>
+                                                <div class="col-sm-10 padding-bottom-20">
+                                                    <div class="summernote" id="detail" name="content">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">招募要求</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">招募要求：</label>
+                                                <div class="col-sm-10 padding-bottom-20">
+                                                    <textarea class="form-control" placeholder="请输入详细招募要求（500字以内）" id="require" name="require"></textarea>
+                                                </div>
+                                                <div class="clearfix visible-sm-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">资质材料<a class="font-size-14 margin-left-20" href="javascript:void(0);">为保证创8网信息准确性，需要对您的运营资质进行审核，材料仅作为官网审核用，感谢您的配合</a></h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">社会信用代码：</label>
+                                                <div class="col-sm-4  padding-bottom-20">
+                                                    <input type="text" class="form-control" name="credit" id="credit" placeholder="请输入企业社会信用代码" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"> 营业执照上传：</label>
+                                                <div class="col-sm-4  padding-bottom-20">
+                                                    <div class="input-group input-group-file">
+                                                    <span class="input-group-btn width-full">
+                                                        <input type="file" class="form-control" id="userheader" value="" data-size="2">
+                                                        <input type="hidden" data-placeholder="营业执照上传"  name="busneslic" id="huserheader" class="opt-require" value='{$current.buslic|default=""}'>
+                                                        <!--取消进度条-->
+                                                        <!--<style>-->
+                                                            <!--.kv-upload-progress{-->
+                                                                <!--display: none;-->
+                                                            <!--}-->
+                                                        <!--</style>-->
+                                                    </span>
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                            <i class="icon wb-download" aria-hidden="true"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu buslicpreview" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                        </ul>
+                                                        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过2M" title="">
+                                                            ？
+                                                        </button>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">法人代表：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="lealperson"  id="lealperson" placeholder="请输入法人代表姓名" >
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">孵化案例</h4>
+                                        </div>
+                                        <div class="example">
+                                            <form class="form-horizontal">
+                                                <div class="form-group col-md-12">
+                                                    <label class="col-sm-2 control-label padding-bottom-10">孵化案例：</label>
+                                                    <div class="col-sm-10 padding-bottom-10">
+                                                        <table id="caseList" class="table table-bordered text-center margin-bottom-20 casetable" data-toggle="table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th class="text-center" data-field="name">案例名称</th>
+                                                                <th class="text-center" data-field="url">案例链接</th>
+                                                                <th class="text-center" data-formatter="logoFmt">案例logo</th>
+                                                                <th class="text-center" data-field="desc">案例简介</th>
+                                                                <th class="text-center" data-formatter="actFmt">操作</th>
+                                                            </tr>
+                                                            </thead>
+                                                        </table>
+                                                        <button type="button" class="btn btn-success pull-right add-row margin-top-20" data-target="#logsForm" data-toggle="modal" aria-hidden="true" role="button">
+                                                            <i class="icon wb-plus"></i> 添加案例
+                                                        </button>
+
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--上传图片弹出层-->
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-0">
+                            <form class="form-horizontal padding-0">
+                                <!--获取图片弹出层-->
+                                <div class="modal" id="logsForm1" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+                                    <div class="modal-dialog modal-center modal-lg">
+                                        <form class="modal-content " id="compileRoleForm">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                                                    <i class="icon wb-close" aria-hidden="true"></i>
+                                                </button>
+                                                <h4 class="modal-title">上传环境图片</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="panel">
+                                                    <div class="panel-body container-fluid container">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="cropper text-center" id="exampleFullCropper" style="height:220px">
+                                                                    <img src="__PUBLIC__/images/default-envir.jpg" alt="..." id = 'image'>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="cropper-preview clearfix" id="exampleFullCropperPreview">
+                                                                    <div class="img-preview preview-lg"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="cropper-toolbar text-left margin-bottom-0 docs-buttons">
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="btn btn-primary" data-cropper-method="zoom" data-option="0.1" data-toggle="tooltip" data-container="body"
+                                                                                title="放大">
+										                                    <span class="cropper-tooltip" title="放大">
+										                                      <i class="wb-zoom-in"></i>
+										                                    </span>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-primary" data-cropper-method="zoom" data-option="-0.1" data-toggle="tooltip" data-container="body"
+                                                                                title="缩小">
+										                                    <span class="cropper-tooltip" title="缩小">
+										                                      <i class="wb-zoom-out"></i>
+										                                    </span>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-primary" data-cropper-method="rotate" data-option="-90" data-toggle="tooltip" data-container="body"
+                                                                                title="逆时针旋转90°">
+										                                    <span class="cropper-tooltip" title="逆时针旋转90°">
+										                                      <i class="wb-arrow-left cropper-flip-horizontal"></i>
+										                                    </span>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-primary" data-cropper-method="rotate" data-option="90" data-toggle="tooltip" data-container="body"
+                                                                                title="顺时针旋转90°">
+										                                    <span class="cropper-tooltip" title="顺时针旋转90°">
+										                                      <i class="wb-arrow-right"></i>
+										                                    </span>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-primary" data-cropper-method="setDragMode" data-option="crop" data-toggle="tooltip"
+                                                                                data-container="body" title="裁剪">
+										                                    <span class="cropper-tooltip" title="裁剪">
+										                                      <i class="icon wb-crop" aria-hidden="true"></i>
+										                                    </span>
+                                                                        </button>
+                                                                        <button type="button" class="btn btn-primary" data-cropper-method="setDragMode" data-option="move" data-toggle="tooltip"
+                                                                                data-container="body" title="移动">
+										                                    <span class="cropper-tooltip" title="移动">
+										                                      <i class="icon wb-move" aria-hidden="true"></i>
+										                                    </span>
+                                                                        </button>
+                                                                        <label class="btn btn-primary" data-toggle="tooltip" for="inputImage" data-container="body" title="上传文件">
+                                                                            <input type="file" class="hide" id="inputImage" name="file" accept="image/*">
+								                                            <span class="cropper-tooltip" title="使用 FileReader 导入图片">
+										                                        <i class="icon wb-upload" aria-hidden="true"></i>
+										                                    </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer docs-buttons">
+                                                <div class="btn-actions pull-right margin-left-15">
+                                                    <a class="btn btn-default" data-dismiss="modal">取消</a>
+                                                </div>
+                                                <div class="btn-group btn-group-crop">
+                                                    <button class="btn btn-primary icon wb-image" aria-hidden="true" data-method="getCroppedCanvas" type="button" class="btn btn-primary"
+                                                            data-cropper-method="getCroppedCanvas" data-option='{ "width": 140, "height": 82 }'
+                                                            data-toggle="tooltip" data-container="body" data-dismiss="modal" id='setCropperData'>
+                                                        上传图片
+                                                    </button>
+                                                </div>
+                                                <div class="modal fade docs-cropped" id="getCroppedCanvasModal" aria-hidden="true" aria-labelledby="getCroppedCanvasTitle"
+                                                     role="dialog" tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="getCroppedCanvasTitle">Cropped</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body"></div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <a class="btn btn-primary" id="download" href="javascript:void(0);" download="cropped.jpg">Download</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- /.modal -->
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="btn-actions text-center">
+                <button type="button" class="btn btn-primary" id="saveIqbt">&nbsp;&nbsp;<i class="fa fa-bullhorn" aria-hidden="true"></i>&nbsp;立即发布&nbsp;&nbsp;</button>
+                <!--编辑时不需要草稿-->
+                <!--<button type="button" class="btn btn-warning" id="addChlidMenu">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存草稿&nbsp;&nbsp;</button>-->
+                <a  onclick="javascript :history.back();"><button type="button" class="btn btn-danger" >&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;取消发布&nbsp;&nbsp;</button></a>
+            </div>
+        </div>
+    </div>
+</main>
+<!--新增案例弹出层start-->
+<div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-center">
+        <form class="modal-content" id="caseForm">
+            <div class="modal-header">
+                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                    <i class="icon wb-close" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title">新增案例</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal logs-settings">
+
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例名称</label>
+                        <div class="col-xs-9">
+                            <input type="hidden" id="id" name="iqbtId" value="0">
+                        </div>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" name="name" placeholder="请填写案例名称" id="newname">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例链接</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" name="url"  id="newurl" placeholder="请填写案例链接" value="http://">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例logo <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i></label>
+                        <div class="col-xs-9">
+                            <input type="hidden" name="logo" id="caselogo" class="opt-require">
+                            <input type="file" class="form-control" id="input-file-now"  data-id="caselogo" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-size="0.5" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例简介</label>
+                        <div class="col-xs-9">
+                            <textarea class="form-control" placeholder="请填写案例链简介" name="desc" id="newdesc"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary"  id="addCase">保存</button>
+                <a class="btn btn-danger" data-dismiss="modal" href="index" id="cancel">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!--新增案例弹出层end-->
+<!--编辑案例弹出层start-->
+<div class="modal" id="editcaseForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-center">
+        <form class="modal-content" id="editcaseForm1">
+            <div class="modal-header">
+                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                    <i class="icon wb-close" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title">编辑案例</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal logs-settings">
+
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例名称</label>
+                        <div class="col-xs-9">
+                            <input type="hidden" id="caseid" name="caseid">
+                        </div>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" id="casename" name="name" placeholder="请填写案例名称">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例链接</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" id="caseurl"  name="url" placeholder="请填写案例链接">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例logo<i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i></label>
+                        <div class="col-xs-9">
+                            <input type="hidden" name="logo" id="caselogoId"  class="opt-require">
+                            <input type="file" class="form-control" id="input-file-now03"  data-id="caselogoId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-size="0.5" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例简介</label>
+                        <div class="col-xs-9">
+                            <textarea class="form-control" placeholder="请填写案例链简介" id="casedesc" name="desc"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary"  id="saveCase">保存</button>
+                <a class="btn btn-danger" data-dismiss="modal" href="index">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!--编辑案例弹出层end-->
+<footer class="site-footer">
+    <div class="site-footer-legal">创8网 &copy;
+        <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+    </div>
+    <div class="site-footer-right">
+        当前版本：v1.3.0
+        <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+            <i class="icon fa-cloud-upload"></i>
+        </a>
+    </div>
+</footer>
+<!--上传图片插件(与提示信息插件存在冲突，去掉后页面报错)-->
+<!--<script src="__PUBLIC__/vendor/jquery-ui/jquery-ui.min.js"></script>为避免与弹出气泡冲突必须在jq文件后，引用-->
+<script src="__PUBLIC__/vendor/blueimp-tmpl/tmpl.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-canvas-to-blob/canvas-to-blob.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-load-image/load-image.all.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-process.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-image.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-audio.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-video.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-validate.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-ui.js"></script>
+<script src="__PUBLIC__/vendor/dropify/dropify.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/dropify.js"></script>
+
+
+<!--弹出层插件-->
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+<script src="__PUBLIC__/vendor/alertify-js/alertify.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/formValidation.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/framework/bootstrap.min.js"></script>
+<script src="__PUBLIC__/js/system/blacklist.js"></script>
+
+
+<!--图片裁剪插件-->
+<script src="__PUBLIC__/vendor/cropper/cropper.js"></script>
+<script src="__PUBLIC__/js/examples/forms/image-cropping.js"></script>
+
+<!--选择时间插件-->
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/multi-select/jquery.multi-select.min.js"></script>
+
+<!-- 消息通知 -->
+<script src="__PUBLIC__/js/notify-msg.js"></script>
+</body>
+<script src="__PUBLIC__/themes/addpicker.js"></script>
+</html>

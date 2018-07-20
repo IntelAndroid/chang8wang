@@ -1,0 +1,170 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{width:150px;color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;text-align:right;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+	.weui-row .weui-col-50{text-align:left;}
+	.weui-row .weui-col-25{text-align:center;}
+	/*单选框*/
+	.weui-cells_checkbox{margin-top:0;text-align:right;}
+	.weui-cells_checkbox .weui-check__label{display:inline-block;padding-right:0;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__hd{display:inline-block;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__bd{display:inline-block;}
+	.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#0193e8;}
+	.weui-cells:after{border-bottom:none;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		//获取数据
+		var curFloor = null;
+		var mtroomId=session("mtroomId");
+		var url = "{:url('/Meetroom/Meetroom/getMtroomDetail')}";
+		var data = {};
+		data.mtroomId = mtroomId;
+		cstmpost("", url, data, function (res) {
+			if (res["code"] == '1') {
+				$('#title').html(res.data.name);
+				assign(res);
+				if (res['data']['free'] == '7002001') {
+					$(".price").hide();
+					$(".audit7002002").attr("checked", true);
+				}else{
+					$(".payprice").show();
+				}
+				setTimeout(function(){
+					$("#editmtroom").find(".rqst_build").change();
+				},200);
+				curFloor = res['data']['rqst_floor'];
+			} else {
+				$.toptip(res["msg"],'error');
+				history.back(-1);
+			}
+		});
+	})
+	function initBuild(){
+		return false
+	}
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">	
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">会议室详情</div>
+			</div>
+			<div class="weui-cells weui-cells_form first-header">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label" id='17'>会议室名称</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id='name'></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">楼座</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id='buildName'></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">楼层</label></div>
+			        <div class="weui-cell__bd">
+			          	<p><span id='floor'></span>楼</p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">容纳人数</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id='acceptName'></p>
+			        </div>
+			    </div>
+			</div>
+			<div class="weui-cells__title">配套设施</div>
+			<div class="weui-cells weui-cells_form">
+			    <div class="weui-cell">
+			        <div class="weui-cell__bd">
+			        	<div class="weui-row weui-no-gutter facilityName" id="facilityName">
+
+			    		</div>	
+			        </div>
+			    </div>
+			</div>
+			<div class="weui-cells__title">会议室介绍</div>
+			<div class="weui-cells weui-cells_form">
+			    <div class="weui-cell">
+			        <div class="weui-cell__bd" style="text-align:left;">
+			            <p id='desc'>
+			            	
+			            </p>
+			        </div>
+			    </div>
+			</div>
+			<div class="weui-cells weui-cells_form" style="margin-top:10px;">
+				<div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">是否免费</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id='freeName'></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">收费单价</label></div>
+			        <div class="weui-cell__bd">
+			          	<p><span id='price'></span>元/小时</p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">是否审核</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id='auditName'></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">是否发布</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id='publishName'></p>
+			        </div>
+			    </div>
+			</div>    
+			<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter weui-tabbar" id='bottom-color'>
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn collection" href="javascript:" style="font-size:16px;background:#0093e7;">收藏</a>
+				    </div>
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="meetinglist.html" style="font-size:16px;background:#f39b0f;">预定</a>
+				    </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+{include file="wechat@public/footer"}
+<script>
+	let url="{:url('Meetroom/Meetroom/getMtroomDetail')}";
+	let data = {
+		mtroomId:sessionStorage.getItem('mtroomId')
+	}
+	cstmpost('',url,data,function(res){
+		assign(res);
+		if(res.data.isCollect){
+			$('.collection').html('取消收藏');
+		}
+	})
+	// 判断是否收藏
+	$("body").on('click','.collection',function(){
+		// 收藏数据提交
+		let url = "{:url('/Meetroom/Meetroom/mtCollect')}";
+		let data = {
+			mtroomId:sessionStorage.getItem('mtroomId')
+		}
+		cstmpost('',url,data,function(res){
+			$.toast(res.msg)
+			history.back(-1);
+		})
+	});
+</script>

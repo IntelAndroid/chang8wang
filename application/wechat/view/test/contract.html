@@ -1,0 +1,168 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;text-align:right;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+	.weui-row .weui-col-50{text-align:left;}
+	.weui-row .weui-col-33{text-align:left;}
+	/*单选框*/
+	.weui-cells_checkbox{margin-top:0;text-align:right;}
+	.weui-cells_checkbox .weui-check__label{display:inline-block;padding-right:0;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__hd{display:inline-block;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__bd{display:inline-block;}
+	.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#0193e8;}
+	.weui-cells:after{border-bottom:none;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(document).ready(function(){
+		var url = "{:url('/Etprs/Etprs/renew')}";
+		var data = {};
+		data.etprsId = session('renewEtprsId');
+		cstmpost("#",url,data, function (res) {
+			if(res["code"]=='1'){
+				delete res.data.rqst_build;
+				assign(res)
+			}else{
+				$.toptip(res["msg"],'warning');
+			}
+		});
+		$("#confirmRenew").on("click", function () {
+			var url="{:url('/Etprs/Etprs/saveRenew')}";
+			var jumpurl="{:url('/wechat/test/entermanage')}";
+			var data=serializeData("renewForm");
+			cstmpost("#confirmRenew",url,data, function (res) {
+				if(res["code"]=='1'){
+					$.toptip(res["msg"],'success');
+					setTimeout(function(){
+						location.href=jumpurl;
+					},500);
+				}else{
+					$.toptip(res["msg"],'success');
+				}
+			});
+		});
+	})
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">	
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">续约</div>
+			</div>
+			<div class="weui-cells weui-cells_form first-header">
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label class="weui-label">入驻客户</label></div>
+					<div class="weui-cell__bd">
+						<p id="name">  </p>
+					</div>
+				</div>
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label class="weui-label">客户类型</label></div>
+					<div class="weui-cell__bd">
+						<p id="typeName"></p>
+					</div>
+				</div>
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label class="weui-label">联系人</label></div>
+					<div class="weui-cell__bd">
+						<p id="contact"></p>
+					</div>
+				</div>
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label class="weui-label">联系电话</label></div>
+					<div class="weui-cell__bd">
+						<p id="mobile"></p>
+					</div>
+				</div>
+			</div>
+			<div class="weui-cells weui-cells_form">
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label class="weui-label">合同开始时间</label></div>
+					<div class="weui-cell__bd">
+						<p id="pact_start"></p>
+					</div>
+				</div>
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label class="weui-label">合同结束时间</label></div>
+					<div class="weui-cell__bd">
+						<p id="pact_end"></p>
+					</div>
+				</div>
+			</div>
+			<div class="weui-cells__title">已分配房间</div>
+			<div class="weui-cells weui-cells_form">
+			    <div class="weui-cell">
+			        <div class="weui-cell__bd">
+			        	<div class="weui-row weui-no-gutter" id="roomList">
+			    		</div>	
+			        </div>
+			    </div>
+			</div>
+			<form action="" id="renewForm">
+				<div class="weui-cells__title">续约房间</div>
+				<div class="weui-cells weui-cells_form">
+					<div class="weui-cell" style="padding:0;">
+						<div class="weui-cell__bd">
+							<div class="weui-cells weui-cells_checkbox">
+								<div class="weui-row weui-no-gutter" id="roomIdNames">
+									<div class="weui-col-50">
+										<label class="weui-cell weui-check__label" for="s7">
+											<div class="weui-cell__hd">
+												<input type="checkbox" name="checkbox1" class="weui-check" id="s7" checked="checked">
+												<i class="weui-icon-checked"></i>
+											</div>
+											<div class="weui-cell__bd">
+												<p></p>
+											</div>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="weui-cells weui-cells_form">
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label for="" class="weui-label">合同开始时间</label></div>
+						<div class="weui-cell__bd" style="direction: rtl;">
+							<input class="weui-input" type="date"  id="pact_next" readonly  name="pact_start" value="请选择时间">
+							<input type="hidden" id="id" name="etprsId">
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label for="" class="weui-label">合同结束时间</label></div>
+						<div class="weui-cell__bd" style="direction: rtl;">
+							<input class="weui-input" type="date"  name="pact_end" value="请选择时间">
+							<input class="weui-input" type="hidden"  name="pact" value="">
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label class="weui-label">合同编号</label></div>
+						<div class="weui-cell__bd">
+							<input class="weui-input"  name="pactNo" type="text" value="">
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+			    <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="javascript:history.back(-1)" style="font-size:16px;background:#0093e7;">取消</a>
+				    </div>
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="javascript:" style="font-size:16px;background:#f39b0f;" id="confirmRenew" >确认续约</a>
+				    </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+{include file="wechat@public/bottom"}
+{include file="wechat@public/footer"}

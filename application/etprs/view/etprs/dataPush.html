@@ -1,0 +1,211 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script>
+    $(document).ready(function(){
+        var str = '';
+        // 获取此页面数据
+        $.get('/Etprs/Etprs/roomAlloction',{id:7},function(res){
+            console.log(res)
+            // 企业信息渲染
+            for(var tmp in res.etprsInfo){
+                $("#"+tmp).val(res.etprsInfo[tmp]);
+            }
+            //
+        },'JSON');
+    });
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">发起入驻</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                    <div class="example example-buttons">
+                                        <button type="button" class="btn btn-primary">基本信息</button>
+                                    </div>
+                                    <div class="example">
+                                        <form class="form-horizontal">
+                                            <div class="form-group col-md-6"> <!--警告：has-warning 成功：has-success 出错：has-error-->
+                                                <label class="col-sm-3 control-label">客户类型：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="radio-custom radio-primary radio-inline">
+                                                        <input type="radio" id="inputRadiosChecked" name="inputRadios" checked>
+                                                        <label for="inputRadiosChecked">企业</label>
+                                                    </div>
+                                                    <div class="radio-custom radio-primary radio-inline">
+                                                        <input type="radio" id="inputRadiosUnchecked" name="inputRadios">
+                                                        <label for="inputRadiosUnchecked">团队</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 客户名称：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="name" placeholder="客户名称" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 联系人：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="email" placeholder="联系人" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label tele"><span class="required">*</span> 联系电话：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="email" placeholder="联系电话" autocomplete="off" id="inputPhone" data-plugin="formatter" data-pattern="[[999]]-[[9999]]-[[9999]]">
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 来源渠道：</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control">
+                                                        <option>1</option>
+                                                        <option>2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 客户状态：</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control">
+                                                        <option>1</option>
+                                                        <option>2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">意向需求：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="col-sm-4 padding-0">
+                                                        <select class="form-control">
+                                                            <option>选择空间</option>
+                                                            <option>2</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4 padding-0">
+                                                        <select class="form-control">
+                                                            <option>选择楼层</option>
+                                                            <option>2</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4 padding-0">
+                                                        <input type="text" class="form-control" name="" placeholder="填写房间" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">需求时间：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                        <div class="input-group">
+					                                        <span class="input-group-addon">
+					                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+					                                        </span>
+                                                            <input type="text" class="form-control" name="start">
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"> 至 </span>
+                                                            <input type="text" class="form-control" name="end">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">详细需求：</label>
+                                                <div class="col-sm-9">
+                                                    <textarea class="form-control" placeholder="简介"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </form>
+                                    </div>
+                                    <div class="example example-buttons">
+                                        <button type="button" class="btn btn-primary">企业信息</button>
+                                    </div>
+                                    <div class="example">
+                                        <form class="form-horizontal">
+                                            <div class="form-group col-md-12 padding-0">
+                                                <div class="col-md-6">
+                                                    <label class="col-sm-3 control-label"><span class="required">*</span> 法人或团队负责人：</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" name="email" placeholder="法人或团队负责人姓名" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix visible-sm-block"></div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label">营业执照上传：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group input-group-file">
+                                                        <div class="input-group-btn">
+			                                                <span class="btn btn-success btn-file">
+					                                            <i class="icon wb-upload" aria-hidden="true"></i>
+					                                            <input type="file" name="" multiple="">
+					                                        </span>
+                                                        </div>
+                                                        <input type="text" class="form-control" readonly="">
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：jpg" title="">
+                                                                ？
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="col-sm-3 control-label"><span class="required">*</span> 项目计划书：</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group input-group-file">
+                                                        <div class="input-group-btn">
+			                                                <span class="btn btn-success btn-file">
+					                                            <i class="icon wb-upload" aria-hidden="true"></i>
+					                                            <input type="file" name="" multiple="">
+					                                        </span>
+                                                        </div>
+                                                        <input type="text" class="form-control" readonly="">
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu" aria-labelledby="exampleColorDropdown1" role="menu">
+                                                                <li role="presentation">
+                                                                    <a href="javascript:;" role="menuitem">文件1</a>
+                                                                </li>
+                                                                <li role="presentation">
+                                                                    <a href="javascript:;" role="menuitem">文件2</a>
+                                                                </li>
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'ppt','pptx','pdf'，不能超过50M" title="">
+                                                                ？
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-actions text-center">
+                            <button type="button" class="btn btn-primary" id="addChlidMenu">下一步</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

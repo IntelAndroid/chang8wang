@@ -1,0 +1,414 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-cell__hd .weui-label {
+		width: 150px;
+		color: #595757;
+		font-size: 15px;
+	}
+
+	.weui-cell__bd {
+		color: #878787;
+		font-size: 15px;
+		text-align: right;
+	}
+
+	.weui-input {
+		text-align: right;
+	}
+
+	.weui-select {
+		direction: rtl;
+		color: #878787;
+	}
+
+	.weui-row .weui-col-50 {
+		text-align: left;
+	}
+
+	.item_cell.weui-col-33 {
+		text-align: center;
+	}
+
+	/*单选框*/
+
+	.weui-cells_checkbox {
+		margin-top: 0;
+		text-align: right;
+	}
+
+	.weui-cells_checkbox .weui-check__label {
+		display: inline-block;
+		padding-right: 0;
+	}
+
+	.weui-cells_checkbox .weui-check__label .weui-cell__hd {
+		display: inline-block;
+	}
+
+	.weui-cells_checkbox .weui-check__label .weui-cell__bd {
+		display: inline-block;
+	}
+
+	.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before {
+		color: #0193e8;
+	}
+
+	.weui-cells:after {
+		border-bottom: none;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+<script>
+	$(function(){
+		// 文本域文字提示
+		$(".weui-textarea").bind('input propertychange',function(){
+			$('.textareaLength').html($('.weui-textarea').val().length)
+		})
+		var res={data:{mtrFacility:'',accept:'',rqst_build:'',free:'',publish:'',audit:''}};
+		assign(res);
+		initCheckbox(6022,'') ;//配套
+		//切换楼座
+		$(".rqst_build").on('change', function () {
+			var url = $(this).attr("data-url");
+			var curBuild = $(this).val();
+			var fdefault = $(this).attr("data-default");
+			if (curBuild == '') {
+				$(".rqst_floor").html('<option value="">选择楼层</option>');
+				$(".curFloor").html('<option value="">选择楼层</option>');
+				return
+			}
+			// 切换楼层
+			$.get(url, {build: curBuild, fdefault: fdefault}, function (res) {
+				if (res) {
+					var ophtml = '';
+					for (var tmp in res) {
+						if(tmp == fdefault){
+							ophtml = ophtml + '<option value="'+tmp+'" selected>'+res[tmp]+'</option>';
+
+						}else {
+							ophtml = ophtml + '<option value="' + tmp + '">' + res[tmp] + '</option>';
+						}
+					}
+					$(".rqst_floor").html(ophtml);
+					$(".curFloor").html(ophtml);
+				} else {
+					$(".rqst_floor").html('<option value="">选择楼层</option>');
+					$(".curFloor").html('<option value="">选择楼层</option>');
+				}
+			});
+		});
+		// 新增保存会议室
+		$("#saveMtroom").click(function () {
+			// 判断是否收费以及单价
+			if ($("#mtRoomForm").find(".free7002002").prop("checked") == true) {
+				if ($("#mtRoomForm").find(".price").val() <= 0) {
+					$.toptip('您好，此会议室为收费会议室，请输入金额','warning');
+					return
+				}
+				if ($(".audit7002002").prop("checked") == true) {
+					$.toptip('您好，此会议室为收费会议室，请选择需要审核','warning')
+					$("#mtRoomForm").find('.keep').attr('data-dismiss', '')
+					return;
+				} else {
+					$("#mtRoomForm").find('.keep').attr('data-dismiss', 'modal')
+				}
+			} else {
+				$("#mtRoomForm").find('.keep').attr('data-dismiss', 'modal')
+			}
+
+
+			var url = "{:url('/meetroom/Meetroom/saveMtroom')}";
+			var data = serializeData("mtRoomFormEdit");
+			cstmpost("#saveMtroom", url, data, function (res) {
+				if (res["code"] == '1') {
+					$.toptip(res["msg"],'success');
+					$('.roomleft').children('.roomRk').remove()
+//					sum();
+					$('.payprice').css('display', 'block')
+//					getAllMtroomName();
+					setTimeout(function(){
+						location.href="{:url('wechat/test/meetingroom')}"
+					},500)
+				} else {
+					$.toptip(res["msg"],'warning');
+				}
+			});
+		});
+	});
+	// 楼层获取  id   默认值
+	function initBuild(domID, bdefault, floor) {
+		var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+		if ($("." + domID).attr('class') != 'control-label' && domID == 'rqst_build' ) {
+			bdefault = bdefault ? bdefault : '';
+			cstmpost('', url, {bd: bdefault}, function (res) {
+				var ophtml = '<option value="">选择楼座</option>';
+//				var ophtml = '';
+				for (var tmp in res) {
+					if(tmp == bdefault){
+						ophtml = ophtml + '<option value="'+tmp+'" selected>'+res[tmp]+'</option>';
+					}else{
+						ophtml = ophtml + '<option value="'+tmp+'">'+res[tmp]+'</option>';
+					}
+				}
+				$("." + domID).html(ophtml);
+				$("." + domID).attr("data-default", floor);
+
+			});
+
+		}
+	}
+
+	// 渲染select
+	function initSelect(fname, code, level, sdefault) {
+		if (!code || code == 0 || code == undefined) {
+			return false;
+		}
+		var selhtml = '';
+		for (var i = 0; i < sysData.length; i++) {
+			if (sysData[i].code && sysData[i].code.indexOf(code, 0) === 0 && sysData[i].level == level) {
+				if (sysData[i].code == sdefault) {
+					selhtml = selhtml + '<option value="' + sysData[i].code + '" selected>' + sysData[i].name + '</option>';
+				} else {
+					selhtml = selhtml + '<option value="' + sysData[i].code + '">' + sysData[i].name + '</option>';
+				}
+			}
+		}
+		selhtml = selhtml;
+		return selhtml;
+	}
+	// 渲染是否
+	function initOneRadio(fname, sdefault) {
+		var random = RndNum(3);
+		switch (sdefault) {
+			case '1':
+				value = '1';
+				ctValue = '0';
+				break;
+			case '是':
+				value = '1';
+				ctValue = '0';
+				break;
+			default:
+				value = '7002001';
+				ctValue = '7002002';
+				break;
+		}
+		if (sdefault == '1' || sdefault == '是' || sdefault == '7002001') {
+			var selhtml = ['<label class="weui-cell weui-check__label" for="inputRadiosChecked' + random + '" id="'+fname+'7002001">' ,
+				'<div class="weui-cell__hd">',
+				' <input type="radio" value="' + value + '"  class="weui-check" id="inputRadiosChecked' + random + '" name="' + fname + '" checked class="weui-check">',
+				'<i class="weui-icon-checked"></i>',
+				'</div>',
+				'<div class="weui-cell__bd" >',
+				'<p>是</p>',
+				' </div>',
+				'</label>',
+				'<label class="weui-cell weui-check__label" for="inputRadiosUnchecked' + random + '" id="'+fname+'7002002">',
+				' <div class="weui-cell__hd" >' +
+				'<input type="radio" value="' + ctValue + '" class="weui-check" id="inputRadiosUnchecked' + random + '"  name="' + fname + '">',
+				'<i class="weui-icon-checked"></i>',
+				'</div>',
+				'<div class="weui-cell__bd">',
+				'<p>否</p>',
+				' </div>',
+				'</label>'].join("");
+		} else {
+			var selhtml = ['<label class="weui-cell weui-check__label" for="inputRadiosChecked' + random + '" id="'+fname+'7002001">' ,
+				'	<div class="weui-cell__hd" >',
+				'<input type="radio" value="' + value + '" class="weui-check" id="inputRadiosChecked' + random + '" name="' + fname + '" class="weui-check">' ,
+				'<i class="weui-icon-checked"></i>',
+				'</div>',
+				'<div class="weui-cell__bd" >',
+				'<p>是</p>',
+				' </div >',
+				'</label>',
+				'<label class="weui-cell weui-check__label" for="inputRadiosUnchecked' + random + '" id="'+fname+'7002002">' ,
+				'<div class="weui-cell__hd" >' ,
+				'<input type="radio" value="' + ctValue + '" id="inputRadiosUnchecked' + random + '" name="' + fname + '" checked class="weui-check">' ,
+				'<i class="weui-icon-checked"></i>',
+				'</div>',
+				'<div class="weui-cell__bd">',
+				'<p>否</p>',
+				' </div>',
+				'</label>'].join("");
+		}
+
+		return selhtml;
+	}
+</script>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+				<div class="navbox">
+					<a href="index.html">
+						<div class="left">
+							<i class="icon iconfont icon-back"></i>
+						</div>
+					</a>
+					<div class="center">新增会议室</div>
+				</div>
+				<div class="weui-cells weui-cells_form" style="margin-top:0;">
+					<div class="weui-cell">
+						<div class="weui-cell__hd">
+							<label class="weui-label">会议室名称</label>
+						</div>
+						<div class="weui-cell__bd">
+							<input class="weui-input" type="text" placeholder="请输入会议室名称" name="name">
+						</div>
+					</div>
+					<div class="weui-cell weui-cell_select weui-cell_select-after">
+						<div class="weui-cell__hd">
+							<label for="" class="weui-label">楼座</label>
+						</div>
+						<div class="weui-cell__bd">
+							<select class="weui-select rqst_build" name="buildId" data-url="{:url('/etprs/Etprs/changeBuild')}">
+							</select>
+						</div>
+					</div>
+					<div class="weui-cell weui-cell_select weui-cell_select-after">
+						<div class="weui-cell__hd">
+							<label for="" class="weui-label ">楼层</label>
+						</div>
+						<div class="weui-cell__bd">
+							<select class="weui-select rqst_floor curFloor" name="floor">
+							</select>
+						</div>
+					</div>
+					<div class="weui-cell weui-cell_select weui-cell_select-after">
+						<div class="weui-cell__hd">
+							<label for="" class="weui-label">容纳人数</label>
+						</div>
+						<div class="weui-cell__bd">
+							<select class="weui-select" name="accept" id="accept">
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="weui-cells__title">配套设施</div>
+				<div class="weui-cells weui-cells_form">
+					<div class="weui-cell" style="padding:0;">
+						<div class="weui-cell__bd">
+							<div class="weui-cells weui-cells_checkbox">
+								<div class="weui-row weui-no-gutter sourceCanal" id="mtrFacility">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="weui-cells__title">会议室介绍</div>
+				<div class="weui-cells weui-cells_form">
+					<div class="weui-cell">
+						<div class="weui-cell__bd">
+							<textarea class="weui-textarea" placeholder="请输入详细会议室介绍" rows="3"  id="desc" name="desc" maxlength="200"></textarea>
+							<div class="weui-textarea-counter">
+								<span class="textareaLength">0</span>/200</div>
+						</div>
+					</div>
+				</div>
+				<div class="weui-cells weui-cells_form" style="margin-top:10px;">
+					<div class="weui-cell" style="padding-top:0;padding-bottom:0;">
+						<div class="weui-cell__hd">
+							<label class="weui-label">是否免费</label>
+						</div>
+						<div class="weui-cell__bd">
+							<div class="weui-cells weui-cells_checkbox" id="free">
+
+							</div>
+						</div>
+					</div>
+					<div class="weui-cell price">
+						<div class="weui-cell__hd">
+							<label class="weui-label">单价（元/小时）</label>
+						</div>
+						<div class="weui-cell__bd">
+							<input class="weui-input" type="text" placeholder="请输入单价" name="price" id="price">
+						</div>
+					</div>
+					<div class="weui-cell" style="padding-top:0;padding-bottom:0;">
+						<div class="weui-cell__hd">
+							<label class="weui-label">是否审核</label>
+						</div>
+						<div class="weui-cell__bd">
+							<div class="weui-cells weui-cells_checkbox" id="audit">
+
+
+							</div>
+						</div>
+					</div>
+					<div class="weui-cell" style="padding-top:0;padding-bottom:0;">
+						<div class="weui-cell__hd">
+							<label class="weui-label">是否发布</label>
+						</div>
+						<div class="weui-cell__bd">
+							<div class="weui-cells weui-cells_checkbox" id="publish">
+
+							</div>
+						</div>
+					</div>
+				</div>
+				</form>
+				<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+					<div class="weui-row weui-no-gutter keepexis weui-tabbar" id='bottom-color'>
+						<div class="weui-col-100" style="background:none;">
+							<a class="weui-btn" href="javascript:" style="font-size:16px;background:#0093e7;" id="saveMtroom" >保存</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{include file="wechat@public/footer"}
+
+	<script>
+//		$(".price").hide();
+		$("#free").on('click','#free7002001',function () {
+			$(".price").slideUp(500);
+		});
+		$("#free").on('click','#free7002002',function () {
+			$(".price").slideDown(500);
+		});
+		// 会议室配套设施字典表插入start
+		function initCheckbox(code) {
+			if (!code || code == 0 || code == undefined) {
+				return false;
+			}
+			for (var i = 0; i < sysData.length; i++) {
+				if (sysData[i].code.indexOf(code, 0) === 0) {
+					var $option = '';
+						$option += '<div class="weui-col-50"><label class="weui-cell weui-check__label" for="facility'+sysData[i].code+'">'+
+								'<div class="weui-cell__hd"><input type="checkbox"  name="facility" class="weui-check" id="facility'+sysData[i].code+'" value="'+sysData[i].code+'">'+
+								'<i class="weui-icon-checked"></i></div><div class="weui-cell__bd"><p>' + sysData[i].name + '</p></div></label></div>';
+					if (code == '6022') {
+						if (sysData[i].level != '1') {
+							$('.sourceCanal').append($option);
+						}
+					}
+				}
+			}
+			// return selhtml;
+		};
+		var potenturl = "{:url('Meetroom/Meetroom/getAplList')}";
+		// 会议室审核
+		cstmpost('', potenturl, { status: 7001001 }, function (res) {
+			console.log(res)
+			$('.examine').html(res.total)
+		})
+	</script>

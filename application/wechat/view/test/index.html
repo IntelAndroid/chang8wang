@@ -1,0 +1,133 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	/*标题*/
+	.weui-media-box__bd{overflow:hidden;margin-top:10px;}
+	.weui-media-box__bd img{float: left;width:22px;height:auto;margin-right:5px;}
+	.weui-media-box__bd .weui-media-box__title{font-size:15px;font-weight:bold;color:#474747;float:left;}
+	/*轮播*/
+	.swiper-container {width: 100%;}
+	.swiper-container img {display: block;width: 100%;}
+	/*九宫格*/
+	.weui-grid {width: 25%;}
+	/*下拉菜单*/
+	.weui-cells_radio{width:100%;position:absolute;top:46px;left:0;z-index:20;margin-top:0;}
+	.weui-cells_radio .weui-cell__bd p{font-size:14px;float:left;}
+	.weui-cell{padding:0 15px;}
+	.iqbtlogo{width:24px;height:24px;border-radius:50%;margin:8px 8px 8px 0;}
+	.iqbtlogo img{width:24px;height:24px;border-radius:50%;}
+</style>
+</head>
+<body ontouchstart>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="topbox">
+				<p class="iqbtname"><span id="iqbtName">{$Think.session.iqbtName}</span> <i class="icon iconfont icon-moreunfold"></i></p>
+			</div>
+			<!--首页-->
+			<div class="swiper-container first-header">
+				<!-- Additional required wrapper -->
+				<div class="swiper-wrapper">
+					<!-- Slides -->
+					<div class="swiper-slide"><img src="__PUBLIC__/wechat/images/banner.png" /></div>
+				</div>
+				<!-- If we need pagination -->
+				<div class="swiper-pagination"></div>
+			</div>
+			<div class="weui-grids">
+				<a href="{:url('wechat/test/attract')}" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/attract.png" alt="">
+					</div>
+					<p class="weui-grid__label">招商管理</p>
+				</a>
+				<a href="{:url('wechat/test/entermanage')}" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/enter.png" alt="">
+					</div>
+					<p class="weui-grid__label">入驻管理</p>
+				</a>
+				<a href="{:url('wechat/test/active')}" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/active.png" alt="">
+					</div>
+					<p class="weui-grid__label">活动管理</p>
+				</a>
+				<a href="{:url('wechat/test/meetingroom')}" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/meeting.png" alt="">
+					</div>
+					<p class="weui-grid__label">会议管理</p>
+				</a>
+			</div>
+			<div class="weui-grids">
+				<div class="weui-media-box__bd">
+					<img src="__PUBLIC__/wechat/images/zsicon.png">
+					<h4 class="weui-media-box__title">招商管理</h4>
+				</div>
+				<a href="attract.html?status=6002001" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/cstm1.png" alt="">
+					</div>
+					<p class="weui-grid__label">潜在客户</p>
+				</a>
+				<a href="attract.html?status=6002002" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/cstm2.png" alt="">
+					</div>
+					<p class="weui-grid__label">意向客户</p>
+				</a>
+				<a href="attract.html?status=6002003" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/cstm3.png" alt="">
+					</div>
+					<p class="weui-grid__label">拟入驻客户</p>
+				</a>
+				<a href="attract.html?status=6002004" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/cstm4.png" alt="">
+					</div>
+					<p class="weui-grid__label">无效客户</p>
+				</a>
+			</div>
+			<div class="weui-grids last-footer">
+				<div class="weui-media-box__bd" id='entermange'>
+					<img src="__PUBLIC__/wechat/images/rzicon.png">
+					<h4 class="weui-media-box__title">入驻管理</h4>
+				</div>
+				<a href="entermanage.html?status=4" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/enter1.png" alt="">
+					</div>
+					<p class="weui-grid__label">待入驻</p>
+				</a>
+				<a href="entermanage.html?status=3" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/enter2.png" alt="">
+					</div>
+					<p class="weui-grid__label">已入驻</p>
+				</a>
+				<a href="entermanage.html?status=2" class="weui-grid js_grid">
+					<div class="weui-grid__icon">
+						<img src="__PUBLIC__/wechat/images/enter3.png" alt="">
+					</div>
+					<p class="weui-grid__label">已毕业</p>
+				</a>
+			</div>
+		</div>
+	</div>
+{include file="wechat@public/bottom"}
+{include file="wechat@public/footer"}
+<script>
+	$(".weui-cells_radio").css("display","none");
+	$(".iqbtname").click(function(){
+		$(".weui-cells_radio").slideToggle(500);
+	});
+	$(".weui-cell").click(function(){
+		$(".weui-cells_radio").slideUp(500);
+	});
+</script>

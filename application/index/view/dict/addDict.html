@@ -1,0 +1,83 @@
+<script type="text/javascript">
+    $(function () {
+        //初始化表单
+        init();
+
+        //提交表单数据
+        $("#btnsave").on("click", function () {
+            //设置接口url，当前这种方式，只在html页面有效
+            var url="{:url('/index/Dict/saveDict')}";
+            var formId = "dictform";
+            //获取表单数据
+            var data=serializeData(formId);
+            var tableId=$("#dictform").attr("tableId");
+            //发送ajax请求
+            //参数1；对应点击的按钮或者超链接。
+            //参数2url
+            //参数3：提交的数据
+            //参数四：请求完成后处理函数
+            cstmpost("#btnsave",url,data, function (data) {
+                if (data.code == 1) {
+                    //提示成功
+                    toastr.success(data.msg);
+                    //如果设置了列表ID，刷新列表内容
+                    if(tableId!=undefined){
+                        $("#" + tableId).bootstrapTable('refresh');
+                    }
+                    //关闭弹出层
+                    $('#myModal').modal('hide');
+                } else {
+                    //提示失败
+                    toastr.error(data.msg);
+                }
+            });
+        });
+
+    });
+
+    /**
+     * 初始化表单数据
+     */
+    function init(){
+        //设置接口url，当前这种方式，只在html页面有效
+        var url="{:url('/index/Dict/dictinfo')}";
+        //从session里获取字典ID
+        var id=session("dictId");
+        //销毁session，不然新增时候会有ID
+        session("dictId",0);
+        //如果有ID，从后台获取数据。
+        if(id!=0&&id!=undefined){
+            cstmpost("",url,{id:id}, function (data) {
+                //code=1 成功 code=0:失败
+                if (data.code == 1) {
+                    //将后台返回数据初始化到表单中
+                    $("#id").val(data.data.id);
+                    $("#name").val(data.data.name);
+                    $("#code").val(data.data.code);
+                } else {
+                    toastr.error(data.msg);
+                }
+            });
+        }
+    }
+</script>
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<form id="dictform" action="{:url('/user/User/saveUser')}" method="post" tableId="dicts" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="name">名称<span class="required">*</span></label>
+            <div class="col-sm-6">
+                <input class="form-control" name="name" id="name" placeholder="名称" value="">
+            </div></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="">
+        <input type="hidden" id="code" name="code" value="8001">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

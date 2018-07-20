@@ -1,0 +1,67 @@
+{include file="index@public/header"} {include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script><!--me +  -->
+<script src="__PUBLIC__/js/bootstrap_validate.js"></script> 
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script>
+    Breakpoints();
+	
+	// 渲染表格操作
+    function actFmt(value,row){
+        var html = '';
+        // 审核
+        html = '<button type="button" class="btn btn-outline btn-xs  btn-primary goAudit">\&nbsp;审核&nbsp;</button>&nbsp;';
+        return html;
+    }
+	
+    window.actEvt = {
+    	// 去审核
+        'click .goAudit': function (e, value, row, index) {
+	        session("aplAuditId", row.id);
+	        session("work",1);   //跳转识别
+	        var url = "{:url('/meetroom/Meetroom/aplAudit')}";
+	        location.href = url;
+        },
+   };
+    
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">待办事项 / 会议室申请</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                        <div class="row row-lg">
+                            <div class="col-md-12 margin-bottom-20">
+		                    </div>
+		                </div>
+                        <table class="table table-bordered text-center" id="iqbtUser" data-side-pagination="server" data-toggle="table" data-url="{:url('/Meetroom/Meetroom/getAplList',array('status'=>'7001001'))}"
+                               data-show-refresh="false" data-show-toggle="false" data-show-columns="false"
+                               data-toolbar="true" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                              <thead>
+                              <tr>
+                                  <th data-field="etprsName" class="text-center">公司名称</th>
+                                  <th data-field="contact" class="text-center">联系人</th>
+                                  <th data-field="mobile" class="text-center">联系方式</th>
+                                  <th data-field="mtroomName" class="text-center">会议室名称</th>
+                                  <th data-field="sprice" class="text-center">收费标准</th>
+                                  <th data-field="Ymd" class="text-center">日期</th>
+                                  <th data-field="timeLen" class="text-center">时间段</th>
+                                  <th data-field="price" class="text-center">应缴金额（元）</th>
+                                  <th data-field="action" class="text-center" data-formatter="actFmt" data-events="actEvt">操作</th>
+                               </tr>
+                               </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

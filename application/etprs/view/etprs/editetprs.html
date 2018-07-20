@@ -1,0 +1,313 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<script>
+    $(document).ready(function(){
+        var upurl="{:url('/etprs/Etprs/ajaxUploads')}";
+        var oFileInput = new FileInput();
+        oFileInput.Init("buslicFile",upurl,[],"buslic","buslicPreview");
+        oFileInput.Init("bpFile",upurl,[],"bp","bpPreview");
+        oFileInput.Init("pactFile",upurl,[],"pact","pactPreview");
+
+        // 当页面存在初始数据   编辑入驻客户信息时候
+        var id = session("editBaseId") ? session("editBaseId") : '';
+        $("#etprsId").val(id);
+        var url = "{:url('/Etprs/Etprs/getRow')}";
+        var data = {};
+        data.id = id;
+        cstmpost("#",url,data, function (res) {
+            // 把刚刚写的seesion清除
+            // sessionStorage.clear();
+            assign(res)
+        });
+        // 下一步,保存企业信息
+        $("#addEtprs").on("click", function () {
+            var url="{:url('/etprs/Etprs/saveEditEtprs')}";
+            var data=serializeData("etprsForm");
+            cstmpost("#addEtprs",url,data, function (res) {
+                var jumpurl="{:url('/Etprs/Etprs/etprsList')}";
+                if(res["code"]=='1'){
+                    toastr.success(res["msg"]);
+                    setTimeout(function(){
+                        window.history.go(-1);
+                    },500);
+                }else{
+                    toastr.error(res["msg"]);
+                }
+            });
+        });
+        // 根据客户名称检索
+        $("#name1").bind('input propertychange',function(){
+            var curInput = $(this).val();
+            var url = "{:url('/Etprs/Etprs/searchEtprs')}";
+            var data = {};
+            data.name = curInput;
+            cstmpost("#",url,data, function (res) {
+                $("#browsers").html("");
+                if(res.data){
+                    for(var i=0;i<res.data.length;i++){
+                        var html = '<option value="'+res.data[i].name+'">';
+                        $("#browsers").append(html);
+                    }
+                }
+            });
+        });
+    });
+
+
+
+    // 楼层获取  id   默认值
+    function initBuild(domID,bdefault,floor)
+    {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if($("."+domID).attr('class') != 'control-label'&&domID == 'rqst_build') {
+            bdefault = bdefault ? bdefault : '';
+            cstmpost('',url, {bd: bdefault},function (res) {
+                var ophtml = '<option value="">选择楼座</option>';
+                for (var tmp in res) {
+                    if(tmp == bdefault){
+                        ophtml = ophtml + '<option value="'+tmp+'" selected>'+res[tmp]+'</option>';
+                    }else{
+                        ophtml = ophtml + '<option value="'+tmp+'">'+res[tmp]+'</option>';
+                    }
+                }
+                $("." + domID).html(ophtml);
+//				alert(JSON.stringify(floor));
+                $("."+domID).attr("data-default",floor);
+                $("."+domID).change();
+            });
+
+        }
+        /*if (domID == 'rqst_floor') {
+            cstmpost('',url,{bd: bdefault}, function (res) {
+                ophtml = res
+                $("." + domID).html(res);
+            });
+        }*/
+    }
+
+
+    function downFile(id){
+        var url="{:url('/etprs/Etprs/download/id/"+id+"')}";
+        window.open(url,"_blank");
+    }
+</script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">编辑客户信息</h1>
+            </div>
+            <div class="page-content">
+                <form class="form-horizontal" action="" id="etprsForm">
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">基本信息</h4>
+                                        </div>
+                                        <div class="example">
+                                            <input type="hidden" id="id" name="id" value="">
+                                            <div class="form-group col-md-12"> <!--警告：has-warning 成功：has-success 出错：has-error-->
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 客户类型：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="type" name="type">
+
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 客户名称：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input class="form-control" list="browsers"  name="name1" id="name1" placeholder="支持检索">
+                                                    <datalist id="browsers">
+                                                    </datalist>
+                                                    <!--<input type="text" class="form-control" name="name" id="name" placeholder="支持检索" autocomplete="off">-->
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系人：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="contact" id="contact" placeholder="联系人" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label tele padding-bottom-20"><span class="required">*</span> 联系电话：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="联系电话" autocomplete="off" id="inputPhone" data-plugin="formatter" data-pattern="[[999]]-[[9999]]-[[9999]]">
+                                                </div>
+                                                <!--<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 来源渠道：</label>-->
+                                                <!--<div class="col-sm-4 padding-bottom-20">-->
+                                                    <!--<select class="form-control" id="source" name="source">-->
+
+                                                    <!--</select>-->
+                                                <!--</div>-->
+                                                <!--<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 客户状态：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <select class="form-control" id="status" name="status" readonly="">
+
+                                                    </select>
+                                                </div>-->
+                                                <!--<label class="col-sm-2 control-label padding-bottom-20">意向需求：</label>-->
+                                                <!--<div class="col-sm-4 padding-bottom-20">-->
+                                                    <!--<div class="col-sm-4 padding-0">-->
+                                                        <!--<select class="form-control rqst_build" name="rqst_build" data-url="{:url('/etprs/Etprs/changeBuild')}">-->
+
+                                                        <!--</select>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="col-sm-4 padding-0">-->
+                                                        <!--<select class="form-control rqst_floor" name="rqst_floor">-->
+                                                            <!--<option value=" ">选择楼层</option>-->
+                                                        <!--</select>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="col-sm-4 padding-0">-->
+                                                        <!--<input type="text" class="form-control" name="rqst_roomNo" id="rqst_roomNo" placeholder="填写房间" autocomplete="off">-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<label class="col-sm-2 control-label padding-bottom-20">需求时间：</label>-->
+                                                <!--<div class="col-sm-4 padding-bottom-20">-->
+                                                    <!--<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">-->
+                                                        <!--<div class="input-group">-->
+					                                        <!--<span class="input-group-addon">-->
+					                                            <!--<i class="icon wb-calendar" aria-hidden="true"></i>-->
+					                                        <!--</span>-->
+                                                            <!--<input type="text" class="form-control" name="rqst_start" id="rqst_start">-->
+                                                        <!--</div>-->
+                                                        <!--<div class="input-group">-->
+                                                            <!--<span class="input-group-addon"> 至 </span>-->
+                                                            <!--<input type="text" class="form-control" name="rqst_end" id="rqst_end">-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                                <!--<div class="col-md-12 padding-0">-->
+                                                    <!--<label class="col-sm-2 control-label padding-bottom-20">详细需求：</label>-->
+                                                    <!--<div class="col-sm-10 padding-bottom-20">-->
+                                                        <!--<textarea class="form-control" placeholder="填写详细需求" id="rqst" name="rqst"></textarea>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业信息</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 法人或团队负责人：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="legalname" id="legalname" placeholder="法人或团队负责人姓名" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">营业执照上传：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full fileupload">
+                                                            <input type="file" class="form-control" id="buslicFile" value="" data-size="2">
+                                                             <!--<style>-->
+                                                                  <!--.kv-upload-progress{-->
+                                                                     <!--display:none;-->
+                                                                 <!--}-->
+                                                             <!--</style>-->
+                                                            <input type="hidden" data-placeholder="营业执照上传"  name="buslic" id="buslic" class="opt-require" value=''>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu buslicPreview" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过2M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"> 项目计划书：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="bpFile" value="" data-ext="ppt,pptx,pdf" data-size="50">
+                                                            <input type="hidden" data-placeholder="项目计划书"  name="bp" id="bp" class="opt-require" value=''>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu bpPreview" aria-labelledby="exampleColorDropdown1" role="menu">
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'ppt','pptx','pdf';<br/>文件大小：不能超过50M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">合同信息</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同编号：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="pactNo" placeholder="合同编号" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同上传：</label>
+
+                                                <div class="col-sm-4 padding-bottom-10">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="pactFile" value="" data-ext="jpg,jpeg,png,doc,docx,pdf,rar,zip" data-size="5">
+                                                            <input type="hidden" data-placeholder="合同上传"  name="pact" id="pact" class="opt-require" value=''>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu pactPreview" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'jpg,jpeg,png,doc,docx,pdf,rar,zip';<br/>文件大小：不能超过2M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="btn-actions text-center">
+                    <button type="button" class="btn btn-primary margin-3" id="addEtprs">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

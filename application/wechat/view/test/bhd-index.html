@@ -1,0 +1,300 @@
+{include file="wechat@public/header"}
+<style>
+		a{text-decoration: none;}
+		a:visited{text-decoration: none;}
+		a:hover {text-decoration: none;}
+		a:active{text-decoration:none;} 
+		.bigbox{width:auto;overflow:hidden;padding:0 15px;}
+		.topbox{width:100%;height:45px;z-index:10;background:#FFF;position:fixed;top:0;left:0;padding:0 15px;border-bottom:1px solid #f4f4f4;}
+		.topbox div.iqbtname{width:100%;height:45px;}	
+		.topbox div.iqbtname img{float:left;width:24px;height:24px;margin-top:10px;margin-right:10px;}	
+		.topbox div.iqbtname p{float:left;font-size:16px;color:#2D2D2D;font-weight:bold;height:45px;line-height:45px;overflow:hidden;-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;}
+		/*标题*/
+		.weui-media-box__bd{overflow:hidden;margin-top:10px;}
+		.weui-media-box__bd img{float: left;width:22px;height:auto;margin-right:5px;}
+		.weui-media-box__bd .weui-media-box__title{width:100%;font-size:15px;font-weight:bold;color:#474747;float:left;margin-bottom:5px;}
+		.weui-media-box__bd .weui-media-box__title i{color: #666;}
+		/*列表*/
+		.weui-panel {margin: 0;background:none;}
+		.weui-panel ul{width:100%;overflow:hidden;}
+		.weui-panel ul li{width:100%;overflow:hidden;background:#FFF;}
+		.weui-panel ul li p .aptmt{display:inline-block;margin-left:5px;}
+		.weui-panel ul li .title{overflow:hidden;padding:0 0 5px 0;}
+		.weui-panel ul li .title h4{float:left;color: #666;font-size:15px;}
+		.weui-panel ul li .title span{float:right;font-size:14px;color:#999;}
+		.weui-panel ul li .title span label{color:#f39b0f;}
+		.weui-panel ul li p{/*padding:0 15px;*/color: #999;font-size:14px;}
+		.weui-panel ul li p i{/*color: #32ADF9;*/color: #999;}
+		.weui-panel ul li p span.sc{color: #32ADF9;border:1px solid #32ADF9;margin-right:5px;}
+		.weui-panel ul li p span{float:right;border:1px solid #f39b0f;color:#f39b0f;padding:2px 6px;font-size:12px;border-radius:2px;margin-right:5px;}
+		.weui-panel ul li p span.sc{color: #32ADF9;border:1px solid #32ADF9;margin-right:5px;}
+		.weui-panel ul li p span.sc1{color: #FFF;border:1px solid #32ADF9;background:#32ADF9;}
+		.weui-panel ul li .imgbox{width:100%;overflow:hidden;position:relative;}
+		.weui-panel ul li .imgbox img{width:100%;height:auto;}
+		.weui-panel ul li .imgbox .timebox{position:absolute;top:8px;right:8px;width:auto;overflow:hidden;font-size:10px;}
+		.weui-panel ul li .imgbox .timebox span{display:block;margin-bottom:4px;background:#52B5BB;padding:2px 8px 0 8px;border:1px solid #FFF;border-radius:4px;}
+		.weui-panel ul li .imgbox .timebox span i{color:#FFF;padding-right:5px;margin-top:-2px;font-size:12px;}
+		.weui-panel ul li .imgbox .namebox{position:absolute;left:20px;bottom:20px;height:40px;}
+		.weui-panel ul li .imgbox .namebox img{width:36px;height:36px;float:left;margin-top:4px;margin-right:10px;}
+		.weui-panel ul li .imgbox .namebox .name{width:auto;overflow:hidden;float:left;}
+		.weui-panel ul li .imgbox .namebox .name .p1{color:#FFF;font-size:14px;font-weight:bold;}
+		.weui-panel ul li .imgbox .namebox .name .p2{color:#000;font-size:12px;}
+		.weui-panel ul li .imgbox .namebox .name .p2 i{color:#FFF;}
+		.weui-panel.weui-panel_access{border-bottom:none;}
+		.weui-panel:after{border-bottom:none;}
+		.aptmta{overflow: hidden; white-space:nowrap;width:90%;}
+	</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		//入驻信息
+		cstmpost('',"{:url('iqbt/Iqbt/getMyIqbt')}",{},function(res){
+			$('#iqbt').html(res.rows[0].name);
+			$('#etprs').html(res.rows[0].etprsName);
+			$('#room').html('<i class="icon iconfont icon-box" style="margin-right:5px"></i>'+res.rows[0].roomInfo);
+			$('#starttime').html('<i class="icon iconfont icon-iconfontplay2"></i>'+res.rows[0].starttime);
+			$('#endtime').html('<i class="icon iconfont icon-iconfontstop"></i>'+res.rows[0].endtime);
+		})
+		/*会议室详情*/
+		$('.potentialUser').click(function(){
+			var mtroomId=$(this).find('.imgbox').attr('value');
+			session('mtroomId',mtroomId);
+		})
+		/*活动详情*/
+		$('.activeUser').click(function(){
+			var actId=$(this).find("input[name='actId']").val();
+			session('actId',actId);
+		})
+		/*我要报名*/
+		$('.activeUser').on('click', '.sign', function (events) {
+			events.stopPropagation();
+			var actId = $(this).parents('li').find("input[name='actId']").val();
+			var total = $(this).parents('li').find("input[name='total']").val();
+			var audit = $(this).parents('li').find("input[name='audit']").val();
+			session('actId', actId);
+			session('total', total);
+			session('audit', audit);
+			location.href = "{:url('wechat/test/my-enroll')}";
+		})
+		/*报名详情*/
+		$('.activeUser').on('click', '.signinfo', function (events) {
+			events.stopPropagation();
+			var actId = $(this).parents('li').find("input[name='actId']").val();
+			var total = $(this).parents('li').find("input[name='total']").val();
+			var audit = $(this).parents('li').find("input[name='audit']").val();
+			var signId = $(this).parents('li').find("input[name='signId']").val();
+			session('actId', actId);
+			session('total', total);
+			session('audit', audit);
+			session('signId', signId);
+			location.href = "{:url('wechat/test/mysign')}";
+		})
+	})
+</script>
+<div class="bigbox" style="margin-top:10px;">
+	<div class="topbox">
+		<a href="{:url('wechat/user/userinfo')}">
+			<div class="iqbtname">
+				<img src="__PUBLIC__/wechat/images/logo.png" alt="">
+				<p id="etprs">{$Think.session.userId}-{$Think.session.user.type}</p>
+			</div> 
+		</a>
+	</div>
+
+	<!--首页-->
+	<div class="page__pd first-header">
+		<div class="weui-panel weui-panel_access">
+		    <ul>
+		    	<li>
+			        <div class="imgbox">
+		        		<img src="__PUBLIC__/wechat/images/bannerpic.png">
+		        		<div class="timebox">
+		        			<span id="starttime"><i class="icon iconfont icon-iconfontplay2"></i></span>
+		        			<span id="endtime"></span>
+		        		</div>
+		        		<div class="namebox">
+		        			<img src="__PUBLIC__/wechat/images/defaultlogo.png" style='height:36px'>
+		        			<div class="name">
+		        				<a href='bhd-my-in.html'><p class="p1" id="iqbt"></p></a>
+		        				<p class="p2" id="room"> </p>
+		        			</div>
+		        		</div>
+		        	</div>
+			        <div style="padding:0 15px;line-height:30px;display:flex">
+			        	<i class="icon iconfont icon-remind" style="display:inline-block;"></i> 
+			        	<!--需要后台限制字数-->
+			        	<a href="bhd-say-detail.html" class='aptmta'><div class="aptmt" style='color:#666;margin-left: 6px;'></div></a>
+			        	<a href="bhd-publicsay.html"><i class="icon iconfont icon-more" style="float:right;font-weight: bold;color:#000"></i></a>
+			        </div>
+		        </li>
+	        </ul>
+		</div>	
+	</div>
+	<div class="weui-grids" style="margin-top:10px;">
+		<div class="weui-media-box__bd">
+			<h4 class="weui-media-box__title">
+				会议室
+				<a href="bhd-meetingroom.html"><i class="icon iconfont icon-more" style="float:right;"></i></a>
+			</h4>
+		</div>
+		<div class="weui-panel weui-panel_access">
+		    <ul class='potentialUser'>
+	        </ul>
+		</div>	
+	</div>
+	<div class="weui-grids">
+		<div class="weui-media-box__bd">
+			<h4 class="weui-media-box__title">
+				最新活动
+				<a href="castation.html"><i class="icon iconfont icon-more" style="float:right;"></i></a>
+			</h4>
+		</div>
+		<div class="weui-panel weui-panel_access">
+		    <ul class='activeUser'>
+	        </ul>
+		</div>	
+	</div>
+</div>	
+{include file="wechat@public/footer"}
+<script>
+	var length = '';
+	// 会议室列表获取一条数据
+	let url = "{:url('Meetroom/Meetroom/getMtroomList')}";
+	let data = {
+		limit:1,
+	}
+	cstmpost('',url,data,function(res){
+		console.log(res);
+		menuSum(res);
+	})
+
+	// 活动列表获取一条数据
+	let activeurl = "{:url('activity/activity/getActList')}";
+	let activedata = {
+		limit:1,
+	}
+	cstmpost('',activeurl,activedata,function(res){
+		active(res);
+	})
+
+	// 公告列表
+	let publicsay = '{:url("/user/notice/getAllNotice")}'
+	// "{:url('user/notice/getNoticeList')}"
+	let pubdata = {
+			limit:1
+	}
+	cstmpost('',publicsay,pubdata,function(res){
+		if(removeHTMLTag(res.data[0].content).length){
+			var size = removeHTMLTag(res.data[0].content);
+			clearInterval(timer)
+		} else {
+			var size = '图片'
+		}
+		$('.aptmt').html(size);
+		$('.aptmt').attr('value',res.data[0].noticeId);
+		$('.msgId').attr('value',res.data[0].msgId);
+		length = size.length;
+		// 截取文本框中的文字
+		function removeHTMLTag(str) {
+			str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+			str = str.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+			//str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+			str=str.replace(/&nbsp;/ig,'');//去掉&nbsp;
+			str=str.replace(/\s/g,''); //将空格去掉
+			return str;
+		}
+		// 公告轮播显示
+		if(length<18){
+			return false;
+		}
+		var num = 0;
+		function goLeft() {
+			//750是根据尺寸，可变的
+			if (num == -length*12) {
+				num = 0;
+			}
+			num -= 1;
+			$(".aptmt").css({
+				marginLeft: num
+			})
+		}
+		//设置滚动速度
+		var timer = setInterval(goLeft, 40);
+	})
+
+	// 点击公告存储信息
+	$('.aptmt').click(function(){
+		sessionStorage.setItem('noticeId',$(this).attr('value'))
+		sessionStorage.setItem('msgId',$(this).attr('msgId'))
+	})
+	// 会议室列表初始化函数start
+	function menuSum(res) {
+		var $potentialUser =
+			'<li><div class="imgbox" value="'+ res.data[0].id +'"><a href="bhd-mt-detail.html"><img src="__PUBLIC__/wechat/images/activepic.jpg">\
+			</a></div><div class="title"><h4 style="color:#999">' + res.data[0].mtrName +
+			'(' + res.data[0].acceptName + ')' + '</h4><span>' + res.data[0].price + '元/小时</span></div>\
+			<p style="color:#999"><i class="icon iconfont icon-shijian" style="margin-right: 5px;"></i>00:00~24:00<a href="meetinglist.html">\
+			<span value='+ res.data[0].id + ' class="mtroomId">立即预定</span></a><span class="sc" id="icon">\
+			收藏</span></p><p style="color:#999"><i class="icon iconfont icon-map-b" style="margin-right: 5px;"></i>' + res.data[0].fullyName + '</p></li>';
+		$('.potentialUser').append($potentialUser);
+		// 判断是否收藏
+		console.log(res.data[0].isCollect)
+		if(res.data[0].isCollect) {
+			$('#icon').addClass('sc1').removeClass('sc');
+		}
+	}
+	$('body').on('click','.mtroomId',function(){
+		sessionStorage.setItem('mtroomId',$(this).parents('li').find('.imgbox').attr('value'));
+	})
+	// 会议室列表初始化函数end
+	// 活动列表初始化函数start
+	function active(res) {
+		// 总共报名数量
+		let $activeUser = '';
+		if (res.rows[0].poster == '') {
+			$activeUser = '<li><a href="cadetails.html"><img src="__PUBLIC__/images/default-iqbt.jpg" class="img" style="width:100%">';
+		} else {
+			$activeUser = '<li><a href="cadetails.html"><img src="__PUBLIC__/' + res.rows[0].poster + '" class="img" style="width:100%">';
+		}
+//		$activeUser += '<div class="title"><h3 style="color:#000">' + res.rows[0].name +
+//			'</h3></div></a><p><i class="icon iconfont icon-map-b"></i>' + res.rows[0].districtId +
+//			'<a href="my-enroll.html" class="my-enroll"><span>我要报名</span></a></p><p><i class="icon iconfont icon-shijian"></i>'
+//			+ res.rows[0].starttime + '~' + res.rows[0].endtime + '</p>' +
+//			'<input name="actId" id="actId" type="hidden" value="' + res.rows[0].id + '"/>' +
+//			'<input name="status" id="status" type="hidden" value="' + res.rows[0].status + '"/></li>';
+//		$activeUser += '<div class="title"><h3>' + res.rows[0].name +
+//				'</h3></div></a><p><i class="icon iconfont icon-map-b"></i>' + res.rows[0].districtId;
+//		/*mfl  end*/
+		$activeUser += '<div class="title"><h4 style="color:#999">' + res.rows[0].name +
+				'</h4></div></a><p style="color:#999"><i class="icon iconfont icon-map-b" style="margin-right: 5px;"></i>' + res.rows[0].districtId;
+		if(res.rows[0].sign){
+			$activeUser +=	'<a  class="my-enroll"><input name="signId"  type="hidden" value="' + res.rows[0].signId + '"/><span class="signinfo">报名详情</span></a></p><p><i class="icon iconfont icon-shijian"></i>'
+		}else{
+			$activeUser +=	'<a  class="my-enroll"><span class="sign">我要报名</span></a></p><p style="color:#999"><i class="icon iconfont icon-shijian" style="margin-right: 5px;"></i>'
+		}
+
+
+		$activeUser += res.rows[0].starttime + '~' + res.rows[0].endtime + '</p>' +
+				'<input name="actId"  type="hidden" value="' + res.rows[0].id + '"/>' +
+				'<input name="total" type="hidden" value="' + res.rows[0].total + '"/>' +
+				'<input name="audit"  type="hidden" value="' + res.rows[0].audit + '"/>' +
+				'<input name="status"  type="hidden" value="' + res.rows[0].status + '"/></li>';
+		$('.activeUser').append($activeUser)
+	// 判断屏幕宽度，选择图片比例
+	$('.weui-panel').find('.img').css('height', $(window).width() / 2 + 'px')
+}
+// 活动列表初始化函数end
+// 判断是否收藏
+$("body").on('click','#icon',function(){
+	$(this).toggleClass("sc1").toggleClass("sc");
+	// 收藏数据提交
+	let url = "{:url('/Meetroom/Meetroom/mtCollect')}";
+	let data = {
+		mtroomId:$(this).parents('li').find('.imgbox').attr('value')
+	}
+	cstmpost('',url,data,function(res){
+		$.toast(res.msg)
+	})
+});
+</script>

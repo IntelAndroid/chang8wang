@@ -1,0 +1,59 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // 当页面存在初始数据   编辑入驻客户信息时候
+        var url = "{:url('/Etprs/Etprs/initXlsRecord')}";
+        var code = sessionStorage.getItem('record_Id');
+        $('#settledTable').bootstrapTable('refresh',{'url':url,query: {code: code,_tm: new Date()}});
+    });
+
+</script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+                                    <li role="presentation" class="account-record" active>
+                                        <a href="#record" aria-controls="record" role="tab" data-toggle="tab">
+                                            <i class="icon fa-reorder" aria-hidden="true"></i> 操作记录
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content margin-top-15">
+                                    <!--选项卡4内容-->
+                                    <div class="tab-pane animation-slide-left tab-record  active" role="tabpanel" id="record">
+                                        <div class="example table-responsive">
+                                            <table class="table table-bordered text-center" id="settledTable" data-side-pagination="false" data-toggle="table"
+                                                   data-show-refresh="false" data-show-toggle="false" data-show-columns="false" data-toolbar="#waitToolbar" data-pagination="true"
+                                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                    <thead>
+                                                        <tr>
+                                                            <!--非正式字段-->
+                                                            <th data-field="realname" class="text-center">操作人</th>
+                                                            <th data-field="addtime" class="text-center">操作时间</th>
+                                                            <th data-field="desc" class="text-center">状态</th>
+                                                        </tr>
+                                                    </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

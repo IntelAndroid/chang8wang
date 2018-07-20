@@ -1,0 +1,304 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-panel {
+		margin: 0;
+		background: none;
+	}
+
+	.weui-panel ul {
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.weui-panel ul li {
+		width: 100%;
+		overflow: hidden;
+		margin-bottom: 15px;
+		padding-bottom: 10px;
+		background: #FFF;
+	}
+
+	.weui-panel ul li .title {
+		overflow: hidden;
+		padding: 0 15px 5px 15px;
+	}
+
+	.weui-panel ul li .title h3 {
+		float: left;
+		color: #32ADF9;
+	}
+
+	.weui-panel ul li .title span {
+		float: right;
+		font-size: 14px;
+		color: #999;
+	}
+
+	.weui-panel ul li .title span label {
+		color: #f39b0f;
+	}
+
+	.weui-panel ul li p {
+		padding: 0 15px;
+		color: #999;
+		font-size: 14px;
+	}
+
+	.weui-panel ul li p i {
+		color: #32ADF9;
+	}
+
+	.weui-panel ul li p span {
+		float: right;
+		background: #f39b0f;
+		color: #FFF;
+		padding: 2px 6px;
+		font-size: 12px;
+		border-radius: 2px;
+	}
+
+	.weui-panel ul li img {
+		width: 100%;
+		height: auto;
+	}
+
+	.item_cell.weui-col-33 {
+		text-align: center;
+	}
+
+	.weui-panel.weui-panel_access {
+		border-bottom: none;
+	}
+
+	.weui-panel:after {
+		border-bottom: none;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+				<div class="navbox">
+					<a href="javascript:history.back(-1)">
+						<div class="left">
+							<i class="icon iconfont icon-back"></i>
+						</div>
+					</a>
+					<div class="center">活动报名</div>
+					<a href="search.html" value='2' class='numsear'>
+						<div class="right">
+							<i class="icon iconfont icon-search"></i>
+						</div>
+					</a>
+				</div>
+				<div class="lr_nb first-header">
+					<div class="slider_wrap line">
+						<div class="wx_items weui-row weui-no-gutter menu">
+							<div class="item_cell weui-col-33 current" value='0'>
+								<span>未开始(<span class='nostart'></span>)</span>
+							</div>
+							<div class="item_cell weui-col-33" value='1'>
+								<span>进行中(<span class='ongoing'></span>)</span>
+							</div>
+							<div class="item_cell weui-col-33" value='2'>
+								<span>已结束(<span class='hasended'></span>)</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="page__pd last-footer">
+					<div class="weui-panel weui-panel_access">
+						<ul id="list" class='potentialUser'>
+							
+
+						</ul>
+						<div class="weui-loadmore" style="margin:0 auto;">
+							<i class="weui-loading"></i>
+							<span class="weui-loadmore__tips">正在加载</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{include file="wechat@public/footer"}
+	<script>
+		// 活动报名页列表url
+		var potentialurl = "{:url('activity/activity/getActList')}";
+		// 活动报名菜单页
+		var areaurl = "{:url('activity/activity/getActNum')}"
+		// 上拉加载
+		var numsign = '';
+		var numtotal = '';
+		var numlength = '';
+		// 上拉加载加载条数
+		var limit = 5;
+		// 活动报名页菜单初始化start
+		var data = { status: 0 };
+		cstmpost('', areaurl, data, function (res) {
+			console.log(res)
+			// 活动报名页菜单初始化start
+			// 未开始人数
+			$('.nostart').html(res.data[0].wnum)
+
+			// 进行中人数
+			$('.ongoing').html(res.data[0].jnum)
+
+			// 已结束人数
+			$('.hasended').html(res.data[0].ynum)
+
+			// 活动报名页菜单初始化end
+
+			// 活动报名页列表初始化start
+			var data = {
+				status: $('.menu>.item_cell:first').attr('value'),
+			}
+			numsign = $('.menu>.item_cell:first').attr('value');
+			cstmpost('', potentialurl, data, function (res) {
+				numtotal = res.total + limit;
+				menuSum(res);
+			})
+			// 活动报名页列表初始化end
+		})
+		// 菜单点击事件start
+		$(function () {
+			$(".wx_items").on('click', '.item_cell', function () {
+				$('.potentialUser').html('')
+				$(this).addClass('current').siblings().removeClass('current');
+				var that = numsign = $(this).attr('value');
+				var clickdata = {
+					status: $(this).attr('value'),
+				}
+				cstmpost('.item_cell', potentialurl, clickdata, function (res, num) {
+					numtotal = res.total + limit;
+					menuSum(res);
+				})
+			});
+			//活动详情
+			$('.potentialUser').on('click','li', function () {
+				var actId = $(this).find("input[name='actId']").val();
+				session('actId', actId);
+				location.href = "{:url('wechat/test/cadetails')}";
+			})
+			/*我要报名*/
+			$('.potentialUser').on('click', '.sign', function (events) {
+				events.stopPropagation();
+				var actId = $(this).parents('li').find("input[name='actId']").val();
+				var total = $(this).parents('li').find("input[name='total']").val();
+				var audit = $(this).parents('li').find("input[name='audit']").val();
+				session('actId', actId);
+				session('total', total);
+				session('audit', audit);
+				location.href = "{:url('wechat/test/my-enroll')}";
+			})
+			/*报名详情*/
+			$('.potentialUser').on('click', '.signinfo', function (events) {
+				events.stopPropagation();
+				var actId = $(this).parents('li').find("input[name='actId']").val();
+				var total = $(this).parents('li').find("input[name='total']").val();
+				var audit = $(this).parents('li').find("input[name='audit']").val();
+				var signId = $(this).parents('li').find("input[name='signId']").val();
+				session('actId', actId);
+				session('total', total);
+				session('audit', audit);
+				session('signId', signId);
+				location.href = "{:url('wechat/test/mysign')}";
+			})
+		});
+		// 菜单点击事件end
+
+		// 列表初始化函数start
+		function menuSum(res) {
+			console.log(res)
+			var people = ''
+			// 进行中切换为已报名
+			$.each(res.rows, function (i) {
+				// 总共报名数量
+				var $potentialUser = '';
+				if (res.rows[i].poster == '') {
+					$potentialUser = '<li><a href="cadetails.html"><img src="__PUBLIC__/images/default-iqbt.jpg">';
+				} else {
+					$potentialUser = '<li><a href="cadetails.html"><img src="__PUBLIC__/' + res.rows[i].poster + '">';
+				}
+				console.log(res.rows[i].poster)
+
+				$potentialUser += '<div class="title"><h3 style="color:#999">' + res.rows[i].name +
+					'</h3></div></a><p style="color:#999"><i class="icon iconfont icon-map-b" style="margin-right: 5px;"></i>' + res.rows[i].districtId;
+				if(res.rows[i].sign){
+					$potentialUser +=	'<a  class="my-enroll"><input name="signId"  type="hidden" value="' + res.rows[i].signId + '"/><span class="signinfo">报名详情</span></a></p><p style="color:#999"><i class="icon iconfont icon-shijian" style="margin-right: 5px;"></i>'
+				}else{
+					$potentialUser +=	'<a  class="my-enroll"><span class="sign">我要报名</span></a></p><p style="color:#999"><i class="icon iconfont icon-shijian" style="margin-right: 5px;"></i>'
+				}
+
+
+				$potentialUser += res.rows[i].starttime + '~' + res.rows[i].endtime + '</p>' +
+					'<input name="actId"  type="hidden" value="' + res.rows[i].id + '"/>' +
+						'<input name="total" type="hidden" value="' + res.rows[i].total + '"/>' +
+						'<input name="audit"  type="hidden" value="' + res.rows[i].audit + '"/>' +
+					'<input name="status"  type="hidden" value="' + res.rows[i].status + '"/></li>';
+				$('.potentialUser').append($potentialUser)
+			})
+			numlength = $('.potentialUser').children().length;
+			if (res.total <= 10 || res.total == $('.potentialUser').children().length) {
+				$('.weui-loadmore').html('')
+			} else {
+				$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+			}
+			// 进行中已报名总数隐藏
+			if (numsign == '1' || numsign == '2') {
+				$('.my-enroll').css('display', 'none');
+			}
+			// 判断屏幕宽度，选择图片比例
+			$('.weui-panel').find('img').css('height', $(window).width() / 2 + 'px')
+		}
+		// 列表初始化函数end
+
+
+		// infinite
+		var loading = false;
+		$(".weui-tab__bd-item").infinite().on("infinite", function () {
+			$('.weui-loadmore').css('display', 'block')
+			if (loading) return;
+			loading = true;
+			if (numtotal > numlength) {
+				$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+				// setTimeout(function () {
+				// if()
+				var signdata = {
+					status: numsign,
+					offset: numlength,
+					limit: limit,
+				}
+				cstmpost('', potentialurl, signdata, function (res) {
+					menuSum(res)
+				})
+				// }, 1000)
+			} else {
+				$('.weui-loadmore').html('')
+			}
+			numlength += limit;
+			loading = false;
+		});
+
+			// 存储搜索value
+			$('.numsear').click(function(){
+                sessionStorage.setItem('numsear',$(this).attr('value'))
+            })
+	</script>

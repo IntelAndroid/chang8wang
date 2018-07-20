@@ -1,0 +1,60 @@
+{include file="index@public/header"}
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+        	<div class="page-header">
+                <h1 class="page-title">房间管理</h1>
+            </div>
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                    	<style>
+                    		.panel0{border:1px solid #d6d6d8;}
+                    		.panel0 h4 span{color:#2f84c5;}
+                    		.customerkind {overflow:hidden;}
+                    		.customerkind .panel-body{padding:15px;border-radius:8px;border:1px solid #4397e6;text-align:center;}
+                    		.customerkind .panel-body > p{margin-bottom:15px;color:#4397e6;font-size:16px;}
+                    		.customerkind .panel-body .label-content {width:100%;}
+                    		.customerkind .panel-body .label-content img{margin:15px auto;display:inline-block;}
+                    	</style>
+                        <div class="panel panel0">
+                        	<div class="panel-body padding-top-40 margin-0">
+                                <div class="col-md-12 padding-0">
+				                    <div class="col-md-3 customerkind">
+				                        <div class="panel">
+				                        	<a href="{:url('room/room/buildlist')}">
+					                            <div class="panel-body">
+					                                <p>楼座管理</p>
+					                                <div class="label-content">
+				                                		<img src="__PUBLIC__/images/building.png">
+					                                </div>
+					                            </div>
+					                        </a>    
+				                        </div>
+				                    </div>
+				                    <div class="col-md-3 customerkind">
+				                        <div class="panel">
+				                        	<a href="{:url('room/room/roominfo')}">
+					                            <div class="panel-body">
+					                                <p>房间管理</p>
+					                                <div class="label-content">
+				                                		<img src="__PUBLIC__/images/room.png">
+					                                </div>
+					                            </div>
+					                        </a>    
+				                        </div>
+				                    </div>
+				                    <div class="col-md-3 customerkind"></div>
+				                    <div class="col-md-3 customerkind"></div>
+				                </div>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{include file="index@public/footer"}

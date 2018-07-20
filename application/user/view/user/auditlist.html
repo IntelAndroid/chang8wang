@@ -1,0 +1,314 @@
+{include file="index@public:header"}
+<!--<link href="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.css" rel="stylesheet">-->
+<!--<script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+	//审核操作
+    function auditFmt(value,row,index){
+    	return '<button onclick="auditWin('+row.userId+','+row.iqbtId+')" type="button" class="btn btn-xs btn-outline btn-warning"  data-target="#logsForm" data-toggle="modal" aria-hidden="true">' +
+            '&nbsp;&nbsp;<i class="fa fa-file" aria-hidden="true"></i>&nbsp;审核&nbsp;&nbsp;</button>';
+    }
+	//查看操作
+	function showFmt(value,row,index){
+		return '<button  onclick="showWin($(this),'+row.userId+','+row.iqbtId+')" data-salesperson="'+row.salesperson+'"  data-time="'+row.addtime+'"  data-valid="'+row.validTime+'" type="button" class="btn btn-xs btn-outline btn-primary" data-target="#showFormDiv" data-toggle="modal" aria-hidden="true">' +
+				'&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;续约&nbsp;&nbsp;</button>'
+
+	}
+
+	//空间名
+	function iqbFmt(value,row,index){
+		return 	'<a style="cursor:pointer "onclick="iqbtInfo('+row.iqbtId+')">'+row.name+'</a>';
+	}
+	//过期时间
+	function validFmt(value,row,index){
+//		<span class="text-warning">
+		var time= $.now()/1000;
+		if(time+86400*30<row.validStamp || row.validTime=='永久有效'){
+			return '<span class="text-success">'+row.validTime+'</span>';
+		}else if(time+86400*30>row.validStamp && time+86400*7<row.validStamp){
+			return '<span class="text-warning">'+row.validTime+'</span>';
+		}else if( time+86400*7>row.validStamp) {
+			return '<span class="text-danger">' + row.validTime + '</span>';
+		}else{
+			return '<span class="text-success">'+row.validTime+'</span>';
+		}
+	}
+	//空间名点击事件
+	function iqbtInfo(iqbtId){
+		session('id',iqbtId);
+		location.href="{:url('iqbt/iqbt/iqbtInfo')}"
+	}
+	//审核点击事件(弹窗)
+	function auditWin(userId,iqbtId){
+		var date=new Date();
+		var str=date.toLocaleDateString();
+		str=str.replace(/\//g,"-");
+		$('#addtime').val(str);
+		var time= $.now();
+		time=time+7*86400000;
+		date=new Date(time);
+		str=date.toLocaleDateString();
+		str=str.replace(/\//g,"-");
+		$('#validTime').val(str);
+		$('#id').val(userId);
+		$('#iqbtId').val(iqbtId);
+	}
+	//查看点击事件(弹窗)
+	function showWin(obj,userId,iqbtId){
+		$('#validTime1').val(obj.attr('data-valid'));
+		var addtime=obj.attr('data-time');
+		$('#addtime1').val(addtime);
+		$('#hiddentime').val(addtime);
+		$('#salesperson').val(obj.attr('data-salesperson'));
+		$('#id1').val(userId);
+		$('#iqbtId1').val(iqbtId);
+	}
+	$(function (){
+		//审核确定按钮
+		$('.confirm').click(function(){
+			var url="{:url('iqbt/iqbt/saveUserInfo')}";
+			var form=$(this).attr('data-form');
+			var table=$(this).attr('refresh-table');
+			var data=serializeData(form);
+			console.log(data);
+			cstmpost('#confirm',url,data,function(res){
+				if(res.code==1){
+					toastr.success(res.msg);
+					$('.close').click();
+					$('#useTable').bootstrapTable('refresh');
+					$('#outTable').bootstrapTable('refresh');
+					$('#auditTable').bootstrapTable('refresh');
+				}else{
+					toastr.error(res.msg);
+				}
+			})
+		})
+	})
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+				<!--审核弹窗-->
+            	<div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+	                <div class="modal-dialog modal-center">
+	                    <form class="modal-content " id="compileRoleForm">
+	                        <div class="modal-header">
+	                            <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+	                            	<i class="icon wb-close" aria-hidden="true"></i>
+	                            </button>
+	                            <h4 class="modal-title">系统使用审核</h4>
+	                        </div>
+	                        <div class="modal-body">
+	                            <div class="form form-horizontal logs-settings">
+	                                <div class="form-group row">
+	                                    <label class="col-xs-3 control-label"><span class="required">*</span> 对接人：</label>
+	                                    <div class="col-xs-9">
+	                                        <!--<select class="form-control">-->
+	                                            <!--<option>王红</option>-->
+	                                            <!--<option>王亮</option>-->
+	                                        <!--</select>-->
+											<input class="form-control" type="text" name="salesperson"/>
+											<input class="form-control" type="hidden" name="id" id="id"/>
+											<input class="form-control" type="hidden" name="iqbtId" id="iqbtId"/>
+	                                    </div>
+	                                </div>
+	                                <!--<div class="form-group row">-->
+	                                    <!--<label class="col-xs-3 control-label"><span class="required">*</span> 开始时间：</label>-->
+	                                    <!--<div class="col-xs-9">-->
+	                                        <!--<div class="input-group">-->
+			                                    <!--<span class="input-group-addon">-->
+			                                        <!--<i class="icon wb-calendar" aria-hidden="true"></i>-->
+			                                    <!--</span>-->
+	                                            <!--<input type="text" class="form-control" id="addtime"  name="addtime" data-plugin="datepicker" data-language="zh-CN">-->
+	                                    	<!--</div>-->
+	                                    <!--</div>-->
+	                                <!--</div>-->
+	                                <div class="form-group row">
+	                                    <label class="col-xs-3 control-label"><span class="required">*</span> 过期时间：</label>
+	                                    <div class="col-xs-9">
+	                                        <div class="input-group">
+			                                    <span class="input-group-addon">
+			                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+			                                    </span>
+	                                            <input type="text" class="form-control" id="validTime" name="validTime" data-plugin="datepicker" data-language="zh-CN">
+	                                    	</div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="modal-footer">
+		                        <div class="btn-actions pull-right margin-left-15">
+		                            <!--<a class="btn btn-primary" data-dismiss="modal" id="confirm">确定</a>-->
+		                            <a class="btn btn-primary confirm"   data-form="compileRoleForm" refresh-table="auditTable">确定</a>
+		                        </div>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+
+				<!--查看弹窗start-->
+				<div class="modal" id="showFormDiv" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+					<div class="modal-dialog modal-center">
+						<form class="modal-content " id="showForm">
+							<div class="modal-header">
+								<button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+									<i class="icon wb-close" aria-hidden="true"></i>
+								</button>
+								<h4 class="modal-title">用户信息</h4>
+							</div>
+							<div class="modal-body">
+								<div class="form form-horizontal logs-settings">
+									<div class="form-group row">
+										<label class="col-xs-3 control-label"><span class="required">*</span> 对接人：</label>
+										<div class="col-xs-9">
+											<!--<select class="form-control">-->
+											<!--<option>王红</option>-->
+											<!--<option>王亮</option>-->
+											<!--</select>-->
+											<input class="form-control" type="text" name="salesperson" id="salesperson"/>
+											<input class="form-control" type="hidden" name="id" id="id1"/>
+											<input class="form-control" type="hidden" name="iqbtId" id="iqbtId1"/>
+										</div>
+									</div>
+									<!--<div class="form-group row">-->
+										<!--<label class="col-xs-3 control-label"><span class="required">*</span> 开始时间：</label>-->
+										<!--<div class="col-xs-9">-->
+											<!--<div class="input-group">-->
+			                                    <!--<span class="input-group-addon">-->
+			                                        <!--<i class="icon wb-calendar" aria-hidden="true"></i>-->
+			                                    <!--</span>-->
+												<!--<input type="text" class="form-control" id="addtime1"  name="addtime"  data-plugin="datepicker" disabled="disabled" data-language="zh-CN">-->
+												<!--<input type="hidden" class="form-control" id="hiddentime"  name="addtime"   data-language="zh-CN">-->
+											<!--</div>-->
+										<!--</div>-->
+									<!--</div>-->
+									<div class="form-group row">
+										<label class="col-xs-3 control-label"><span class="required">*</span> 过期时间：</label>
+										<div class="col-xs-9">
+											<div class="input-group">
+			                                    <span class="input-group-addon">
+			                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+			                                    </span>
+												<input type="text" class="form-control" id="validTime1" name="validTime" data-plugin="datepicker" data-language="zh-CN">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="btn-actions pull-right margin-left-15">
+									<!--<a class="btn btn-primary" data-dismiss="modal" id="confirm">确定</a>-->
+									<a class="btn btn-primary confirm" data-form="showForm"  refresh-table="useTable">确定</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!--查看弹窗end-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <div class="nav-tabs-horizontal" data-approve="nav-tabs">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="active" role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsOne" aria-controls="exampleTabsOne" role="tab">待审核</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsTwo" aria-controls="exampleTabsTwo" role="tab">使用中</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsThree" aria-controls="exampleTabsThree" role="tab">已过期</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content padding-top-20">
+                                        <div class="tab-pane animation-slide-left active" id="exampleTabsOne" role="tabpanel">
+	                                        <table id="auditTable" class="table table-bordered text-center cdtable margin-top-20" data-pagination="true"
+                                                   data-toggle="table"  data-toolbar="false" data-side-pagination="server"
+                                                   data-url="{:url('iqbt/iqbt/getUserList',array('status'=>6018005))}">
+					                        	<thead>
+					                                <tr>
+					                                	<th class="text-center" data-field="province">省份</th>
+					                                	<th class="text-center" data-field="city">城市</th>
+					                                	<th class="text-center" data-formatter="iqbFmt">空间名称</th>
+					                                	<th class="text-center" data-field="contact">联系人</th>
+					                                    <th class="text-center" data-field="mobile">电话</th>
+					                                    <th class="text-center" data-field="addtime">提交时间</th>
+					                                    <th class="text-center" data-formatter="auditFmt">操作</th>
+					                                    <!--<th class="text-center">对接人</th>
+					                                    <th class="text-center">系统使用起止时间</th>-->
+					                                </tr>
+					                            </thead>
+					                        </table>
+                                        </div>
+                                        <!--使用中-->
+										<div class="tab-pane animation-slide-left" id="exampleTabsTwo" role="tabpanel">
+	                                        <table id="useTable" class="table table-bordered text-center cdtable margin-top-20"
+												   data-pagination="true"
+												   data-toggle="table"  data-toolbar="false" data-side-pagination="server"
+												   data-url="{:url('iqbt/iqbt/getUserList',array('status'=>'intime'))}">
+					                        	<thead>
+					                                <tr>
+														<th class="text-center" data-field="province">省份</th>
+														<th class="text-center" data-field="city">城市</th>
+														<th class="text-center" data-formatter="iqbFmt">空间名称</th>
+														<th class="text-center" data-field="contact">联系人</th>
+														<th class="text-center" data-field="mobile">电话</th>
+					                                    <th class="text-center" data-field="roomnum">办公室数量</th>
+					                                    <th class="text-center" data-field="oddroomnum">剩余数量</th>
+					                                    <th class="text-center" data-field="">办公室价格</th>
+					                                    <th class="text-center" data-field="unitnum">工位数量</th>
+					                                    <th class="text-center" data-field="oddunitnum">剩余数量</th>
+					                                    <th class="text-center" data-field="">工位价格</th>
+					                                    <th class="text-center" data-field="salesperson" data-sortable="true">对接人</th>
+														<th class="text-center" data-field="addtime">提交时间</th>
+														<th class="text-center" data-formatter="validFmt">过期时间</th>
+					                                    <th class="text-center" data-formatter="showFmt">操作</th>
+					                                </tr>
+					                            </thead>
+					                        </table>
+                                        </div>
+										<!--已过期-->
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsThree" role="tabpanel">
+	                                        <table id="outTable" class="table table-bordered text-center cdtable margin-top-20"
+												   data-pagination="true"
+												   data-toggle="table"  data-toolbar="false" data-side-pagination="server"
+												   data-url="{:url('iqbt/iqbt/getUserList',array('status'=>'outtime'))}">
+
+					                        	<thead>
+					                                <tr>
+														<th class="text-center" data-field="province">省份</th>
+														<th class="text-center" data-field="city">城市</th>
+														<th class="text-center" data-formatter="iqbFmt">空间名称</th>
+														<th class="text-center" data-field="contact">联系人</th>
+														<th class="text-center" data-field="mobile">电话</th>
+														<th class="text-center" data-field="roomnum">办公室数量</th>
+														<th class="text-center" data-field="oddroomnum">剩余数量</th>
+														<th class="text-center" data-field="">办公室价格</th>
+														<th class="text-center" data-field="unitnum">工位数量</th>
+														<th class="text-center" data-field="oddunitnum">剩余数量</th>
+														<th class="text-center" data-field="">工位价格</th>
+														<th class="text-center" data-field="salesperson" data-sortable="true">对接人</th>
+														<th class="text-center" data-field="addtime">提交时间</th>
+														<th class="text-center" data-field="validTime">过期时间</th>
+					                                    <th class="text-center" data-formatter="showFmt">操作</th>
+					                                </tr>
+					                            </thead>
+					                            </tbody>
+					                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public:footer"}

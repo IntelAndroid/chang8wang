@@ -1,0 +1,417 @@
+{include file="wechat@public/header"}
+<style>
+		a{text-decoration: none;}
+		a:visited{text-decoration: none;}
+		a:hover {text-decoration: none;}
+		a:active{text-decoration:none;} 
+		.weui-panel {margin: 0;background:none;}
+		.weui-cell:before{border:none;}
+		.weui-panel ul{width:100%;overflow:hidden;}
+		.weui-panel ul li{width:100%;overflow:hidden;background:#FFF;}
+		.weui-panel ul li .title{overflow:hidden;padding:0 15px 5px 15px;}
+		.weui-panel ul li .title h4{float:left;color: #666;font-size:15px;}
+		.weui-panel ul li .title span{float:right;font-size:14px;color:#999;}
+		.weui-panel ul li .title span label{color:#f39b0f;}
+		.weui-panel ul li p{padding:0 15px;color: #999;font-size:14px;}
+		.weui-panel ul li p i{/*color: #32ADF9;*/color: #999;}
+		.weui-panel ul li p span.sc{color: #32ADF9;border:1px solid #32ADF9;margin-right:5px;}
+		.weui-panel ul li p span.sc1{color: #FFF;border:1px solid #32ADF9;background:#32ADF9;}
+		.weui-panel ul li p span{float:right;border:1px solid #f39b0f;color:#f39b0f;padding:2px 6px;font-size:12px;border-radius:2px;}
+		
+		
+		.weui-panel ul li .imgbox{width:100%;overflow:hidden;position:relative;}
+		.weui-panel ul li .imgbox img{width:100%;height:auto;}
+		.weui-panel.weui-panel_access{border-bottom:none;}
+		.weui-panel:after{border-bottom:none;}
+		.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+		.weui-cell__bd{color:#878787;font-size:15px;text-align: left;}
+		.weui-cell__bd .weui-input{text-align: left;}
+		
+		
+		.lr_nb1 { width:100%;height:60px;line-height:60px;margin-top:10px;background:#FFF;font-size:12px;}
+		.lr_nb1 .slider_wrap {width:100%;overflow:hidden;overflow-x:scroll;-webkit-overflow-scrolling:touch;}/*允许独立的滚动区域和触摸回弹*/
+		.lr_nb1 .slider_wrap.line .wx_items {white-space:nowrap;}/*规定段落中的文本不进行换行*/
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell {display:inline-block;padding:0;height:60px;padding:0 5px;border-bottom:1px solid #c1d6e0;margin-left:-4px;border-left:1px solid #c1d6e0;}
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell:last-child{border-right:1px solid #c1d6e0;}
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell:first-child{margin-left:0;}
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell span {display:inline-block;color:#999;white-space:nowrap;}
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell.current{background:#32adf9;}
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell.current span{color:#FFF;}
+		.lr_nb1 .slider_wrap.line .wx_items .item_cell.checked{background:#f3f7f9;color:#999;}
+	</style>	
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		//获取当天日期
+		var mydate=new Date();
+		var year=mydate.getFullYear();
+		var month=mydate.getMonth() + 1;
+		var date=mydate.getDate() ;
+		var fullstr=year+'-'+month+'-'+date;
+	})
+</script>
+<div class="navbox">
+	<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+	<div class="center">申请会议室</div>	
+</div>
+<form action="" id="aplForm">
+<div class="choosebox first-header" style="width:auto;padding:0 15px;">
+    <div class="weui-row weui-no-gutter">
+	    <div class="weui-col-50 active">
+	      	<i class="icon iconfont icon-calendar"></i>
+	   		<input class="weui-input" id="date" type="text" value="" style="width:90px;text-align:center;">
+	    </div>
+	    <div class="weui-col-50" style='display:none'>
+	      	<label class="weui-label nextday" style="width:100%;text-align:center;">
+	      		后一天
+	      		<i class="icon iconfont icon-more" style="float:right;"></i>
+	      	</label>
+	    </div>
+    </div>
+</div>
+<div class="page__pd" style="padding:0 15px;">
+	<div class="weui-panel weui-panel_access">
+	    <ul id="list">
+	    	<li style='display:none' id='room'>
+		        <div class="lr_nb1">
+					<div class="slider_wrap line">
+					    <div class="wx_items">
+							<div class="item_cell">
+								<span>00:00</span>
+							</div>
+							<div class="item_cell">
+								<span>00:30</span>
+							</div>
+						    <div class="item_cell">
+						        <span>01:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>01:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>02:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>02:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>03:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>03:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>04:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>04:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>05:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>05:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>06:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>06:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>07:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>07:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>08:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>08:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>09:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>09:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>10:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>10:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>11:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>11:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>12:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>12:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>13:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>13:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>14:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>14:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>15:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>15:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>16:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>16:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>17:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>17:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>18:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>18:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>19:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>19:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>20:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>20:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>21:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>21:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>22:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>22:30</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>23:00</span>
+						    </div>
+						    <div class="item_cell">
+						        <span>23:30</span>
+						    </div>
+					    </div>
+					</div>
+				</div>	
+		        <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">已选定</label></div>
+			        <div class="weui-cell__bd">
+			          	<span class='starttime' id="starttime"></span><span>~</span><span class='endtime' id="endtime"></span>（共计<span class='addtime'></span>小时）
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">费用</label></div>
+			        <div class="weui-cell__bd">
+			          	<span class='pay'></span><span>元</span>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">会议名称</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input mtName" type="text" placeholder="请输入会议名称" name="name">
+			        </div>
+			    </div>
+	        </li>
+        </ul>
+        <div class="choosebox" style="background:none;margin:20px 0;">
+	        <div class="weui-row weui-no-gutter">
+			    <div class="weui-col-100" style="background:none;">
+			      	<a class="weui-btn confirmOrder" href="javascript:" style="font-size:16px;background:#f39b0f;">提交</a>
+			    </div>
+		    </div>
+	    </div>
+	</div>
+
+</div>
+</form>
+{include file="wechat@public/footer"}
+<script>
+		// 填完会议室信息往后台提交
+		$('.confirmOrder').click(function(){
+		var date=$('#date').val()
+		let reserveurl = "{:url('/meetroom/Meetroom/reserve')}";
+		let reservedata = {
+			mtroomId:sessionStorage.getItem('mtroomId'),
+			name:$('.mtName')[1].value,
+			starttime:$('.starttime').text(),
+			endtime:$('.endtime').text(),
+			date:date,
+			payable:$('.pay').text()
+		}
+		 cstmpost('',reserveurl,reservedata,function(res){
+			 if(res["code"]=='1'){
+					$.toptip(res["msg"],'success');
+//					$('.roomleft').children('.roomRk').remove()
+				 setTimeout(function(){
+					history.back(-1);
+				 },500)
+				}else{
+					$.toptip(res["msg"],'warning');
+				}
+		 })
+	})
+	var myDate = new Date();
+  	//获取当前年
+	var year=myDate.getFullYear();
+	//获取当前月
+	var month=myDate.getMonth()+1;
+	//获取当前日
+	var date=myDate.getDate();
+	var time = year + '/' + month + '/' + date
+	$('#date').attr('value',time)
+	let url = "{:url('Meetroom/Meetroom/getMtroomList')}"
+
+	// 初始化页面及会议室加载
+	cstmpost('',url,{id:sessionStorage.getItem('mtroomId')},function(res){
+		$.each(res.data,function(i){
+			let meetinfor = '<div class="imgbox"><a><img src="__PUBLIC__/images/123.png">\
+			</a></div><div class="title"><h4>'+  res.data[i].mtrName +'</h4><span>元/小时</span><span class="payall">'+ res.data[i].price +'</span></div>\
+			<p><i class="icon iconfont icon-map-b">'+ res.data[i].fullyName +
+			'</i></p><p><i class="icon iconfont icon-shijian"></i> 00:00~24:00<span>'+ res.data[i].acceptName +'</span></p>';
+			let $room = '<li id="copy">'+ meetinfor + $('#room').html()+'</li>';
+			$('#list').append($room);
+			// 给会议室添加value
+			$.each($('#copy').find('.item_cell'),function(i){
+				$(this).attr('value',i+1);
+			})
+			// 初始化页面图片1比例
+			$('.imgbox').find('img').css('height', $(window).width() / 2 + 'px')
+	})
+	// 若后台已被预订，添加颜色
+	var starttimeval = '';
+	var endtimeval = '';
+	$.each(res.data[0].timeLine,function(i){	
+		$.each($('#copy').find('.item_cell'),function(){
+			if($(this).find('span').text() == res.data[0].timeLine[i].starttimeStr){
+				starttimeval = $(this).attr('value');
+				console.log(starttimeval)
+			}
+			if($(this).next().find('span').text() == res.data[0].timeLine[i].endtimeStr){
+				endtimeval = $(this).attr('value');
+				console.log(endtimeval)
+			}
+			$.each($('#copy').find('.item_cell'),function(){
+				if($(this).attr('value')-starttimeval>=0&&$(this).attr('value')-endtimeval<=0){
+					console.log(starttimeval)
+					$(this).addClass('checked');
+				}
+			})
+		})
+	})
+	// 会议室动画
+	$('.line').on('click','.item_cell',function(){
+		// 如果当前元素有颜色的话，将颜色去掉
+		if($(this).hasClass('current')){
+			$(this).nextAll().removeClass('current');
+			$(this).removeClass('current');
+		} else {
+			if($(this).hasClass('checked')){
+				$.toptip('选择的房间中存在已被选择的时间段', 'warning');
+				return false;
+				}
+			// 如果当前元素之前有颜色的话，将中间所有元素颜色改变
+			if($(this).prevAll().hasClass('current')){
+				// 判断中间有无已被选中元素，有的话提示
+				 if($(this).parent().children('.current').nextAll().hasClass('checked')&&$(this).prevAll().hasClass('checked')){
+					$.toptip('选择的房间中存在已被选择的时间段', 'warning');
+					return false;
+				}else{
+					$(this).parent().children('.current').nextAll().addClass('current');
+					$(this).nextAll().removeClass('current');
+				}
+			} else {
+				$(this).addClass('current')
+			}
+			// 判断当前元素之后有无颜色，若有，则去掉
+			if($(this).nextAll().hasClass('current')){
+				$(this).nextAll().removeClass('current');
+				$(this).addClass('current');
+			}
+		}
+		// 如果没有选中元素，初始化数据
+		if(!$(this).parent().children('.current').children().html()){
+			$(this).parents('li').find('.starttime').html('');
+			$(this).parents('li').find('.endtime').html('');
+			$(this).parents('li').find('.pay').html('0')
+			return false;
+		}
+		// 判断当前元素有无选中,格式化时间
+		if($(this).hasClass('current')){
+			var $endtime = $(this).next().children().html()?$(this).next().children().html():'24:00';
+		} else {
+			var $endtime = $(this).children().html()?$(this).children().html():'24:00';
+		}
+		let $starttime = $(this).parent().children('.current').children().html();
+		let $startm = $starttime.substr($starttime.indexOf(':')+1);
+		let $endm = $endtime.substr($endtime.indexOf(':')+1);
+		$(this).parents('li').find('.starttime').html($starttime);
+		$(this).parents('li').find('.endtime').html($endtime);
+		if($startm>0){
+			$starttime = $starttime.substr('',$starttime.indexOf(':')) - (-0.5);
+		} else {
+			$starttime = $starttime.substr('',$starttime.indexOf(':')) - 0;
+		}
+		if($endm>0){
+			$endtime = $endtime.substr('',$endtime.indexOf(':')) - (-0.5);
+		} else {
+			$endtime = $endtime.substr('',$endtime.indexOf(':')) - 0;
+		}
+		$(this).parents('li').find('.addtime').html($endtime - $starttime)
+		$(this).parents('li').find('.pay').html($(this).parents('li').find('.addtime').html()*$(this).parents('li').find('.payall').html())
+	
+	})
+
+	
+	})
+</script>
+<script>
+	  $("#date").calendar({
+	    onChange: function (p, values, displayValues) {
+	      console.log(values, displayValues);
+	    }
+	  });
+	  $("#date2").calendar({
+	    value: ['2016-12-12'],
+	    dateFormat: 'yyyy年mm月dd日'  // 自定义格式的时候，不能通过 input 的value属性赋值 '2016年12月12日' 来定义初始值，这样会导致无法解析初始值而报错。只能通过js中设置 value 的形式来赋值，并且需要按标准形式赋值（yyyy-mm-dd 或者时间戳)
+	  });
+	  $("#date-multiple").calendar({
+	    multiple: true,
+	    onChange: function (p, values, displayValues) {
+	      console.log(values, displayValues);
+	    }
+	  });
+	  $("#date3").calendar({
+	    container: "#inline-calendar"
+	  });
+</script>

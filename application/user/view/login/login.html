@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="no-js css-menubar height-full" lang="zh-cn">
+
+<head>
+    <title>登录</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 移动设备 viewport -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <meta name="author" content="admui.com">
+    <!-- 360浏览器默认使用Webkit内核 -->
+    <meta name="renderer" content="webkit">
+    <!-- 禁止搜索引擎抓取 -->
+    <meta name="robots" content="nofollow">
+    <!-- 禁止百度SiteAPP转码 -->
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <link rel="shortcut icon" href="__PUBLIC__/images/favicon.ico">
+
+    <!-- 图标 CSS -->
+    <link rel="stylesheet" href="__PUBLIC__/themes/font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="__PUBLIC__/fonts/web-icons/web-icons.css">
+    <link rel="stylesheet" href="__PUBLIC__/themes/iconfont/demo.css"><!--阿里图库-->
+    <link rel="stylesheet" href="__PUBLIC__/themes/iconfont/iconfont.css"><!--阿里图库-->
+    <link rel="stylesheet" href="__PUBLIC__/themes/classic/global/css/bootstrap.css">
+
+    <!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="__PUBLIC__/themes/classic/global/css/bootstrap.css">
+
+	<!-- Site CSS -->
+	<link rel="stylesheet" href="__PUBLIC__/themes/classic/base/css/site.css" id="admui-siteStyle">
+
+    <!-- 插件 CSS -->
+    <link rel="stylesheet" href="__PUBLIC__/vendor/animsition/animsition.css">
+
+    <!-- page CSS -->
+    <link rel="stylesheet" href="__PUBLIC__/css/locked.css">
+    
+    <!--独立样式-->
+    <link rel="stylesheet" href="__PUBLIC__/themes/theme.css">
+
+    <!--[if lte IE 9]>
+    <meta http-equiv="refresh" content="0; url='http://www.admui.com/ie'"/>
+	<![endif]--><!--[if lt IE 10]>
+    <script src="__PUBLIC__/vendor/media-match/media.match.min.js"></script>
+    <script src="__PUBLIC__/vendor/respond/respond.min.js"></script>
+    <![endif]-->
+    <script src="__PUBLIC__/vendor/jquery/jquery.min.js"></script>
+    <script src="__PUBLIC__/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="__JS__/base.js"></script>
+    <script src="__JS__/bootstrap_validate.js"></script>
+    <link href="__VD__/toastr/toastr.css" rel="stylesheet">
+    <!-- toastr Theme JavaScript -->
+    <script src="__VD__/toastr/toastr.js"></script>
+
+</head>
+<body class="page-locked1 layout-full page-dark">
+<!--<div class=" page animation-fade vertical-align text-center animsition-fade height-full">
+    <div class="page-content vertical-align-middle padding-top-0"> 
+    	<div class="alert alert-danger alert-dismissible" role="alert">用户名或密码错误！</div>
+        <div class="page-login-main animation-fade">
+            <div class="vertical-align">
+            	<h1 class="margin-top-0 cbgj">创8助手</h1>
+        		<h4 class="locked-user">专业空间管理运营工具</h4>
+                <form class="login-form" action="/system/loginValidate" method="post" id="loginForm">
+                    <div class="form-group margin-bottom-3">
+                        <label class="sr-only" for="username">用户名（手机号）</label>
+                        <input type="text" class="form-control" id="username" name="loginName" placeholder="请输入手机号码">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="password">密码</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码">
+                    </div>
+                    <div class="form-group clearfix">
+                        <a href="" class="font-size-12 pull-right">忘记密码？</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">登录</button>
+                </form>
+            </div>
+        </div>
+        <p>没有账号?立即 <a href="">注册→</a></p>
+    </div>
+</div>-->
+<div class="container loginbigbox">		
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<div class="col-lg-3 col-md-3 col-sm-12"></div>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+				<div class="col-md-2"></div>
+				<div class="col-md-8 col-sm-12">
+					<div class="col-md-12 col-sm-12 loginbox">
+						<h1 class="text-center">创8助手</h1>
+						<p class="text-center kouhao">专业的空间运营工具</p>
+						<div class="form-group">
+                            <form class="login-form" action="/system/loginValidate" method="post" id="loginForm">
+							<div class="col-md-12 col-sm-12 padding-0 inputbox">
+								<div class="col-md-12 col-sm-12 padding-0 inputbox1">
+		                        	<input type="text" class="form-control name" id="username" name="name" maxlength="11" placeholder="用户名/手机号码">
+		                        	<p class="false animate-bounce errora" style = 'display:none'>手机号格式错误！</p>
+		                        </div>
+		                        <div class="col-md-12 col-sm-12 padding-0 inputbox1">
+		                        	<input type="password" class="form-control password" id="password" name="password" placeholder="密码">
+		                        	<p class="false animsition-fade errorb" style = 'display:none'>请输入6-12位登录密码！</p>
+		                        </div>
+		                    </div>
+                                </form>
+	                        <button type="button" class="btn btn-block btn-primary" id="btnlogin">登录</button>
+	                        <p class="text-right forget padding-top-10"><a href="{:url('user/rgst/forget')}">忘记密码？</a></p>
+	                        <p class="text-center register padding-top-10">没有账号&nbsp; , &nbsp;<a href="{:url('user/rgst/register')}">注册→</a></p>
+		                </div>
+					</div>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-12"></div>
+		</div>
+	</div>
+</div>
+<script>
+    $(function () {
+        $("#btnlogin").on("click", function () {
+            var url="{:url('/user/Login/access')}";
+            var data=serializeData("loginForm");
+            cstmpost("#btnlogin",url,data, function (data) {
+                if(data["code"]=='1'){
+//                    alert(JSON.stringify(data));
+                    toastr.success(data["msg"]);
+                    localStorage.setItem("user_avatar",data["data"].avatarpath);
+                    sessionStorage.setItem("iqbtId",data["data"]["iqbtId"]);
+                    /*setTimeout(function(){
+                        location.href=data["url"];
+                    },500);*/
+                    if(data["token"]==""){
+                        if(data["qr"]==""){
+                            gosys(data["url"]);
+                        }else{
+                            gosys(data["url"]);
+                        }
+                        /*else{
+                            var mobile=$('#mobile').val();
+                            var htm='<div class="modal-header">' +
+                                    '<h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                                    '<div class="modal-body" style="text-align: center;"><h4 class="modal-body">登录成功，请先绑定公众号及时接收消息提醒。</h4>' +
+                                    '<img src="__ROOT__'+data["qr"]+'"  style="width:150px;height: 150px;"/>' +
+                                    '</div>' +
+                                    '<div class="modal-footer">' +
+//                                    '<button class="btn btn-primary" id="conDelBtn" >已绑定？</button>' +
+                                    '</div>';
+                            show_modal("绑定公众号",htm,"");
+                            checkbind(data["url"]);
+                        }*/
+                    }else{
+                        gosys(data["url"]);
+                    }
+//                    gosys(data["url"]);
+                    /*location.href="{:url('/index/Index/index')}";*/
+                }else{
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+        $(document).keydown(function(event){
+            e = event ? event :(window.event ? window.event : null);
+            if(e.keyCode == 13){
+                $("#btnlogin").click();
+            }
+        })
+
+    });
+    function checkbind(url){
+        setInterval("getBindRlt('"+url+"')","1000");
+    }
+
+    function getBindRlt(url){
+        cstmpost("","{:url('/user/Login/checkbind')}",{}, function (data) {
+//            alert(JSON.stringify(data));
+            if(data.code==1){
+                gosys(url);
+            };
+        })
+    }
+
+    /*$('.name').on('blur',function(){
+    var phone = /^1[3|4|5|7|8][0-9]{9}$/;
+    if(!phone.test($('.name').val())){
+        $('.errora').css('display','block')
+    }else{
+        $('.errora').css('display','none')
+    }
+})
+$('.password').on('blur',function(){
+    var pho = /^[\w]{6,12}$/;
+    console.log(pho.test($('.name').val()))
+    console.log($('.name').val())
+    if(!pho.test($('.password').val())){
+        $('.errorb').css('display','block')
+    }else{
+        $('.errorb').css('display','none')
+    }
+})*/
+    function gosys(url){
+        location.href=url;
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,189 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-panel {
+		margin: 0;
+		background: none;
+	}
+
+	.weui-panel ul {
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.weui-panel ul li {
+		width: 100%;
+		overflow: hidden;
+		margin-bottom: 15px;
+		padding-bottom: 10px;
+		background: #FFF;
+	}
+
+	.weui-panel ul li .title {
+		overflow: hidden;
+		padding: 0 15px 5px 15px;
+	}
+
+	.weui-panel ul li .title h3 {
+		float: left;
+		color: #32ADF9;
+	}
+
+	.weui-panel ul li .title span {
+		float: right;
+		font-size: 14px;
+		color: #999;
+	}
+
+	.weui-panel ul li .title span label {
+		color: #f39b0f;
+	}
+
+	.weui-panel ul li p {
+		padding: 0 15px;
+		color: #999;
+		font-size: 14px;
+	}
+
+	.weui-panel ul li p i {
+		color: #32ADF9;
+	}
+
+	.weui-panel ul li p span {
+		float: right;
+		color: #f39b0f;
+	}
+
+	.weui-panel ul li img {
+		width: 100%;
+		height: auto;
+	}
+
+	.item_cell.weui-col-33 {
+		text-align: center;
+	}
+
+	.weui-panel.weui-panel_access {
+		border-bottom: none;
+	}
+
+	.weui-panel:after {
+		border-bottom: none;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+				<div class="navbox">
+					<a href="{:url('wechat/test/bhd-index')}">
+						<div class="left">
+							<i class="icon iconfont icon-back"></i>
+						</div>
+					</a>
+					<div class="center">我的入驻</div>
+					<!--<a href="search.html">
+					<div class="right">
+						<i class="icon iconfont icon-search"></i>
+					</div>
+				</a>-->
+				</div>
+				<div class="page__pd first-header last-footer">
+					<div class="weui-panel weui-panel_access">
+						<ul id="list" class='potentialUser'>
+							
+						</ul>
+						<div class="weui-loadmore" style="margin:0 auto;">
+							<i class="weui-loading"></i>
+							<span class="weui-loadmore__tips">正在加载</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{include file="wechat@public/footer"}
+	<script>
+		// 报名管理页列表url
+		var potentialurl = "{:url('iqbt/iqbt/getMyIqbt')}";
+		// 上拉加载
+		var numsign = '';
+		var numtotal = '';
+		var numlength = '';
+		// 上拉加载加载条数
+		var limit = 5;
+
+		// 报名管理页列表初始化start
+		
+		numsign = $('.menu>.item_cell:first').attr('value');
+		cstmpost('', potentialurl, '', function (res) {
+			numtotal = res.total + limit;
+			menuSum(res);
+			session('etprsId',res.rows[0].etprsId);
+		})
+		// 报名管理页列表初始化end
+
+		// 列表初始化函数start
+		function menuSum(res) {
+
+			var people = ''
+			$.each(res.rows, function (i) {
+				var $potentialUser =
+					'<li><a href="in-information.html"><img src="'+ '/public' + res.rows[i].poster +
+					'"><div class="title"><h3>'+ res.rows[i].name +
+					'</h3></div><p><i class="icon iconfont icon-map-b"></i>'+ res.rows[i].roomInfo +
+					'<span>'+ res.rows[i].statusText +'</span></p><p><i class="icon iconfont icon-shijian"></i>'+
+						res.rows[i].starttime + '~'+ res.rows[i].endtime +'</p></a></li>';
+				$('.potentialUser').append($potentialUser);
+			})
+			numlength = $('.potentialUser').children().length;
+			if (res.total <= 10 || res.total == $('.potentialUser').children().length) {
+				$('.weui-loadmore').html('')
+			} else {
+				$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+			}
+		}
+		// 列表初始化函数end
+		$('.weui-loadmore').css('display', 'none')
+		// infinite
+		var loading = false;
+		$(".weui-tab__bd-item").infinite().on("infinite", function () {
+			$('.weui-loadmore').css('display', 'block')
+			if (loading) return;
+			loading = true;
+			if (numtotal > numlength) {
+				$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+				// setTimeout(function () {
+				// if()
+				var signdata = {
+					status: numsign,
+					offset: numlength,
+					limit: limit,
+				}
+				cstmpost('', potentialurl, signdata, function (res) {
+					menuSum(res)
+				})
+				// }, 1000)
+			} else {
+				$('.weui-loadmore').html('')
+			}
+			numlength += limit;
+			loading = false;
+		});
+	</script>

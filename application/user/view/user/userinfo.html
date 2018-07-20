@@ -1,0 +1,273 @@
+{include file="index@public:header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<!-- 插件 -->
+<link rel="stylesheet" href="__PUBLIC__/vendor/webui-popover/webui-popover.css">
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+<style>
+    .kv-upload-progress{
+        display: none;
+    }
+</style>
+<script>
+$(function () {
+    cstmpost("","{:url('/user/User/getuserinfo')}",{}, function (data) {
+        $("#realname").val(data["data"]["realname"]);
+        $("#mobile").val(data["data"]["mobile"]);
+        $("#name").val(data["data"]["name"]);
+        $("#avatar").val(data["data"]["avatar"]);
+        if(data["data"]["avatarpath"]!=''){
+            var htmll ="<img src='__PUBLIC__/"+data["data"]["avatarpath"]+"'>";//封面
+            $('#input-file-now').next().next().children('span').html(htmll);
+            $('#input-file-now').next().next().css('display','block');
+            $('#input-file-now').prev().prev().prev().css('display','none');
+            $('#input-file-now').next().next().children('.dropify-infos').css('display','none');
+        }
+
+    });
+
+    $("#btn-save").on("click", function () {
+        var form = $(this).closest("form");
+        form.on("submit",function(e){
+            e.preventDefault();
+        });
+        var thisobj = $(this);
+        /*var url = form.prop("action");
+        var formId = form.attr("id");
+
+        var data=serializeData(formId);*/
+        var url="{:url('/user/User/saveInfo')}";
+        var data={"avatar":$("#avatar").val(),"realname":$("#realname").val(),"mobile":$("#mobile").val(),"name":$("#name").val()};
+        cstmpost("#btn-save",url,data, function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+                var path=$("#hidepic").val();
+                localStorage.setItem("user_avatar",path);
+                var pic=$("#hidepic").val();
+                if(pic!=''&&pic!=undefined){
+                    $("#user_avatar").find('img').attr('src', "__PUBLIC__"+pic);
+                }
+                $('#editcaseForm').modal('hide');
+            } else {
+                toastr.error(data.msg);
+            }
+        });
+    });
+
+    $("#btn-reset").on("click", function () {
+        var form = $("#resetpwdform");
+        form.on("submit",function(e){
+            e.preventDefault();
+        });
+        var url = "{:url('/user/User/resetpwd')}";
+        var password=$("#password").val();
+        var newpassword=$("#newpassword").val();
+        var cfmpassword=$("#cfmpassword").val();
+        if(password==""){
+            toastr.error("密码不能为空");
+            return false;
+        }
+        if(newpassword!=cfmpassword){
+            toastr.error("两次密码不一致");
+        }else{
+            cstmpost("#btn-reset",url,{'password':password,"newpassword":newpassword,"cfmpassword":cfmpassword}, function (data) {
+                if (data.code == 1) {
+                    toastr.success('密码修改成功,请重新登录,正在跳转到登录页');
+
+                    setTimeout(function() {
+                        location.href = "{:url('user/login/login')}";
+                    },1000 );
+                } else {
+                    toastr.error(data.msg);
+                }
+            });
+        }
+
+    });
+
+});
+
+/**
+ * 上传图片
+ * files  file
+ */
+function uploadFile(files,imageClass){
+    $('#input-file-now').next().css('display','none');
+    var id = files.attr('data-id');
+    if(imageClass){
+        var imageBox = $("#"+imageClass).find('img');
+    }
+    var url="{:url('etprs/Etprs/ajaxUploads')}";
+    ext = 'jpg,jpeg,png,gif';
+    var files = files.get(0).files[0];
+    var obj = files;
+    var size = 0.5;
+    data = new FormData();
+    data.append("ext", ext);
+    data.append("size", size);
+    data.append("file", obj);
+    $.ajax({
+        data: data,
+        type: "POST",
+        url: url,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            $("#"+id).val(data["fileId"]);
+            if(data["code"]=='1'){
+                $("#hidepic").val(data['path']);
+                $("#avatar").val(data["id"]);
+                //保存用户头像
+//                localStorage.setItem("user_avatar",data['path']);
+                toastr.info("上传成功。");
+            }else{
+                toastr.error("头像上传失败。"+data["msg"]);
+            }
+        }
+    },'JSON');
+}
+</script>
+<input type="hidden" id="hidepic" value="">
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+                                    <li class="news accout-msg active" role="presentation">
+                                        <a href="#message" aria-controls="message" role="tab" data-toggle="tab">
+                                            <i class="icon fa-edit" aria-hidden="true"></i> 编辑信息
+                                            <span class="badge badge-danger"></span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-log">
+                                        <a href="#log" aria-controls="log" role="tab" data-toggle="tab">
+                                            <i class="fa fa-key" aria-hidden="true"></i> 重置密码
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content margin-top-15">
+                                	<!--编辑信息-->
+                                    <div class="tab-pane animation-slide-left tab-message active" role="tabpanel" id="message">
+                                        <div class="row row-lg">
+				                            <div class="col-md-12">
+				                                <div class="example-wrap">
+				                                    <div class="example">
+				                                        <form class="form-horizontal">
+				                                        	<div class="row row-lg">
+									                            <div class="col-lg-4 col-sm-4"></div>
+									                            <div class="col-lg-4 col-sm-4 col-xs-12">
+									                                <!--<h3 class="text-center margin-top-20">修改信息</h3>-->
+									                                <form method="post" id="userinfo" action="{:url('/user/User/saveInfo')}">
+									                                    <div class="form-group">
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">上传头像 <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i>：</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <!--<input type="file" class="form-control" id="input-file-now" data-plugin="dropify" data-default-file="">-->
+									                                            <input type="hidden" data-placeholder="头像"  name="avatar" id="avatar" class="opt-require" value=''>
+									                                            <input type="file" class="form-control" id="input-file-now"  data-id="hxlsfileId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this),'user_avatar')" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+									
+									                                        </div>
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">姓名：</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <input type="text" class="form-control" name="realname" id="realname" placeholder="请输入您的姓名">
+									                                        </div>
+                                                                            <div class="col-md-4 text-right padding-bottom-20">
+                                                                                <label class="control-label">登录名：</label>
+                                                                            </div>
+                                                                            <div class="col-md-8 padding-bottom-20">
+                                                                                <input type="text" class="form-control" name="name" id="name" placeholder="请输入您的登录名">
+                                                                            </div>
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">联系电话：</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <input type="text" class="form-control" name="mobile" id="mobile" placeholder="请输入联系电话">
+									                                        </div>
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">&nbsp;</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <button type="button" class="btn btn-md btn-block btn-primary" id="btn-save"><i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存</button>
+									                                        </div>
+									                                    </div>
+									                                </form>
+									                            </div>
+									                            <div class="col-lg-4 col-sm-4"></div>
+									                        </div>
+				                                        </form>
+				                                    </div>
+				                                </div>
+				                            </div>
+				                        </div>
+                                    </div>
+                                    <!--重置密码-->
+                                    <div class="tab-pane animation-slide-left tab-log" role="tabpanel" id="log">
+				                        <div class="row row-lg">
+				                            <div class="col-md-12">
+				                                <div class="example-wrap">
+				                                    <div class="example">
+				                                    	<form class="form-horizontal">
+					                                    	<div class="row row-lg">
+									                            <div class="col-lg-4 col-sm-4"></div>
+									                            <div class="col-lg-4 col-sm-4 col-xs-12">
+									                                <!--<h3 class="text-center margin-top-20">修改信息</h3>-->
+									                                <form method="post" id="resetpwdform" action="{:url('/user/User/resetpwd')}">
+									                                    <div class="form-group">
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">原始密码：</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <input type="password" class="form-control" name="password" id="password" placeholder="请输入原始密码">
+									                                        </div>
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">新密码：</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <input type="password" class="form-control" name="newpassword" id="newpassword" placeholder="请输入新密码">
+									                                        </div>
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">确认新密码：</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <input type="password" class="form-control" name="cfmpassword" id="cfmpassword" placeholder="请再次输入新密码">
+									                                        </div>
+									                                        <div class="col-md-4 text-right padding-bottom-20">
+									                                            <label class="control-label">&nbsp;</label>
+									                                        </div>
+									                                        <div class="col-md-8 padding-bottom-20">
+									                                            <button type="button" class="btn btn-md btn-block btn-primary" id="btn-reset"><i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存</button>
+									                                        </div>
+									                                    </div>
+									                                </form>
+									                            </div>
+									                            <div class="col-lg-4 col-sm-4"></div>
+									                        </div>
+										                </form>
+				                                    </div>
+				                                </div>
+				                            </div>
+				                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

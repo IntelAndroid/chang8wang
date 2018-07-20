@@ -1,0 +1,270 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-panel {
+		margin: 0;
+		background: none;
+	}
+
+	.weui-panel ul {
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.weui-panel ul li {
+		width: 100%;
+		overflow: hidden;
+		margin-bottom: 15px;
+		padding-bottom: 10px;
+		background: #FFF;
+	}
+
+	.weui-panel ul li .title {
+		overflow: hidden;
+		padding: 0 15px 5px 15px;
+	}
+
+	.weui-panel ul li .title h4 {
+		float: left;
+		color: #666;
+		font-size: 15px;
+	}
+
+	.weui-panel ul li .title span {
+		float: right;
+		font-size: 14px;
+		color: #999;
+	}
+
+	.weui-panel ul li .title span label {
+		color: #f39b0f;
+	}
+
+	.weui-panel ul li p {
+		padding: 0 15px;
+		color: #999;
+		font-size: 14px;
+	}
+
+	.weui-panel ul li p i {
+		/*color: #32ADF9;*/
+		color: #999;
+	}
+
+	.weui-panel ul li p span.sc1 {
+		color: #FFF;
+		border: 1px solid #32ADF9;
+		background: #32ADF9;
+		margin-right: 5px;
+	}
+
+	.weui-panel ul li p span {
+		float: right;
+		border: 1px solid #f39b0f;
+		color: #f39b0f;
+		padding: 2px 6px;
+		font-size: 12px;
+		border-radius: 2px;
+	}
+
+	.weui-panel ul li p span.sc {
+		color: #32ADF9;
+		border: 1px solid #32ADF9;
+		margin-right: 5px;
+	}
+
+	.weui-panel ul li .imgbox {
+		width: 100%;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.weui-panel ul li .imgbox img {
+		width: 100%;
+		height: auto;
+	}
+
+	.weui-panel.weui-panel_access {
+		border-bottom: none;
+	}
+
+	.weui-panel:after {
+		border-bottom: none;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="navbox">
+		<a href="javascript:history.back(-1)">
+			<div class="left" style="width:20%;">
+				<i class="icon iconfont icon-back"></i>
+			</div>
+		</a>
+		<div class="center" style="width:60%;">会议室管理</div>
+		<div class="right" style="width:20%;">
+			<a href="search.html" value='3' class='numsear'>
+				<i class="icon iconfont icon-search"></i>
+			</a>
+			&nbsp;&nbsp;
+			<a href='bhd-my-meeting.html'>
+				<i class="icon iconfont icon-survey"></i>
+			</a>
+		</div>
+	</div>
+	<!--<div class="choosebox">
+	<div class="weui-row weui-no-gutter">
+		<div class="weui-col-50 active">
+			<a href="">会议室预定</a>
+		</div>
+		<div class="weui-col-50">
+			<a href="">我的预定</a>
+		</div>
+	</div>
+
+</div>  -->
+	<div class="page__pd first-header last-footer">
+		<div class="weui-panel weui-panel_access">
+			<ul id="list" class='potentialUser'>
+
+			</ul>
+			<div class="weui-loadmore" style="margin:0 auto;">
+				<i class="weui-loading"></i>
+				<span class="weui-loadmore__tips">正在加载</span>
+			</div>
+		</div>
+	</div>
+
+	{include file="wechat@public/footer"}
+
+	<script>
+		// 会议室页列表url
+		var potentialurl = "{:url('Meetroom/Meetroom/getMtroomList')}";
+		// 上拉加载
+		var numtotal = '';
+		var numlength = '';
+		// 上拉加载加载条数
+		var limit = 5;
+		// 会议室审核
+		cstmpost('', potentialurl, { status: 7001001, limit: 10 }, function (res) {
+			console.log(res)
+			$('.examine').html(res.data.length)
+		})
+		// 会议室页列表初始化start
+		cstmpost('', potentialurl, '', function (res) {
+			numtotal = res.data.length + limit;
+			menuSum(res);
+		})
+		// 会议室页列表初始化end
+
+		// 列表初始化函数start
+		function menuSum(res) {
+			console.log(res)
+			var people = ''
+			$.each(res.data, function (i) {
+				var $potentialUser =
+					'<li><div class="imgbox"><a href="bhd-mt-detail.html"><img src="__PUBLIC__/wechat/images/activepic.jpg">\
+					</a></div><div class="title"><h4 style="color:#999">' + res.data[i].mtrName +
+					'(' + res.data[i].acceptName + ')' + '</h4><span>' + res.data[i].price + '元/小时</span></div>\
+					<p style="color:#999"><i class="icon iconfont icon-shijian" style="margin-right: 5px;"></i>00:00~24:00<a href="meetinglist.html">\
+					<span value='+ res.data[i].id + ' class="mtroomId">立即预定</span></a>';
+					// 判断是否收藏
+					if(res.data[i].isCollect) {
+						var isCollect =  '<span class="sc1" id="sc">收藏</span></p><p style="color:#999"><i class="icon iconfont icon-map-b" style="margin-right: 5px;"></i>' + res.data[i].fullyName+'</p></li>'
+					} else {
+						var isCollect =  '<span class="sc" id="sc">收藏</span></p><p style="color:#999"><i class="icon iconfont icon-map-b" style="margin-right: 5px;"></i>' + res.data[i].fullyName + '</p></li>'
+					}
+				$('.potentialUser').append($potentialUser + isCollect);
+			})
+			numlength = $('.potentialUser').children().length;
+			if (res.total <= 10 || res.total == $('.potentialUser').children().length) {
+				$('.weui-loadmore').html('')
+			} else {
+				$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+			}
+		}
+		// 列表初始化函数end
+		$('.weui-loadmore').css('display', 'none');
+
+		$(function () {
+		$(".potentialUser").on('click', '#sc', function () {
+			// 点击颜色改变，将收藏元素顺序改变
+			$(this).toggleClass("sc1").toggleClass("sc");
+			var that = $(this);
+			if($(this).hasClass('sc')){
+					$(this).parents('li').hide('slow',function(){
+						that.parents('li').appendTo($(this).parents('ul')).fadeIn(1500);
+					})
+				} else {
+					if($(this).parents('li').find('.mtroomId').attr('value') == $(this).parents('ul').find('li:first').find('.mtroomId').attr('value')){
+						that.parents('li').prependTo(that.parents('ul')).fadeIn(1500);
+					} else {
+						$(this).parents('li').hide('slow',function(){
+							that.parents('li').prependTo(that.parents('ul')).fadeIn(1500);
+						});
+					}
+				}
+			let url = "{:url('/Meetroom/Meetroom/mtCollect')}";
+			let data = {
+				mtroomId:$(this).parent().find('.mtroomId').attr('value')
+			}
+			cstmpost('',url,data,function(res){
+				$.toast(res.msg,800)
+			})
+		});
+		// 点击预定审核mtroomId存储到session
+		$('#list').on('click', '.mtroomId', function () {
+			// alert($(this).attr('value'))
+			sessionStorage.setItem('mtroomId',$(this).attr('value'))
+		})
+		// 点击图片mtroomId存储到session
+		$('#list').on('click', '.imgbox', function () {
+			// alert($(this).attr('value'))
+			sessionStorage.setItem('mtroomId',$(this).parent().find('.mtroomId').attr('value'))
+		})
+		});
+		// infinite
+		var loading = false;
+		$(".weui-tab__bd-item").infinite().on("infinite", function () {
+			$('.weui-loadmore').css('display', 'block')
+			if (loading) return;
+			loading = true;
+			if (numtotal > numlength) {
+				$('.weui-loadmore').css('display', 'block')
+				// setTimeout(function () {
+				// if()
+				var signdata = {
+					offset: numlength,
+					limit: limit,
+				}
+				cstmpost('', potentialurl, signdata, function (res) {
+					menuSum(res)
+				})
+				// }, 1000)
+			} else {
+				$('.weui-loadmore').css('display', 'none')
+			}
+			numlength += limit;
+			loading = false;
+		});
+
+			// 存储搜索value
+			$('.numsear').click(function(){
+                sessionStorage.setItem('numsear',$(this).attr('value'))
+            })
+	</script>

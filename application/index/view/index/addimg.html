@@ -1,0 +1,53 @@
+
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#imgReplaceBtn").on("click",function(){
+            $("body").prepend('<div class="parsetcroBox" >'
+                    +'<div class="cropperBox">'
+                    +'<h4 class="boxH4" >图片裁剪 <a class="imgBoxBtn">选择图片 <input type="file" class="file_upload" /></a>  </h4>'
+                    +'<hr />'
+                    +'<div class="imgBox"><img id="preview" src="" /></div>'
+                    +'<div class="imgBoxyulan"><img id="previewyulan" src="" /></div>'
+                    +'<div class="bottomBox">'
+                    +'<button class="imgBoxBtn queding">确定</button>'
+                    +'<button class="imgBoxBtn xuanzhuan">旋转</button>'
+                    +'</div>'
+                    +' </button>'
+                    +'</div>'
+                    +'</div>')
+        });
+    });
+
+</script>
+
+<form id="pdtform" action="{:url('/index/Apply/saveAplPdt')}" method="post" tableId="aplpdtId" class="form-horizontal">
+    <div class="modal-body">
+        <div id="content">
+            <form id="NewQyq">
+                <div class="SeeCont">
+                    <p><span style="color: red;">*</span>选择图片：</p>
+                    <div class="SeeImg image_container">
+                        <img class="myimg" src='' />
+                    </div>
+                    <button class="TxText xzBtn" id="imgReplaceBtn" type="button">更换图片   </button>
+                    <br />
+                    base64地址：<input name="url" id="imgShowurlbase" style="width: 400px;" value="f12打开控制台查看"  />
+                    <br />
+                    七牛云地址： <input name="url" id="imgShowurl" style="width: 400px;"  />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" id="etprsId" name="etprsId" value="{$etprsId|default='0'}">
+        <input type="hidden" id="flag" name="flag" value="{$data.flag|default=''}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span></button>
+    </div>
+</form>

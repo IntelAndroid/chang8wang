@@ -1,0 +1,62 @@
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<script type="text/javascript">
+    $(function () {
+        var iqbtId=session("dstbIqbtId");
+        var url = "{:url('/iqbt/Iqbt/initSale')}";
+        cstmpost("", url, {}, function (data) {
+            var html="<option value=''>请选择</option>";
+            for (var i = 0; i < data.length; i++) {
+                var obj = data[i];
+                html+="<option value='"+obj["id"]+"'>"+obj["realname"]+"</option>";
+            }
+            $("#saleId").html(html);
+        })
+
+        $("#btnsave").click(function () {
+            var dstburl="{:url('/iqbt/Iqbt/dstbiqbtSale')}";
+            var sale=$("#saleId").val();
+            if(sale==""){
+                toastr.warning("请选择一个销售人员");
+            }else{
+                cstmpost("", dstburl, {saleId:sale,iqbtId:iqbtId}, function (data) {
+                    if(data.code==1){
+                        toastr.success("分配成功");
+                        $('#iqbtTab').bootstrapTable('refresh');
+                        $('#iqbtTab2').bootstrapTable('refresh');
+                        $('#iqbtTab3').bootstrapTable('refresh');
+                        $("#myModal").modal("hide");
+                    }else {
+                        toastr.success("分配失败");
+                    }
+                 })
+            }
+
+        });
+
+    });
+</script>
+
+<form id="pdtform" action="{:url('/index/Apply/saveAplPdt')}" method="post" tableId="aplpdtId" class="form-horizontal">
+    <div class="modal-body">
+        <div id="content">
+            <form id="NewQyq">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="saleId">选择销售人员<span class="required">*</span></label>
+                    <div class="col-sm-8">
+                        <select class="form-control"  id="saleId" name="saleId">
+                            <option>请选择</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">分配</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span></button>
+    </div>
+</form>

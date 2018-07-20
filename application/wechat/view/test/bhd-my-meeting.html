@@ -1,0 +1,205 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-panel {
+		margin: 0;
+	}
+
+	.weui-media-box {
+		padding: 8px 15px;
+	}
+
+	.weui-panel__bd .weui-media-box__hd {
+		width: 50px;
+		height: 50px;
+		line-height: 50px;
+		color: #FFF;
+		font-size: 16px;
+		border-radius: 50%;
+		background: #32adf9;
+		text-align: center;
+		position: relative;
+	}
+
+	.weui-panel__bd .weui-media-box__hd1 {
+		background: #f39b0f;
+	}
+
+	.weui-media-box__desc {
+		-webkit-line-clamp: 1;
+	}
+
+	.weui-media-box__desc i {
+		color: #32adf9;
+	}
+
+	.weui-media-box__title {
+		margin-top: -4px;
+		font-size: 15px;
+		color: #595757;
+		font-weight: bold;
+	}
+
+	.weui-media-box__title-after {
+		color: #b7b7b7;
+		font-weight: 500;
+	}
+
+	.weui-media-box__desc .call {
+		float: right;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+				<div class="navbox">
+					<a href="javascript:history.back(-1)">
+						<div class="left">
+							<i class="icon iconfont icon-back"></i>
+						</div>
+					</a>
+					<div class="center">我的预定</div>
+				</div>
+				<div class="choosebox first-header">
+					<div class="weui-row weui-no-gutter menu">
+						<div class="weui-col-50 active item_cell" value='7001001'>
+							<a>待审核（<span class='examine'></span>）</a>
+						</div>
+						<div class="weui-col-50 item_cell" value='7001002'>
+							<a>预定成功（<span class='success'></span>）</a>
+						</div>
+					</div>
+				</div>
+				<div class="page__pd last-footer">
+					<div class="weui-panel weui-panel_access">
+						<div class="weui-panel__bd">
+							<div id="list" class='demos-content potentialUser'>
+
+							</div>
+						</div>
+					</div>
+					<div class="weui-loadmore">
+						<i class="weui-loading"></i>
+						<span class="weui-loadmore__tips">正在加载</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="wechat@public/footer"}
+		<script>
+
+			// 待审核列表url
+			var potentialurl = "{:url('meetroom/Meetroom/getAplList')}";
+			// 上拉加载
+			var numsign = '';
+			var numtotal = '';
+			var numlength = '';
+			// 上拉加载加载条数
+			var limit = 5;
+			// 待审核列表初始化start
+			numsign = $('.menu>.item_cell:first').attr('value');
+			var potentialdata = {
+				status: numsign,
+				limit: 10,
+			}
+			cstmpost('', potentialurl, potentialdata, function (res) {
+				numtotal = res.total + limit;
+				menuSum(res);
+				$('.examine').html(res.total)
+			})
+			// 成功人数
+			var clickdata = {
+				status: 7001002,
+				limit: 10
+			}
+			cstmpost('.item_cell', potentialurl, clickdata, function (res) {
+				$('.success').html(res.total)
+			})
+			// 菜单点击事件start
+			$(function () {
+				$(".menu").on('click', '.item_cell', function (status) {
+					$('.potentialUser').html('')
+					$(this).addClass('active');
+					$(this).siblings().removeClass('active');
+					var that = numsign = $(this).attr('value');
+					var clickdata = {
+						status: $(this).attr('value'),
+						limit: 10
+					}
+					cstmpost('.item_cell', potentialurl, clickdata, function (res) {
+						numtotal = res.total + limit;
+						menuSum(res);
+					})
+				});
+			});
+			// 菜单点击事件end
+
+			// 列表初始化函数start
+			function menuSum(res) {
+				console.log('aaa')
+				$.each(res.rows, function (i) {
+					// 截取用户名字后两位
+					// 用户创建时间截取
+					var starttime = res.rows[i].starttime.substr(res.rows[i].starttime.indexOf(':') - 2);
+					var endtime = res.rows[i].endtime.substr(res.rows[i].endtime.indexOf(':') - 2);
+					var $potentialUser = '<a  class="weui-media-box weui-media-box_appmsg"><div class="weui-media-box__hd">' + res.rows[i].hour +
+						'</div><div class="weui-media-box__bd"><h4 class="weui-media-box__title">' + res.rows[i].etprsName +
+						'<span class="weui-media-box__title-after">' + res.rows[i].price
+						+ '元</span></h4><p class="weui-media-box__desc"><i class="icon iconfont icon-map-b"></i> ' + res.rows[i].buildName +
+						'-' + res.rows[i].floor + '楼-' + res.rows[i].mtroomName + '<span class="call">' + starttime + '~' + endtime + '</span></p>' + '</div></a>'
+					$('.potentialUser').append($potentialUser)
+				})
+				numlength = $('.potentialUser').children().length;
+				if (res.total <= 10 || res.total == $('.potentialUser').children().length) {
+					$('.weui-loadmore').html('')
+				} else {
+					$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+				}
+			}
+			// 列表初始化函数end
+
+
+			// infinite
+			var loading = false;
+			$(".weui-tab__bd-item").infinite().on("infinite", function () {
+				$('.weui-loadmore').css('display', 'block')
+				if (loading) return;
+				loading = true;
+				if (numtotal > numlength) {
+					$('.weui-loadmore').html('<i class="weui-loading"></i><span class="weui-loadmore__tips">正在加载</span>')
+					// setTimeout(function () {
+					// if()
+					var signdata = {
+						status: numsign,
+						offset: numlength,
+						limit: limit,
+					}
+					cstmpost('', potentialurl, signdata, function (res) {
+						menuSum(res)
+					})
+					// }, 1000)
+				} else {
+					$('.weui-loadmore').html('')
+				}
+				numlength += limit;
+				loading = false;
+			});
+		</script>

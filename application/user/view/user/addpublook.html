@@ -1,0 +1,214 @@
+{include file="index@public:header"}
+<!-- 插件 CSS -->
+<link rel="stylesheet" href="__PUBLIC__/vendor/select2/select2.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/icheck/icheck.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/switchery/switchery.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/clockpicker/clockpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-colorpicker/colorpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-touchspin/bootstrap-touchspin.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/card/card.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/fontawesome-iconpicker/iconpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jt-timepicker/jquery-timepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-strength/jquery-strength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/multi-select/multi-select.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/typeahead-js/typeahead.css">
+<script>
+    Breakpoints();
+</script>
+
+
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/vendor/select2/select2.full.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="__PUBLIC__/vendor/icheck/icheck.min.js"></script>
+<script src="__PUBLIC__/vendor/switchery/switchery.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.min.js"></script>
+<script src="__PUBLIC__/vendor/clockpicker/bootstrap-clockpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-colorpicker/bootstrap-colorpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-knob/jquery.knob.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="__PUBLIC__/vendor/card/jquery.card.js"></script>
+<script src="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/jt-timepicker/jquery.timepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/datepair-js/jquery.datepair.min.js"></script>
+<script src="__PUBLIC__/vendor/fontawesome-iconpicker/fontawesome-iconpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-strength/jquery-strength.min.js"></script>
+<script src="__PUBLIC__/vendor/multi-select/jquery.multi-select.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/bloodhound.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/typeahead.jquery.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/advanced.js"></script>
+<!--编辑器-->
+<link href="__VD__/summernote/summernote.css" rel="stylesheet">
+<script src="__VD__/summernote/summernote.min.js"></script>
+<style>
+    #districtStr{
+        border:0;
+        background:#fff;
+    }
+</style>
+</head>
+
+<body>
+    <input type="hidden" id="cutimgurl" value="{:url('/etprs/Etprs/cutImg')}" />
+    <main class="site-page">
+        <div class="page-container" id="admui-pageContent">
+            <div class="page animation-fade page-forms">
+                <div class="page-header">
+                    <h4 class="padding-bottom-10 btborder">
+                       通知管理 > 查看
+                    </h4>
+                </div>
+                <div class="page-content">
+                    <form class="form-horizontal" id="iqbtInfo">
+                        <div class="panel">
+                            <div class="panel-body container-fluid padding-top-0">
+                                <div class="row row-lg">
+                                    <div class="col-md-12">
+                                        <div class="example-wrap">
+                                            <div class="example example-buttons">
+                                                <h4 class="padding-bottom-10 btborder">基本信息</h4>
+                                            </div>
+                                            <div class="example">
+                                                <!--<form class="form-horizontal" id="iqbtForm">-->
+                                                <div class="form-group col-md-12">
+                                                    <label class="col-sm-4 control-label padding-bottom-20">
+                                                        发布时间：</label>
+                                                    <div class="col-sm-8 padding-bottom-20">
+                                                        <span class="form-control" id="addtime" style='border:0'></span>
+                                                    </div>
+                                                    <label class="col-sm-4 control-label padding-bottom-20">
+                                                        标　　题：</label>
+                                                    <div class="col-sm-8 padding-bottom-20">
+                                                        <span class="form-control" id="title" style='border:0'></span>
+                                                    </div>
+                                                    <label class="col-sm-4 control-label padding-bottom-20">
+                                                        推送对象：</label>
+                                                    <div class="col-sm-8 padding-bottom-20">
+                                                        <span class="form-control usertype" style='border:0'></span>
+                                                    </div>
+                                                    <label class="col-sm-4 control-label padding-bottom-20">
+                                                        已推送：</label>
+                                                    <div class="col-sm-8 padding-bottom-20">
+                                                        <span class="form-control" id="pushNum" style='border:0'></span>
+                                                    </div>
+                                                    <label class="col-sm-4 control-label padding-bottom-20">
+                                                        已阅读：</label>
+                                                    <div class="col-sm-8 padding-bottom-20">
+                                                        <span class="form-control" id="readNum" style='border:0'></span>
+                                                    </div>
+                                                    <label class="col-sm-4 control-label padding-bottom-20">
+                                                        内　　容：</label>
+                                                    <div class="col-sm-8 padding-bottom-20" id="conten">
+                                                    </div>
+                                                </div>
+                                                <!--</form>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="btn-actions text-center">
+                        <div class="btn-actions margin-left-5 inline-block">
+                            <a href='publicsay.html'><button type="button" class="btn btn-primary btn-outline margin-3" id="">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;返回&nbsp;&nbsp;</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="site-footer-legal">创8网 &copy;
+            <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+        </div>
+        <div class="site-footer-right">
+            当前版本：v1.3.0
+            <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+                <i class="icon fa-cloud-upload"></i>
+            </a>
+        </div>
+    </footer>
+    <!--上传图片插件(与提示信息插件存在冲突，去掉后页面报错)-->
+    <!--<script src="__PUBLIC__/vendor/jquery-ui/jquery-ui.min.js"></script>为避免与弹出气泡冲突必须在jq文件后，引用-->
+    <script src="__PUBLIC__/vendor/blueimp-tmpl/tmpl.min.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-canvas-to-blob/canvas-to-blob.min.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-load-image/load-image.all.min.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-process.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-image.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-audio.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-video.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-validate.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-ui.js"></script>
+    <script src="__PUBLIC__/vendor/dropify/dropify.min.js"></script>
+    <script src="__PUBLIC__/js/examples/forms/dropify.js"></script>
+
+
+    <!--弹出层插件-->
+    <script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+    <script src="__PUBLIC__/vendor/alertify-js/alertify.min.js"></script>
+    <script src="__PUBLIC__/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+    <script src="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.min.js"></script>
+    <script src="__PUBLIC__/vendor/formvalidation/formValidation.min.js"></script>
+    <script src="__PUBLIC__/vendor/formvalidation/framework/bootstrap.min.js"></script>
+    <script src="__PUBLIC__/js/system/blacklist.js"></script>
+    <!-- 消息通知 -->
+    <script src="__PUBLIC__/js/notify-msg.js"></script>
+</body>
+<script src="__PUBLIC__/themes/addpicker.js"></script>
+<script>
+    let url = "{:url('/user/notice/getNoticeInfo')}";
+    let data = {
+            id:sessionStorage.getItem('id')
+    };
+    cstmpost('',url,data,function(res){
+        assign(res)
+        $('#pushNum').html($('#pushNum').html()+'人');
+        $('#readNum').html($('#readNum').html()+'人');
+        $('#conten').html(res.data.content);
+        if(!$('.usertype').html()){
+            $('.usertype').html('孵化器管理员，企业用户')
+        }
+        if(res.data.usertype == ''){
+            $('.usertype').html('孵化器管理员,企业用户')
+        } else if(res.data.usertype == '6019001'){
+            $('.usertype').html('孵化器管理员')
+        } else if(res.data.usertype == '6019002'){
+            $('.usertype').html('企业用户')
+        }
+
+    })
+</script>
+
+</html>

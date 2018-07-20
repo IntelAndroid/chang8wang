@@ -1,0 +1,170 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+
+
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		var url="{:url('activity/activity/getSignInfo')}";
+		var signId=session('signId');
+		var status='7001003';
+		cstmpost('',url,{signId:signId},function(res){
+			if(res.code==1){
+				switch(res.data.status){
+					case'7001001':
+						status='待审核'
+						$('#cancel').show();
+						break;
+					case'7001002':
+						status='已通过'
+						$('#back').attr('class','weui-col-100')
+						break;
+					case'7001003':
+						status='已拒绝'
+						$('#resign').show();
+						break;
+					case'7001000':
+						status='已取消'
+						$('#resign').show();
+						break;
+				}
+				$('#status').html(status)
+				delete res.data.status;
+				assign(res);
+			}
+		})
+		var actId=session('actId');
+		//提交报名
+		$('#saveSign').click(function(){
+			var data=serializeData('signForm');
+			data.actId=actId;
+			data.total=session('total');
+			data.audit=session('audit');
+			var url="{:url('activity/activity/saveSign')}";
+			cstmpost('#saveSign',url,data,function(res){
+				if(res.code==1){
+					$('.close').click();
+					alert(res.msg);
+					setTimeout(function(){
+						location.href="{:url('wechat/test/castation')}";
+					},500);
+				}else{
+					alert(res.msg);
+				}
+			});
+		})
+		/*重新报名*/
+		$('#resign').on('click',function () {
+			location.href = "{:url('wechat/test/my-enroll')}";
+		})
+		/*取消报名*/
+		$('#cancel').on('click',function () {
+			$.confirm("您确定要取消报名吗?", "确认取消?", function() {
+				var url = "{:url('/activity/activity/cancelSign')}";
+				cstmpost('',url, {id: session('signId')}, function (data) {
+					if (data.code == 1) {
+						$.toast(data.msg);
+						setTimeout(function(){
+							location.href="{:url('wechat/test/mysign')}";
+						},500);
+					} else{
+						$.toast(data.msg);
+					}
+				})
+			}, function(){
+				//取消操作
+			});
+		})
+	})
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">报名详情</div>
+			</div>
+			<form action="" id="signForm">
+			<div class="weui-cells weui-cells_form first-header">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">报名人</label></div>
+			        <div class="weui-cell__bd">
+			          	<p class="weui-input" type="text" placeholder="请输入您的姓名" id="name"> </p><!--placeholder="新智能"-->
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">人数</label></div>
+			        <div class="weui-cell__bd">
+			          	<p class="weui-input" type="text" placeholder="请输入参加人数" id="num"> </p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd">
+			          <label class="weui-label">联系电话</label>
+			        </div>
+			        <div class="weui-cell__bd">
+			          <p class="weui-input" type="tel" placeholder="请输入联系电话" id="mobile"> </p>
+			        </div>
+			    </div>
+				<div class="weui-cell">
+					<div class="weui-cell__hd">
+						<label class="weui-label">报名状态</label>
+					</div>
+					<div class="weui-cell__bd">
+						<p class="weui-input"  placeholder="请输入联系电话" id="status"> </p>
+					</div>
+				</div>
+		    </div>
+			</form>
+		    <div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-50" style="background:none;" id="back">
+				      	<a class="weui-btn" href="javascript:history.back(-1)" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;">返回</a>
+				    </div>
+				    <div class="weui-col-50" style="background:none;display:none" id="cancel">
+				      	<a class="weui-btn"  href="javascript:" style="font-size:16px;background:#f39b0f;">取消报名</a>
+				      	<!--<a class="weui-btn" id="resign" href="javascript:" style="font-size:16px;background:#f39b0f;display:none">重新报名</a>-->
+				      	<!--<a class="weui-btn" id="saveSign" href="javascript:" style="font-size:16px;background:#f39b0f;">取消报名</a>-->
+				    </div>
+					<div class="weui-col-50" style="background:none;display:none" id="resign">
+						<!--<a class="weui-btn" id="cancel" href="javascript:" style="font-size:16px;background:#f39b0f;display:none">取消报名</a>-->
+						<a class="weui-btn"  href="javascript:" style="font-size:16px;background:#f39b0f;">重新报名</a>
+						<!--<a class="weui-btn" id="saveSign" href="javascript:" style="font-size:16px;background:#f39b0f;">取消报名</a>-->
+					</div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+	<div class="weui-tabbar">
+		<a href="" class="weui-tabbar__item weui-bar__item--on">
+			<!--<span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>-->
+			<div class="weui-tabbar__icon">
+				<i class="icon iconfont icon-yewu"></i>
+			</div>
+			<p class="weui-tabbar__label">业务</p>
+		</a>
+		<a href="" class="weui-tabbar__item">
+			<div class="weui-tabbar__icon">
+				<i class="icon iconfont icon-shujubaobiao"></i>
+			</div>
+			<p class="weui-tabbar__label">数据</p>
+		</a>
+		<a href="" class="weui-tabbar__item">
+			<div class="weui-tabbar__icon">
+				<i class="icon iconfont icon-account"></i>
+			</div>
+			<p class="weui-tabbar__label">我的</p>
+		</a>
+	</div>
+</div>
+{include file="wechat@public/footer"}

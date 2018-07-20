@@ -1,0 +1,145 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;}
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;text-align:right;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		var needle=location.href.indexOf('id=');//判断地址栏是否有id
+		if(needle!=-1){
+			var signId=location.href.substr(needle+3);
+			session('signId',signId);
+		}else{
+			var signId=session('signId');
+		}
+		// 当页面存在初始数据   初始化
+		var url = "{:url('/Meetroom/Meetroom/review')}";
+		var data = {};
+		data.mtAplId = signId;
+		cstmpost("#",url,data, function (res) {
+			assign(res)
+			if(res.data.status==7001001){
+				$('#auditBtn').show();
+			}else{
+
+			}
+		});
+
+	})
+	// 修改申请状态
+	function changeAplStatus(status){
+		var url = "{:url('meetroom/Meetroom/saveAplstatus')}";
+		var free=$('#free').val();
+		var paid=$('#price').val();
+		cstmpost(".changeAplStatus", url,{status:status,id:session('signId'),free:free,paid:paid}, function (res) {
+			var jumpurl = "{:url('/wechat/test/audit-detail')}";
+			if (res["code"] == '1') {
+				$.toptip(res["msg"],'success');
+				setTimeout(function () {
+					location.href = jumpurl;
+				}, 500);
+			} else {
+				$.toptip(res["msg"],'warning');
+			}
+		});
+	};
+	// 楼层获取  id   默认值
+	function initBuild(domID,bdefault,floor)
+	{
+		var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+		if($("."+domID).attr('class') != 'control-label'&&domID == 'rqst_build') {
+			bdefault = bdefault ? bdefault : '';
+			var ophtml = '';
+			cstmpost('',url, {bd: bdefault},function (res) {
+				ophtml = res
+				$("." + domID).html(res);
+				$("."+domID).attr("data-default",floor);
+				$("."+domID).change();
+			});
+		}
+	}
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">大会议室</div>
+			</div>
+			<div class="weui-cells weui-cells_form first-header">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">会议室名称</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="name"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">楼座</label></div>
+			        <div class="weui-cell__bd">
+			            <p  id="buildName"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">楼层</label></div>
+			        <div class="weui-cell__bd">
+				        <p id="floor"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label for="" class="weui-label">申请企业名称</label></div>
+			        <div class="weui-cell__bd">
+				        <p id="etprsName"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">开始时间</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="starttime"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">结束时间</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="endtime"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">会议室状态</label></div>
+			        <div class="weui-cell__bd">
+			          	<p style="color:#0093e7;" id="statusName"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">是否免费</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="freeName"></p>
+						<input name="free" type="hidden" id="free"/>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">应缴金额（元）</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="price"></p>
+			        </div>
+			    </div>
+		    </div>
+		    <div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter" id="auditBtn" style="display: none;">
+				    <div class="weui-col-50 auditdiv" style="background:none;" value='7001003'>
+				      	<a class="weui-btn" href="javascript:" id="" style="font-size:16px;background:#0093e7;" onclick="changeAplStatus(7001003)">拒绝</a>
+				    </div>
+				    <div class="weui-col-50 auditdiv" style="background:none;" value='7001002'>
+				      	<a class="weui-btn" href="javascript:" style="font-size:16px;background:#f39b0f;" onclick="changeAplStatus(7001002)">通过</a>
+				    </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+{include file="wechat@public/footer"}
+

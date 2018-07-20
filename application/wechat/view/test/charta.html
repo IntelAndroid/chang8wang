@@ -1,0 +1,477 @@
+{include file="wechat@public/header"}
+<script src="__PUBLIC__/themes/echarts.js"></script>
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	/*标题*/
+
+	.weui-media-box__bd {
+		overflow: hidden;
+		margin-top: 10px;
+	}
+
+	.weui-media-box__bd img {
+		float: left;
+		width: 22px;
+		height: auto;
+		margin-right: 5px;
+	}
+
+	.weui-media-box__bd .weui-media-box__title {
+		font-size: 15px;
+		color: #515151;
+		float: left;
+	}
+
+	/*轮播*/
+
+	.swiper-container {
+		width: 100%;
+	}
+
+	.swiper-container img {
+		display: block;
+		width: 100%;
+	}
+
+	/*九宫格*/
+
+	.weui-grid {
+		width: 25%;
+	}
+
+	/*下拉菜单*/
+
+	.weui-cells_radio {
+		width: 100%;
+		position: absolute;
+		top: 46px;
+		left: 0;
+		z-index: 20;
+		margin-top: 0;
+	}
+
+	.weui-cells_radio .weui-cell__bd p {
+		font-size: 14px;
+		float: left;
+	}
+
+	.weui-cell {
+		padding: 0 15px;
+	}
+
+	.iqbtlogo {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		margin: 8px 8px 8px 0;
+	}
+
+	.iqbtlogo img {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+	}
+</style>
+</head>
+
+<body ontouchstart>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active" style="padding:0 15px;">
+				<div class="topbox">
+					<p class="iqbtname">
+						<span>青岛中联慧云信息科技有限公司</span>
+						<!--<i class="icon iconfont icon-moreunfold"></i>-->
+					</p>
+				</div>
+				<!--两个选项卡时使用-->
+				<div class="choosebox first-header">
+					<div class="weui-row weui-no-gutter">
+						<div class="weui-col-50 active" value='1'>
+							<a>招商管理统计</a>
+						</div>
+						<div class="weui-col-50" value='2'>
+							<a href='chartb'>入驻管理统计</a>
+						</div>
+					</div>
+				</div>
+				<!--多于两个选项卡时使用-->
+				<!--<div class="lr_nb first-header">
+				<div class="slider_wrap line">
+				    <div class="wx_items">
+					    <div class="item_cell current">
+					        <span>招商管理统计</span>
+					    </div>
+					    <div class="item_cell">
+					        <span>客户管理统计</span>
+					    </div>
+				    </div>
+				</div>
+			</div>-->
+				<div class="weui-grids">
+					<div class="weui-media-box__bd">
+						<h4 class="weui-media-box__title">客户状态</h4>
+					</div>
+					<style>
+						.lr_nb1 {
+							width: 100%;
+							overflow: hidden;
+							line-height: 40px;
+							font-size: 14px;
+							margin: 10px 0 15px 0;
+						}
+
+						.lr_nb1 .slider_wrap {
+							width: 100%;
+							overflow: hidden;
+							overflow-x: scroll;
+							-webkit-overflow-scrolling: touch;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items {
+							white-space: nowrap;
+						}
+
+						/*规定段落中的文本不进行换行*/
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell {
+							display: inline-block;
+							width: 90px;
+							font-size: 12px;
+							line-height: 20px;
+							color: #FFF;
+							height: 60px;
+							margin-right: 5px;
+							padding: 5px;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell:last-child {
+							margin-right: 0;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell span {
+							white-space: nowrap;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell .leftimg {
+							margin-top: 10px;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell .leftimg img {
+							width: 24px;
+							height: auto;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell .rightword {
+							text-align: center;
+							margin-top: 10px;
+							font-size: 12px;
+							line-height: 24px;
+							color: #FFF;
+						}
+
+						.lr_nb1 .slider_wrap.line .wx_items .item_cell .rightword span {
+							font-size: 14px;
+							font-weight: bold;
+						}
+					</style>
+					<div class="lr_nb1">
+						<div class="slider_wrap line">
+							<div class="wx_items business">
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="weui-grids doug">
+					<div class="weui-media-box__bd">
+						<h4 class="weui-media-box__title">客户转化率</h4>
+					</div>
+					<div class="panel-body height-200" id="doug" style='width:100%;height:200px'>
+
+					</div>
+				</div>
+				<div class="weui-grids douga">
+					<div class="weui-media-box__bd">
+						<h4 class="weui-media-box__title">无效客户分析</h4>
+					</div>
+					<div class="panel-body height-200" id="douga" style='width:100%;height:200px'>
+
+					</div>
+				</div>
+				<div class="weui-grids last-footer">
+					<div class="weui-media-box__bd">
+						<h4 class="weui-media-box__title">客户趋势</h4>
+					</div>
+					<div class="panel-body height-200" id="basic" style='width:100%;height:250px'>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	{include file="wechat@public/bottom"}
+	{include file="wechat@public/footer"}
+	<script>
+		// 柱状图名称集合
+		var mychart = [];
+		// 饼状图data
+		var data = [];
+		// 饼状图normal
+		var datanormal = {};
+		// 饼状图itemStyle
+		var dataitemStyle = {};
+		// 柱状图名称集合
+		var mycharta = [];
+		// 柱状图人数集合
+		var myChartaNum = [];
+		// 柱状图颜色集合
+		var myChartaColor = [];
+		// 折线图月份集合
+		var month = ['月份'];
+		// 折线图种类人数
+		var typePeonum = [];
+		// 折线图单独种类
+		var typeOnone = [];
+		// 折线图series
+		var series = [];
+		var url = url?url:"{:url('customer/Customer/getCstmData')}"
+		var seriesChildren = { type: 'line', smooth: true, seriesLayoutBy: 'row' };
+		cstmpost('', url, '', function (res) {
+			console.log(res)
+			$('.business').html('')
+			// console.log(res);
+			cstmpost('', url, '', function (res) {
+				business(res);
+				console.log(res.cstmNum);
+			})
+			function business(res) {
+				$.each(res.cstmNum, function (i) {
+					let business = '<div class="item_cell" style="background: ' + res.cstmNum[i].color +
+						';"><p>' + res.cstmNum[i].name + '</p><div class="weui-row weui-no-gutter"><div class="weui-col-20 leftimg">\
+		<img src="'+ res.cstmNum[i].pic + '"></div><div class="weui-col-80 rightword"><p><span>' + res.cstmNum[i].num +
+						'</span> 个</p></div></div></div>';
+					$('.business').append(business)
+				})
+			}
+			// 饼状图参数
+			$.each(res.con, function (b) {
+				mychart.push(res.con[b].name)
+				var datanormal = {
+					color: res.con[b].color,
+				}
+				var dataitemStyle = {
+					normal: datanormal,
+				}
+				var dataline = {
+					value: res.con[b].num,
+					name: res.con[b].name,
+					itemStyle: dataitemStyle
+				}
+				data.push(dataline);
+			})
+
+			// 柱状图参数
+			$.each(res.invalid, function (i) {
+				myChartaNum.push(res.invalid[i].num)
+				mycharta.push(res.invalid[i].name)
+				myChartaColor.push(res.invalid[i].color)
+			})
+
+			// 折线图月份
+			$.each(res.cstmTrend, function (e) {
+				month.push(res.cstmTrend[e].name)
+			})
+			typePeonum.push(month)
+
+			// 折线图种类人数(仅一月)
+			$.each(res.cstmTrend[0].cstmTrend, function (e) {
+				typeOnone = []
+				typeOnone.push(res.cstmTrend[0].cstmTrend[e].name);
+				typeOnone.push(res.cstmTrend[0].cstmTrend[e].num);
+				typePeonum.push(typeOnone);
+				series.push(seriesChildren);
+			})
+
+			// 折线图剩下月份人数
+			for (var n = 0; n < res.cstmTrend.length - 1; n++) {
+				var replace = res.cstmTrend[n + 1].cstmTrend
+				for (var m = 0; m < typePeonum.length - 1; m++) {
+					typePeonum[m + 1].push(replace[m].num);
+				}
+			}
+
+			//饼状图
+			var myChart = echarts.init(document.getElementById('doug'), '');
+			option = {
+				backgroundColor: '#fff',
+				tooltip: {
+					trigger: 'item',
+					formatter: "{b} <br/> {c} ({d}%)"
+				},
+				legend: {
+					orient: 'vertical',
+					x: 'right',
+					y: 'bottom',
+					data: mychart
+				},
+				series: [
+					{
+						name: '访问来源',
+						type: 'pie',
+						radius: ['50%', '70%'],
+						avoidLabelOverlap: false,
+						label: {
+							normal: {
+								show: false,
+								position: 'center'
+							},
+							emphasis: {
+								show: true,
+								textStyle: {
+									fontSize: '12',
+									fontWeight: 'bold'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								show: false
+							}
+						},
+						data: data
+					}
+				]
+			};
+			myChart.setOption(option);
+
+			// 柱状图
+			var myCharta = echarts.init(document.getElementById('douga'), '');
+			var colors = myChartaColor;
+			var i = 0;
+			option = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					top: '10%',
+					containLabel: true,
+				},
+				xAxis: [
+					{
+						type: 'category',
+						data: mycharta,
+						splitLine: {
+							show: false
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+						axisTick: {
+							alignWithLabel: true
+						}
+					}
+				],
+				yAxis: [
+					{
+						type: 'value',
+						splitLine: {
+							show: false
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+						splitArea: {
+							show: true,
+						},
+					}
+				],
+				series: [
+					{
+						barWidth: '10px',
+						type: 'bar',
+						label: {
+							normal: {
+								show: true,
+								position: 'top'
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: function (d) {
+									i = i + 1;
+									return colors[i - 1];
+								}
+							}
+						},
+						data: myChartaNum,
+					}
+				]
+
+			};
+			myCharta.setOption(option);
+
+			// 折线图
+			var basic = echarts.init(document.getElementById('basic'), '');
+			option = {
+				backgroundColor: '#fff',
+				legend: {},
+				tooltip: {
+					trigger: 'axis',
+					showContent: true
+				},
+				dataset: {
+					source: typePeonum
+				},
+				xAxis: [
+					{
+						type: 'category',
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+					}
+				],
+				yAxis: {
+					gridIndex: 0,
+					axisLabel: {
+						show: true,
+						textStyle: {
+							color: '#000'
+						}
+					},
+				},
+				series: series
+			};
+			basic.setOption(option);
+		});
+
+		$('.chart').addClass('weui-bar__item--on');
+		$('.chart').siblings().removeClass('weui-bar__item--on');
+	</script>

@@ -1,0 +1,304 @@
+{include file="index@public:header"}
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/js/base.js"></script>
+	<script src="__PUBLIC__/themes/echarts.js"></script>
+
+    <script>
+        Breakpoints();
+    </script>
+    
+</head>
+<body>
+
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+        	<div class="page-header">
+                <h1 class="page-title">数据中心</h1>
+            </div>
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                    	<style>
+                    		.panel0{border:1px solid #d6d6d8;}
+                    		.panel0 h4 span{color:#2f84c5;}
+                    		.customerkind {overflow:hidden;}
+                    		.customerkind .panel-body{padding:15px;}
+                    		.customerkind .panel-body > p{margin-bottom:15px;color:#FFF;}
+                    		.customerkind .col-md-9 p {color:#FFF;line-height:40px;}
+                    		.customerkind p span {color:#FFF;font-size:36px;font-weight:bold;}
+                    	</style>
+                        <div class="panel panel0">
+                        	<h4 class="padding-top-10 margin-0"><span>▋</span> 活动数据（园区更青睐于积极参加活动的企业哦~）</h4>
+                            <div class="panel-body">
+                                <div class="col-md-12 padding-0">
+                                	<div class="col-md-3 customerkind"></div>
+				                    <div class="col-md-3 customerkind">
+				                        <div class="panel" style="background: #2591d1;">
+				                            <div class="panel-body">
+				                                <p>共参加活动次数</p>
+				                                <div class="label-content">
+				                                	<div class="col-md-3 padding-left-0"><img src="__PUBLIC__/images/cusblue.png"></div>
+				                                	<div class="col-md-9 padding-left-0 padding-right-0"><p class="text-center"><span class="number"></span> 次</p></div>
+				                                </div>
+				                            </div>
+				                        </div>
+				                    </div>
+				                    <div class="col-md-3 customerkind">
+				                        <div class="panel" style="background: #f49c45;">
+				                            <div class="panel-body">
+				                                <p>共参加活动人数</p>
+				                                <div class="label-content">
+				                                	<div class="col-md-3 padding-left-0"><img src="__PUBLIC__/images/cusyellow.png"></div>
+				                                	<div class="col-md-9 padding-left-0 padding-right-0"><p class="text-center"><span class="mannum"></span> 人</p></div>
+				                                </div>
+				                            </div>
+				                        </div>
+				                    </div>
+				                    <div class="col-md-3 customerkind"></div>
+				                </div>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                	<div class="col-md-12">
+	                	<div class="panel panel0">
+	                    	<h4 class="padding-top-10 margin-0"><span>▋</span> 会议数据（累计使用会议室5次）</h4>
+	                        <div class="panel-body">
+	                            <div class="col-md-6">
+			                        <div class="panel introduce-info">
+			                            <h4 class="padding-top-10 margin-0">高频时间段</h4>
+			                            <div class="panel-body height-200" id="doug">
+			
+			                            </div>
+			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
+			                        <div class="panel changelog-info">
+			                            <h4 class="padding-top-10 margin-0">高频会议室</h4>
+			                            <div class="panel-body height-200" id="douga">
+			                                   
+										</div>
+			                        </div>
+			                    </div> 
+	                        </div>
+	                    </div>
+	                </div>    
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="site-footer-legal">创8网 &copy;
+        <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+    </div>
+    <div class="site-footer-right">
+       	 当前版本：v1.3.0
+        <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+            <i class="icon fa-cloud-upload"></i>
+        </a>
+    </div>
+</footer>
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/themes/chart.js"></script>
+</body>
+<script>
+	let url = "{:url('iqbt/iqbt/dataCenter')}";
+	cstmpost('',url,'',function(res){
+		$('.number').html(res.actNum)
+		$('.mannum').html(res.peoNum)
+	})
+		// 高频会议室柱状图名称集合
+		var mychart = [];
+		// 高频会议室柱状图使用次数
+		var myChartaNum = [];
+		// 高频会议室柱状图颜色集合
+		var myChartaColor = [];
+		// 高频会议室柱状图参数
+		let charurl = "{:url('work/Etprsuser/getMtroomData')}"
+		// 高频时间段柱状图名称集合
+		var douga = [];
+		// 高频时间段柱状图使用次数
+		var dougNum = [];
+		// 高频时间段柱状图颜色集合
+		var dougColor = [];
+		// 高频时间段柱状图参数
+		let dougurl = "{:url('work/Etprsuser/getMtrTimeData')}"
+		cstmpost('',charurl,'',function(res){
+			$.each(res.data, function (i) {
+				myChartaNum.push(res.data[i].aplNum)
+				mychart.push(res.data[i].name)
+				myChartaColor.push(res.data[i].color)
+				if(res.code == 0){
+					toastr.error(res.msg)
+				}
+			})
+			// 高频会议室柱状图
+			var myCharta = echarts.init(document.getElementById('douga'), '');
+			var colors = myChartaColor;
+			var i = 0;
+			option = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					top: '10%',
+					containLabel: true,
+				},
+				xAxis: [
+					{
+						type: 'category',
+						data: mychart,
+						splitLine: {
+							show: false
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+						axisTick: {
+							alignWithLabel: true
+						}
+					}
+				],
+				yAxis: [
+					{
+						type: 'value',
+						splitLine: {
+							show: false
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+						splitArea: {
+							show: true,
+						},
+					}
+				],
+				series: [
+					{
+						barWidth: '50px',
+						type: 'bar',
+						label: {
+							normal: {
+								show: true,
+								position: 'top'
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: function (d) {
+									i = i + 1;
+									return colors[i - 1];
+								}
+							}
+						},
+						data: myChartaNum,
+					}
+				]
+
+			};
+			myCharta.setOption(option);
+		})
+			cstmpost('',dougurl,'',function(res){
+			$.each(res.data, function (i) {
+				dougNum.push(res.data[i].count)
+				douga.push(res.data[i].stEn)
+				dougColor.push(res.data[i].color)
+				if(res.code == 0){
+					toastr.error(res.msg)
+				}
+			})
+			// 高频会议室柱状图
+			var doug = echarts.init(document.getElementById('doug'), '');
+			var colors = dougColor;
+			var i = 0;
+			option = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					top: '10%',
+					containLabel: true,
+				},
+				xAxis: [
+					{
+						type: 'category',
+						data: douga,
+						splitLine: {
+							show: false
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+						axisTick: {
+							alignWithLabel: true
+						}
+					}
+				],
+				yAxis: [
+					{
+						type: 'value',
+						splitLine: {
+							show: false
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#000'
+							}
+						},
+						splitArea: {
+							show: true,
+						},
+					}
+				],
+				series: [
+					{
+						barWidth: '20px',
+						type: 'bar',
+						label: {
+							normal: {
+								show: true,
+								position: 'top'
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: function (d) {
+									i = i + 1;
+									return colors[i - 1];
+								}
+							}
+						},
+						data: dougNum,
+					}
+				]
+
+			};
+			doug.setOption(option);
+		})
+</script>
+</html>

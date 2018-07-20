@@ -1,0 +1,82 @@
+{include file="index@public:header"}
+</head>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+        	<div class="page-header">
+                <h1 class="page-title">公告详情</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-heading text-center margin-bottom-20">
+                        <h3 class="panel-title detaname"></h3>
+                        <p class='detatime'></p>
+                    </div>
+                    <div class="panel-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="site-footer-legal">创8网 &copy;
+        <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+    </div>
+    <div class="site-footer-right">
+       	 当前版本：v1.3.0
+        <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+            <i class="icon fa-cloud-upload"></i>
+        </a>
+    </div>
+</footer>
+
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-strength/jquery-strength.min.js"></script>
+<script src="__PUBLIC__/vendor/alertify-js/alertify.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/formValidation.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/framework/bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/switchery/switchery.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+
+<script src="__PUBLIC__/js/system/log.js"></script>
+<script src="__PUBLIC__/js/system/account/password.js"></script>
+<!--选择时间插件-->
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+
+</body>
+    <script>    
+        let url = '{:url("/user/notice/getNoticeInfo")}'
+        let data = {
+            id:sessionStorage.getItem('noticeId')
+        }
+        cstmpost('',url,data,function(res){
+            $('.detaname').html(res.data.title);
+            $('.detatime').html(res.data.addtime);
+            $('.panel-body').html(res.data.content);
+        })
+
+        // 将公告设为已读
+        let readurl = '{:url("/user/notice/readNotice")}'
+        let readdata = {
+            id:sessionStorage.getItem('msgId')
+        }
+        cstmpost('',readurl,readdata,function(res){
+        })
+    </script>
+</html>

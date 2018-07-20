@@ -1,0 +1,244 @@
+{include file="index@public:header"}
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <div class="nav-tabs-horizontal" data-approve="nav-tabs">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="active" role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsOne" aria-controls="exampleTabsOne" role="tab">待审核</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsTwo" aria-controls="exampleTabsTwo" role="tab">使用中</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsThree" aria-controls="exampleTabsThree" role="tab">已过期</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content padding-top-20">
+                                        <div class="tab-pane animation-slide-left active" id="exampleTabsOne" role="tabpanel">
+	                                        <table class="table table-bordered text-center cdtable margin-top-20">
+					                        	<thead>
+					                                <tr>
+					                                	<th class="text-center">省份</th>
+					                                	<th class="text-center">城市</th>
+					                                	<th class="text-center">孵化器名称</th>
+					                                	<th class="text-center">联系人</th>
+					                                    <th class="text-center">电话</th>
+					                                    <th class="text-center">提交时间</th>
+					                                    <th class="text-center">对接人</th>
+					                                    <th class="text-center">系统使用起止时间</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody>
+					                                <tr>
+					                                	<td>山东</td>
+					                                	<td>青岛</td>
+					                                	<td><a href="">亚马逊联合创新中心</a></td>
+					                                    <td>张天</td>
+					                                    <td>15806553642</td>
+					                                    <td>2018-03-26</td>
+					                                    <td>
+					                                    	<select class="form-control inline unit" id="unit">
+					                                            <option>王红</option>
+					                                            <option>王亮</option>
+					                                            <option>李明</option>
+					                                        </select>
+					                                    </td>
+					                                    <td style="width:20%;">
+					                                    	<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+					                                            <div class="input-group">
+							                                        <span class="input-group-addon">
+							                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+							                                        </span>
+					                                                <input type="text" class="form-control" name="start">
+					                                            </div>
+					                                            <div class="input-group">
+					                                                <span class="input-group-addon"> 至 </span>
+					                                                <input type="text" class="form-control" name="end">
+					                                            </div>
+					                                        </div>
+					                                    </td>
+					                                </tr>
+					                            </tbody>
+					                        </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsTwo" role="tabpanel">
+	                                        <table class="table table-bordered text-center cdtable margin-top-20">
+					                        	<thead>
+					                                <tr>
+					                                	<th class="text-center">省份</th>
+					                                	<th class="text-center">城市</th>
+					                                	<th class="text-center">孵化器名称</th>
+					                                	<th class="text-center">联系人</th>
+					                                    <th class="text-center">电话</th>
+					                                    <th class="text-center">办公室数量</th>
+					                                    <th class="text-center">剩余数量</th>
+					                                    <th class="text-center">办公室价格</th>
+					                                    <th class="text-center">工位数量</th>
+					                                    <th class="text-center">剩余数量</th>
+					                                    <th class="text-center">工位价格</th>
+					                                    <th class="text-center">提交时间</th>
+					                                    <th class="text-center">对接人</th>
+					                                    <th class="text-center">系统使用起止时间</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody>
+					                                <tr>
+					                                	<td>山东</td>
+					                                	<td>青岛</td>
+					                                	<td><a href="">亚马逊联合创新中心</a></td>
+					                                    <td>张天</td>
+					                                    <td>15806553642</td>
+					                                    <td>100</td>
+					                                    <td>21</td>
+					                                    <td>200元/平/天</td>
+					                                    <td>200</td>
+					                                    <td>150</td>
+					                                    <td>200元/工位/月</td>
+					                                    <td>2018-03-26</td>
+					                                    <td>王红</td>
+					                                    <td style="width:15%;">
+					                                    	<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+					                                            <div class="input-group">
+							                                        <span class="input-group-addon">
+							                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+							                                        </span>
+					                                                <input type="text" class="form-control" readonly="readonly" name="start" value="2018年03月08日">
+					                                            </div>
+					                                            <div class="input-group">
+					                                                <span class="input-group-addon"> 至 </span>
+					                                                <input type="text" class="form-control" name="end">
+					                                            </div>
+					                                        </div>
+					                                    </td>
+					                                </tr>
+					                            </tbody>
+					                        </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsThree" role="tabpanel">
+	                                        <table class="table table-bordered text-center cdtable margin-top-20">
+					                        	<thead>
+					                                <tr>
+					                                	<th class="text-center">省份</th>
+					                                	<th class="text-center">城市</th>
+					                                	<th class="text-center">孵化器名称</th>
+					                                	<th class="text-center">联系人</th>
+					                                    <th class="text-center">电话</th>
+					                                    <th class="text-center">办公室数量</th>
+					                                    <th class="text-center">剩余数量</th>
+					                                    <th class="text-center">办公室价格</th>
+					                                    <th class="text-center">工位数量</th>
+					                                    <th class="text-center">剩余数量</th>
+					                                    <th class="text-center">工位价格</th>
+					                                    <th class="text-center">提交时间</th>
+					                                    <th class="text-center">对接人</th>
+					                                    <th class="text-center">系统使用起止时间</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody>
+					                                <tr>
+					                                	<td>山东</td>
+					                                	<td>青岛</td>
+					                                	<td><a href="">亚马逊联合创新中心</a></td>
+					                                    <td>张天</td>
+					                                    <td>15806553642</td>
+					                                    <td>100</td>
+					                                    <td>21</td>
+					                                    <td>200元/平/天</td>
+					                                    <td>200</td>
+					                                    <td>150</td>
+					                                    <td>200元/工位/月</td>
+					                                    <td>2018-03-26</td>
+					                                    <td>王亮</td>
+					                                    <td>
+					                                    	2018-03-26 至 2018-04-06
+					                                    </td>
+					                                </tr>
+					                            </tbody>
+					                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="site-footer">
+    <div class="site-footer-legal">创8网 &copy;
+        <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+    </div>
+    <div class="site-footer-right">
+       	 当前版本：v1.3.0
+        <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+            <i class="icon fa-cloud-upload"></i>
+        </a>
+    </div>
+</footer>
+
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-strength/jquery-strength.min.js"></script>
+<script src="__PUBLIC__/vendor/alertify-js/alertify.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/formValidation.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/framework/bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/switchery/switchery.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+
+<script src="__PUBLIC__/js/system/log.js"></script>
+<script src="__PUBLIC__/js/system/account/account.js"></script>
+<script src="__PUBLIC__/js/system/account/message.js"></script>
+<script src="__PUBLIC__/js/system/account/password.js"></script>
+
+<!--上传图片插件-->
+<script src="__PUBLIC__/vendor/blueimp-tmpl/tmpl.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-canvas-to-blob/canvas-to-blob.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-load-image/load-image.all.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-process.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-image.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-audio.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-video.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-validate.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-ui.js"></script>
+<script src="__PUBLIC__/vendor/dropify/dropify.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/dropify.js"></script>
+
+
+<!--弹出层插件-->
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+<script src="__PUBLIC__/vendor/alertify-js/alertify.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/formValidation.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/framework/bootstrap.min.js"></script>
+<script src="__PUBLIC__/js/system/blacklist.js"></script>
+
+
+<!--选择时间插件-->
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+<!--图片放大插件-->
+<script src="__PUBLIC__/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script src="__PUBLIC__/js/examples/components/advanced/lightbox.js"></script>
+
+<!-- 消息通知 -->
+<script src="__PUBLIC__/js/notify-msg.js"></script>
+</body>
+</html>

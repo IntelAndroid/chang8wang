@@ -1,0 +1,525 @@
+{include file="index@public/header"}
+
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script><script src="__PUBLIC__/js/base.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btn-search").click(function () {
+            var tableId = $(this).attr("feresh-table");
+            var formId = $(this).attr("data-form");
+            var d = {};d._tm = new Date();
+            var t = $('#' + formId).serializeArray();
+            $.each(t, function () {
+                d[this.name] = this.value;
+            });
+            if(tableId == 'WaitmtAplList'){
+                var tableServer = session("mtAplTableServer");
+                $("#WaitmtAplList").bootstrapTable('refresh',{'url':tableServer,query:d});
+            }else if(tableId == 'SucmtAplList'){
+                var tableServer = session("mtAplTableServer");
+                $("#SucmtAplList").bootstrapTable('refresh',{'url':tableServer,query:d});
+            }else if(tableId == 'AllmtAplList'){
+                var tableServer = session("mtAplTableServer");
+                $("#AllmtAplList").bootstrapTable('refresh',{'url':tableServer,query:d});
+            }else{
+                $('#' + tableId).bootstrapTable('refresh', {'query': d});
+            }
+        });
+        $(".btn-clear").click(function () {
+            var tableId = $(this).attr("feresh-table");
+            var formId = $(this).attr("data-form");
+            $('#' + formId)[0].reset();
+            $('#' + tableId).bootstrapTable('refresh');
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        assign();
+        var mtRoomId = session("mtRoomAplId");
+        // 获取所有会议室
+        var url = "{:url('/meetroom/Meetroom/getAllname')}";
+        cstmpost("", url, {}, function (res) {
+            if (res.code == '1') {
+                if (res.data) {
+                    for (var i = 0; i < res.data.length; i++) {
+                        var op = '<option value="' + res.data[i].id + '">' + res.data[i].name + '</option>';
+                        $(".mtroomNameList").append(op);
+                    }
+                }
+            } else {
+                toastr.error(res.msg);
+            }
+        });
+        // 渲染表格
+        var tableServer = "{:url('/meetroom/Meetroom/getAplList')}";
+        session("mtAplTableServer",tableServer);
+        var tableData = {};
+        tableData.status = '7001001';
+        tableData._tm = new Date();
+        var tableData2 = {};
+        tableData2._tm = new Date();
+        $("#WaitmtAplList").bootstrapTable('refresh',{'url':tableServer,query:tableData});
+        tableData2.status = '7001002';
+        $("#SucmtAplList").bootstrapTable('refresh',{'url':tableServer,query:tableData2});
+        var tableData3 = {};
+        tableData3._tm = new Date();
+        $("#AllmtAplList").bootstrapTable('refresh',{'url':tableServer,query:tableData3});
+        // 导出excle
+        $(".btn-export").click(function () {
+            var url = "{:url('/meetroom/Meetroom/exportApl')}";
+            var geturl="{:url('/meetroom/Meetroom/getAplList')}";
+            var form = $(this).attr("data-form");
+            var table=$(this).attr('feresh-table');
+            var data = serializeData(form);
+            cstmpost('.btn-export',geturl,data,function(res){
+                if(res.total==0){
+                    toastr.warning('没有相关数据');
+                }else{
+                    if(table==SucmtAplList){
+                        //预订成功
+                        data.status = 7001002;
+                    }else if(table==WaitmtAplList){
+                        data.status = 7001001;
+                    }
+                    var query = '';
+                    for (field in data) {
+                        if (data[field] != '') {
+                            if (query == '') {
+                                query = query + field + '=' + data[field];
+                            } else {
+                                query = query + '&' + field + '=' + data[field];
+                            }
+                        }
+                    }
+                    location.href = url + '?' + query
+                }
+            })
+        });
+    });
+    // 楼层获取  id   默认值
+    function initBuild(domID, bdefault, floor) {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if ($("." + domID).attr('class') != 'control-label' && domID == 'rqst_build') {
+            bdefault = bdefault ? bdefault : '';
+            cstmpost('', url, {bd: bdefault}, function (res) {
+                var ophtml = '<option value="">选择楼座</option>';
+                for (var tmp in res) {
+                    if(tmp == bdefault){
+                        ophtml = ophtml + '<option value="'+tmp+'" selected>'+res[tmp]+'</option>';
+                    }else{
+                        ophtml = ophtml + '<option value="'+tmp+'">'+res[tmp]+'</option>';
+                    }
+                }
+                $("." + domID).html(ophtml);
+                $("." + domID).attr("data-default", floor);
+                $("." + domID).change();
+            });
+
+        }
+    }
+
+    // 渲染表格操作
+    function actFormatter(value,row){
+        var timestamp = $.now();
+        var html = '';
+        switch (row.status){
+            // 提交
+            case '7001001':
+                if(timestamp<row.endstamp) {
+                    html = '<button type="button" class="btn  btn-outline btn-xs  btn-danger " onclick="cancelApl(' + row.id + ')" >\
+                    &nbsp;取消预订&nbsp;</button>&nbsp;';
+                }
+            // 通过
+            case '7001002':
+                break;
+            // 拒绝
+            case '7001003':
+                break;
+        }
+        html = html  + '&nbsp;<button type="button" class="btn  btn-outline btn-xs  btn-info goDetail" >\
+               &nbsp;详情&nbsp;</button>';
+        return html;
+    }
+
+    window.actEvents = {
+        // 取消预定
+        'click .cancel': function (e, value, row, index) {
+
+        },
+        // 看详情
+        'click .goDetail': function (e, value, row, index) {
+            session("myAplAuditId", row.id);
+            session('endstamp',row.endstamp);
+            var url = "{:url('/meetroom/Meetroom/myAplAudit')}";
+            location.href = url;
+        }
+    };
+    function basedelete(tableId,url,id){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要取消预定吗？</div><div class="modal-footer"><button class="btn btn-primary" onclick="common_delete(\''+url+'\',\''+id+'\',\''+tableId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    //取消预定
+    function cancelApl(id) {
+        var url="{:url('/meetroom/Meetroom/cancelReserve')}";
+        var data = {};
+        data.id = id;
+        //调用删除提示功能将id传入,点击确定后则发送删除请求
+        basedelete("WaitmtAplList",url,id);
+        $('#AllmtAplList').bootstrapTable('refresh');
+    }
+
+    function common_delete(url,id,tableId){
+        $.post(url, {id: id}, function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+                // 渲染表格
+                var tableServer = "{:url('/meetroom/Meetroom/getAplList')}";
+                session("mtAplTableServer",tableServer);
+                var tableData = {};
+                tableData.status = '7001001';
+                tableData._tm = new Date();
+                var tableData2 = {};
+                $("#WaitmtAplList").bootstrapTable('refresh',{'url':tableServer,query:tableData});
+                tableData2.status = '7001002';
+                tableData2._tm = new Date();
+                $("#SucmtAplList").bootstrapTable('refresh',{'url':tableServer,query:tableData2});
+                var tableData3 = {};
+                tableData3._tm = new Date();
+                $("#AllmtAplList").bootstrapTable('refresh',{'url':tableServer,query:tableData3});
+                $('#myModal').modal('hide');
+            }else if(data.code == 0){
+                toastr.warning(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function statusFmt(value,row){
+        switch(row.status){
+            case"7001001":
+                var time=$.now();
+                if(row.endstamp<time){
+                    return '<span class="text-default">已过期</span>';
+                }
+                return '<span class="text-warning">待审核</span>';
+                break;
+            case"7001002":
+                return '<span class="text-success">已通过</span>';
+                break;
+            case"7001003":
+                return '<span class="text-danger">已拒绝</span>';
+                break;
+            default:
+                return '<span class="text-default">已取消</span>';
+                break;
+        }
+    }
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+                                    <li class="news accout-msg active" role="presentation">
+                                        <a href="#message" aria-controls="message" role="tab" data-toggle="tab">
+                                            待审核
+                                            <span class="badge badge-danger"></span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-log">
+                                        <a href="#log" aria-controls="log" role="tab" data-toggle="tab">
+                                            预定成功
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-log">
+                                        <a href="#log2" aria-controls="log2" role="tab" data-toggle="tab">
+                                            全部
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content margin-top-15">
+                                    <div class="tab-pane animation-slide-left tab-message active" role="tabpanel" id="message">
+                                        <div class="row row-lg">
+                                            <div class="col-md-12">
+
+                                                <div class="example" id="WaitmtApl">
+                                                    <form action="" id="WaitmtAplForm">
+                                                        <input type="hidden" name="status" value="7001001">
+                                                        <div class="form-group col-md-2 padding-left-0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">楼座</span>
+                                                                <select class="form-control rqst_build" name="build"
+                                                                        data-url="{:url('/etprs/Etprs/changeBuild')}">
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">楼层</span>
+                                                                <select class="form-control rqst_floor" name="floor">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">会议名称</span>
+                                                                <input type="text" class="form-control meetname" name="mtName" placeholder="请输入会议名称">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">会议室名称</span>
+                                                                <select class="form-control mtroomNameList" name="id">
+                                                                    <option value="">选择会议室</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <div class="input-group col-md-12">
+
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">开始时间</span>
+                                                                        <input type="text" class="form-control starttime" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon"> 至 </span>
+                                                                        <input type="text" class="form-control endtime" name="end">
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-md-4 pull-right text-right">
+                                                            <div class="btn-actions">
+                                                                <button type="button" class="btn btn-primary btn-search" feresh-table="WaitmtAplList" data-form="WaitmtAplForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+                                                                <button type="button" class="btn btn-info btn-export" data-form="WaitmtAplForm" data-status=""
+                                                                        feresh-table="WaitmtAplList">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <table class="table table-bordered text-center cdtable" id="WaitmtAplList"
+                                                       data-side-pagination="server" data-toggle="table" data-search="false"
+                                                       data-show-refresh="false" data-show-toggle="false"
+                                                       data-show-columns="false" data-toolbar="#WaitmtApl"
+                                                       data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="text-center" data-field="mtroomName">会议室名称</th>
+                                                        <th class="text-center" data-field="freeName">是否免费</th>
+                                                        <th class="text-center" data-field="buildName">楼座</th>
+                                                        <th class="text-center" data-field="floor">楼层</th>
+                                                        <th class="text-center" data-field="etprsName">申请企业名称</th>
+                                                        <th class="text-center" data-field="starttime">开始时间</th>
+                                                        <th class="text-center" data-field="endtime">结束时间</th>
+                                                        <th class="text-center" data-field="price">应缴金额（元）</th>
+                                                        <th class="text-center" data-formatter="statusFmt">会议室状态</th>
+                                                        <th class="text-center" data-formatter="actFormatter" data-events="actEvents">操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
+
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane animation-slide-left tab-log" role="tabpanel" id="log">
+                                        <div class="row row-lg">
+                                            <div class="col-md-12">
+
+                                                <div class="example" id="SucmtApl">
+                                                    <form action="" id="SucmtAplForm">
+                                                        <input type="hidden" name="status" value="7001002">
+                                                        <div class="form-group col-md-2 padding-left-0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">楼座</span>
+                                                                <select class="form-control rqst_build" name="build"
+                                                                        data-url="{:url('/etprs/Etprs/changeBuild')}">
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">楼层</span>
+                                                                <select class="form-control rqst_floor" name="floor">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">会议名称</span>
+                                                                <input type="text" class="form-control meetname" name="mtName" placeholder="请输入会议名称">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">会议室名称</span>
+                                                                <select class="form-control mtroomNameList" name="id">
+                                                                    <option value="">选择会议室</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <div class="input-group col-md-12">
+
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">开始时间</span>
+                                                                        <input type="text" class="form-control starttime" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon"> 至 </span>
+                                                                        <input type="text" class="form-control endtime" name="end">
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-md-4 pull-right text-right">
+                                                            <div class="btn-actions">
+                                                                <button type="button" class="btn btn-primary btn-search" feresh-table="SucmtAplList" data-form="SucmtAplForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+                                                                <button type="button" class="btn btn-info btn-export" data-form="SucmtAplForm" data-status=""
+                                                                        feresh-table="SucmtAplList">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <table class="table table-bordered text-center cdtable" id="SucmtAplList"
+                                                       data-side-pagination="server" data-toggle="table" data-search="false"
+                                                       data-show-refresh="false" data-show-toggle="false"
+                                                       data-show-columns="false" data-toolbar="#SucmtApl"
+                                                       data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="text-center" data-field="mtroomName">会议室名称</th>
+                                                        <th class="text-center" data-field="freeName">是否免费</th>
+                                                        <th class="text-center" data-field="buildName">楼座</th>
+                                                        <th class="text-center" data-field="floor">楼层</th>
+                                                        <th class="text-center" data-field="etprsName">申请企业名称</th>
+                                                        <th class="text-center" data-field="starttime">开始时间</th>
+                                                        <th class="text-center" data-field="endtime">结束时间</th>
+                                                        <th class="text-center" data-field="price">应缴金额（元）</th>
+                                                        <th class="text-center" data-formatter="statusFmt">会议室状态</th>
+                                                        <th class="text-center" data-formatter="actFormatter" data-events="actEvents">操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane animation-slide-left tab-log" role="tabpanel" id="log2">
+                                        <div class="row row-lg">
+                                            <div class="col-md-12">
+
+                                                <div class="example" id="AllmtApl">
+                                                    <form action="" id="AllmtAplForm">
+                                                        <div class="form-group col-md-2 padding-left-0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">楼座</span>
+                                                                <select class="form-control rqst_build" name="build"
+                                                                        data-url="{:url('/etprs/Etprs/changeBuild')}">
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">楼层</span>
+                                                                <select class="form-control rqst_floor" name="floor">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">会议名称</span>
+                                                                <input type="text" class="form-control meetname" name="mtName" placeholder="请输入会议名称">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-2 padding-left-18">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">会议室名称</span>
+                                                                <select class="form-control mtroomNameList" name="id">
+                                                                    <option value="">选择会议室</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <div class="input-group col-md-12">
+
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">开始时间</span>
+                                                                        <input type="text" class="form-control starttime" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon"> 至 </span>
+                                                                        <input type="text" class="form-control endtime" name="end">
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-md-4 pull-right text-right">
+                                                            <div class="btn-actions">
+                                                                <button type="button" class="btn btn-primary btn-search" feresh-table="AllmtAplList" data-form="AllmtAplForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+                                                                <button type="button" class="btn btn-info btn-export" data-form="AllmtAplForm" data-status=""
+                                                                        feresh-table="AllmtAplList">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <table class="table table-bordered text-center cdtable" id="AllmtAplList"
+                                                       data-side-pagination="server" data-toggle="table" data-search="false"
+                                                       data-show-refresh="false" data-show-toggle="false"
+                                                       data-show-columns="false" data-toolbar="#AllmtApl"
+                                                       data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="text-center" data-field="mtroomName">会议室名称</th>
+                                                        <th class="text-center" data-field="freeName">是否免费</th>
+                                                        <th class="text-center" data-field="buildName">楼座</th>
+                                                        <th class="text-center" data-field="floor">楼层</th>
+                                                        <th class="text-center" data-field="etprsName">申请企业名称</th>
+                                                        <th class="text-center" data-field="starttime">开始时间</th>
+                                                        <th class="text-center" data-field="endtime">结束时间</th>
+                                                        <th class="text-center" data-field="price">应缴金额（元）</th>
+                                                        <th class="text-center" data-formatter="statusFmt">会议室状态</th>
+                                                        <th class="text-center" data-formatter="actFormatter" data-events="actEvents">操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
+
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

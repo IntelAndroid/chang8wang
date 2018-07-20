@@ -1,0 +1,272 @@
+{include file="index@public:header"}
+{include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script>
+    $(function () {
+        $("#btnadd").click(function () {
+            var url="{:url('/user/User/adduser')}";
+            baseadd(url,"添加用户","");
+        });
+
+        $("#btnsave").on("click", function () {
+            var form = $(this).closest("form");
+            form.on("submit",function(e){
+                e.preventDefault();
+            });
+            var thisobj = $(this);
+            var url = form.prop("action");
+            var tableId = form.attr("tableId");
+            var formId = form.attr("id");
+
+            var data=serializeData(formId);
+            cstmpost("#btnsave",url,data, function (data) {
+                if (data.code == 1) {
+                    toastr.success(data.msg);
+                    if(tableId!=undefined){
+                        $("#" + tableId).bootstrapTable('refresh');
+                    }
+
+                    $('#editcaseForm').modal('hide');
+                } else {
+                    toastr.error(data.msg);
+                }
+            });
+        });
+    });
+
+    function actionFormatter(value, row) {
+        var html = '<button type="button" class="btn btn-outline btn-info btn-xs reset">&nbsp;重置密码&nbsp;</button>&nbsp;';
+        switch (row.status) {
+            case '6018001':
+                html += '<button type="button" class="btn btn-outline btn-danger btn-xs frz">&nbsp;冻结&nbsp;</button>&nbsp;';
+                break;
+            case '6018003':
+                html += '<button type="button" class="btn btn-outline btn-success btn-xs unfrz">&nbsp;解冻&nbsp;</button>&nbsp;';
+                break;
+            default:
+                html += '';
+        }
+        return html;
+    }
+
+
+    window.actEvt = {
+        'click .frz': function (e, value, row, index) {
+            var id = row.id;
+            var data = '<div class="modal-header"><button type="button" id="qiuttt" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定冻结此用户吗？</div><div class="modal-footer"><button class="btn btn-primary" onclick="frzy(\'' + id + '\',6018003)">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示", data, "modal-sm");
+        },
+        'click .unfrz': function (e, value, row, index) {
+            var id = row.id;
+            var data = '<div class="modal-header"><button type="button" id="qiuttt" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定解冻此用户吗？</div><div class="modal-footer"><button class="btn btn-primary" onclick="frzy(\'' + id + '\',6018001)">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示", data, "modal-sm");
+        },
+        'click .reset': function (e, value, row, index) {
+            var id = row.id;
+            var data = '<div class="modal-header"><button type="button" id="qiuttt" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">重置后密码为：888888</div><div class="modal-footer"><button class="btn btn-primary" onclick="resetpwd(\'' + id + '\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示", data, "modal-sm");
+        }
+    };
+
+    function frzy(userId,status){
+        var url="{:url('/user/User/frzy')}";
+        cstmpost("",url,{userId:userId,status:status}, function (data) {
+            if(data.code==1){
+                toastr.success("操作成功");
+                $('#myModal').modal('hide');
+                $('#etprsUser').bootstrapTable('refresh');
+                $('#iqbtUser').bootstrapTable('refresh');
+                $('#sysUser').bootstrapTable('refresh');
+            }else{
+                toastr.error(data.msg);
+            }
+        })
+    }
+    function resetpwd(userId){
+        var url="{:url('/user/User/resetdftpwd')}";
+        cstmpost("",url,{userId:userId}, function (data) {
+            if(data.code==1){
+                toastr.success("重置成功");
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        })
+    }
+
+
+
+</script>
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <div class="nav-tabs-horizontal" data-approve="nav-tabs">
+                                    <ul class="nav nav-tabs" role="tablist">
+
+                                        <li class="active" role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsOne" aria-controls="exampleTabsOne"
+                                               role="tab">系统管理员<span id="wait"></span></a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsTwo" aria-controls="exampleTabsTwo"
+                                               role="tab">孵化器管理员<span id="settled"></span></a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsThree"
+                                               aria-controls="exampleTabsThree" role="tab">企业用户<span
+                                                    id="quit"></span></a>
+                                        </li>
+
+                                    </ul>
+                                    <div class="tab-content padding-top-20">
+
+                                        <div class="tab-pane animation-slide-left active" id="exampleTabsOne"
+                                             role="tabpanel">
+                                            <div class="row row-lg" id="allToolbar">
+                                                <div class="col-md-12">
+                                                    <div class="example">
+                                                        <div class="form-group col-md-4 padding-left-0">
+                                                            <!--<button type="button" class="btn btn-outline btn-info enter-etprs" id="btnadd">&nbsp;&nbsp;<i
+                                                                    class="fa fa-edit" aria-hidden="true"></i>&nbsp;新增&nbsp;&nbsp;
+                                                            </button>-->
+                                                            <button type="button" class="btn btn-outline btn-success add-row"
+                                                                    data-target="#editcaseForm" data-toggle="modal" aria-hidden="true"
+                                                                    role="button">&nbsp;&nbsp;<i class="fa fa-plus"
+                                                                                                 aria-hidden="true"></i>&nbsp;用户&nbsp;&nbsp;
+                                                            </button>
+
+                                                            <div class="modal" id="editcaseForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+                                                                <div class="modal-dialog modal-center">
+                                                                    <form id="userform" action="{:url('/user/User/saveUser')}" method="post" tableId="sysUser" class="form-horizontal">
+                                                                        <div class="modal-body">
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-4 control-label"></label>
+                                                                                <div class="col-sm-6">
+                                                                                    <div class="example-wrap">
+                                                                                        <div class="example">
+                                                                                            <input type="hidden" data-placeholder="头像"  name="avatar" id="avatar" class="opt-require" value=''>
+                                                                                            <input type="file" class="form-control" id="input-file-now"  data-id="hxlsfileId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <span><label class="col-sm-4 control-label" for="mobile">手机号码<span class="required">*</span></label>
+                                                                                <div class="col-sm-6">
+                                                                                    <input class="form-control require unique" table="user" name="mobile" id="mobile" placeholder="手机号码" value="{$data.mobile|default=''}">
+                                                                                </div></span>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <span><label class="col-sm-4 control-label" for="mobile">真实姓名<span class="required">*</span></label>
+                                                                                <div class="col-sm-6">
+                                                                                    <input class="form-control require"name="realname" id="realname" placeholder="真实姓名" value="{$data.realname|default=''}">
+                                                                                </div></span>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <input type="hidden" id="type" name="type" value="6019003">
+                                                                            <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                                                                                    class="bold">保存</span></button>
+                                                                            <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table class="table table-bordered text-center" id="sysUser"
+                                                   data-side-pagination="server" data-toggle="table"
+                                                   data-url="{:url('/user/User/userList',array('type'=>'sys'))}"
+                                                   data-show-refresh="false" data-show-toggle="false"
+                                                   data-show-columns="false" data-toolbar="#sysbar"
+                                                   data-pagination="true"
+                                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                <thead>
+                                                <tr>
+                                                    <!--<th data-field="isCheck" data-checkbox="true"></th>-->
+                                                    <th data-field="realname" class="text-center">姓名</th>
+                                                    <th data-field="mobile" class="text-center">联系电话</th>
+                                                    <th data-field="addtime" class="text-center">注册时间</th>
+                                                    <th data-field="statusText" class="text-center">状态</th>
+                                                    <th data-field="action" class="text-center"
+                                                        data-formatter="actionFormatter" data-events="actEvt">操作
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsTwo" role="tabpanel">
+
+                                            <table class="table table-bordered text-center" id="iqbtUser"
+                                                   data-side-pagination="server" data-toggle="table"
+                                                   data-url="{:url('/user/User/userList',array('type'=>'iqbt'))}"
+                                                   data-show-refresh="false" data-show-toggle="false"
+                                                   data-show-columns="false" data-toolbar="#settledTbar"
+                                                   data-pagination="true"
+                                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                <thead>
+                                                    <tr>
+                                                        <!--<th data-field="isCheck" data-checkbox="true"></th>-->
+                                                        <th data-field="realname" class="text-center">姓名
+                                                        </th>
+                                                        <th data-field="mobile" class="text-center">联系电话</th>
+                                                        <th data-field="addtime" class="text-center">注册时间</th>
+                                                        <th data-field="statusText" class="text-center">状态</th>
+                                                        <th data-field="action" class="text-center" data-formatter="actionFormatter" data-events="actEvt">操作
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsThree"
+                                             role="tabpanel">
+                                            <table class="table table-bordered text-center" id="etprsUser"
+                                                   data-side-pagination="server" data-toggle="table"
+                                                   data-url="{:url('/user/User/userList',array('type'=>'etprs'))}"
+                                                   data-show-refresh="false" data-show-toggle="false"
+                                                   data-show-columns="false" data-toolbar="#quitTbar"
+                                                   data-pagination="true"
+                                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                <thead>
+                                                    <tr>
+                                                        <th data-field="realname"
+                                                            class="text-center">姓名
+                                                        </th>
+                                                        <th data-field="mobile" class="text-center">联系电话</th>
+                                                        <th data-field="addtime" class="text-center">注册时间</th>
+                                                        <th data-field="statusText" class="text-center">状态</th>
+                                                        <th class="text-center" data-field="action"
+                                                            data-formatter="actionFormatter" data-events="actEvt">操作
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

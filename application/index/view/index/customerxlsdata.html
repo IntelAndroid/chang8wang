@@ -1,0 +1,203 @@
+{include file="index@public/header"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script src="__JS__/common.js"></script>
+<script src="__JS__/base.js"></script>
+<!-- 插件 -->
+<link rel="stylesheet" href="__PUBLIC__/vendor/webui-popover/webui-popover.css">
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+    <script>
+        Breakpoints();
+        $(function(){
+            /*如果文件已上传，展现文件名称等*/
+            /*var  fileId=$('#hxlsfileId').val();
+            console.log(fileId);
+            if (fileId){
+            }*/
+            $("#btnxls").click(function () {
+                var fileid=$("#hxlsfileId").val();
+                if(fileid==""){
+                    toastr.warning("请先上传文件");
+                }
+                var url="{:url('/index/Index/saveCustomerData')}";
+                var type=$('input[name="inputRadios"]:checked').val();
+                cstmpost("#btnxls",url,{'fileId':fileid,"type":type}, function (data) {
+                    if(data["code"]=='1'){
+                        toastr.info("成功导入"+data["count"]+"条数据");
+                        $("#view_record").css("display","none");
+                    }else{
+                        toastr.warning(data["msg"]);
+                    }
+                });
+            });
+
+            $("#xlsrecord").click(function () {
+                sessionStorage.setItem('record_Id', "6012005");
+                location.href="{:url('/index/Index/xlsRecord')}";
+            });
+
+            /*导入方式改变*/
+            $('input:radio[name="inputRadios"]').change( function(){
+                var display=$('.example .dropify-preview').css('display');
+                if(display=='block') {
+                $('#input-file-now').change();
+                }
+            })
+        });
+
+
+        function actCldFmt(value, row, index) {
+            var f=row.flag;
+            var msg=row.err;
+            if(f=="0"){
+                return "<span class='text-warning'>【提醒】</span>"+msg;
+            }else if(f=="1"){
+                return "<span class='text-danger'>【错误】</span>"+msg;
+            }
+        }
+
+        /**
+         * 上传图片
+         * files  file
+         */
+        function uploadFile(files,imageClass){
+            var id = files.attr('data-id');
+            if(imageClass){
+                var imageBox = $("#"+imageClass).find('img');
+            }
+            var url="{:url('/index/Index/customerupload')}";
+            var files = files.get(0).files[0];
+            var obj = files;
+            data = new FormData();
+            data.append("file", obj);
+            var  mode=$("input[name='inputRadios']:checked").val();
+            data.append("mode", mode);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: url,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    $("#"+id).val(data["fileId"]);
+                    if(data["code"]=='0'){
+                        if(data["data"].length>0){
+                            $('#xlsData').bootstrapTable('destroy');
+                            $('#xlsData').bootstrapTable({
+                                data: data["data"]
+                            });
+                            $("#view_record").css("display","block");
+                            toastr.error("上传成功，有数据校验提醒。");
+                        }else{
+                            toastr.error(data["msg"]);
+                        }
+                    }else{
+                        $("#view_record").css("display","none");
+                        toastr.info("文件上传成功，请及时导入。");
+                    }
+                }
+            },'JSON');
+        }
+
+
+    </script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">导入客户</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                        <div class="row row-lg">
+                            <div class="col-lg-4 col-sm-4"></div>
+                            <div class="col-lg-4 col-sm-4 col-xs-12">
+                                <h3 class="text-center margin-top-20">
+                                    <a href="{:url('/index/Index/download_file',array('fileId'=>2))}">下载excel模板</a>按模板中的示例填写信息
+                                    <!--<span class="badge up badge-primary">5</span>-->
+                                </h3>
+                                <div class="example-wrap">
+                                    <div class="example">
+                                        <!--<input type="file" class="form-control" id="input-file-now" data-plugin="dropify" data-default-file="">-->
+                                        <!--<input type="file" class="form-control" id="xlsfileId" value="" multiple="false" >
+                                        <input type="hidden" data-placeholder="模板文件"  name="xlsfileId" id="hxlsfileId" class="opt-require" value=''>-->
+
+                                        <input type="hidden" data-placeholder="模板文件"  name="xlsfileId" id="hxlsfileId" class="opt-require" >
+                                        <input type="file" class="form-control" id="input-file-now"  data-id="hxlsfileId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-4 col-sm-12 col-xs-12">
+                                        <label class="control-label">上传要求：</label>
+                                    </div>
+                                    <div class="col-lg-8 col-sm-12 col-xs-12">
+                                        <p>
+                                            上传模板文件格式限制为：xlsx格式。
+                                        </p>
+                                    </div>
+                                    <div class="clearfix visible-sm-block"></div>
+                                </div>
+                                <!--<div class="form-group">
+                                    <div class="col-lg-4 col-sm-12 col-xs-12">
+                                        <label class="control-label">导入方式：</label>
+                                    </div>
+                                    <div class="col-lg-8 col-sm-12 col-xs-12">
+                                        <div class="radio-custom radio-primary radio-inline">
+                                            <input type="radio" id="inputRadiosChecked" name="inputRadios" value="0" checked>
+                                            <label for="inputRadiosChecked">新增</label>
+                                        </div>
+                                        <div class="radio-custom radio-primary radio-inline">
+                                            <input type="radio" id="inputRadiosUnchecked" name="inputRadios" value="1">
+                                            <label for="inputRadiosUnchecked">覆盖并新增 <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="将删除原有数据，然后导入xlsx文件数据" data-trigger="hover" tabindex="0"></i></label>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix visible-sm-block"></div>
+                                </div>-->
+                                <div class="col-lg-12 col-sm-12 col-xs-12 padding-0 padding-top-20">
+                                    <button type="button" class="btn btn-lg btn-block btn-primary" id="btnxls">导入excel</button>
+                                </div>
+                                <p class="col-lg-12 col-sm-12 col-xs-12 text-center margin-top-50">
+                                    <a href="javascript:void(0);" id="xlsrecord">查看导入记录</a>
+                                    <!--<span class="badge up badge-info">2</span>-->
+                                </p>
+                            </div>
+                            <div class="col-lg-4 col-sm-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content" id="view_record" style="display:none;">
+                <div class="panel">
+                    <div class="panel-body container-fluid">
+                        <div class="row row-lg">
+                            <table id="xlsData"  data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                <thead>
+                                <tr>
+                                    <th data-field="name" data-sortable="true">客户名称</th>
+                                    <th data-field="type" data-sortable="true">客户类型</th>
+                                    <th data-field="contact" data-sortable="true">联系人</th>
+                                    <th data-field="mobile" data-sortable="true">联系电话</th>
+                                    <th data-field="source" data-sortable="true">来源渠道</th>
+                                    <th data-field="cstmstatus" data-sortable="true">客户状态</th>
+                                    <th data-field="rqst" data-sortable="true">详细需求</th>
+                                    <th data-field="err" data-sortable="true"  data-formatter="actCldFmt">提醒</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

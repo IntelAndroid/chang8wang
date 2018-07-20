@@ -1,0 +1,31 @@
+<script src="__PUBLIC__/js/base.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btn-search").click(function () {
+            var tableId = $(this).attr("feresh-table");
+            var formId = $(this).attr("data-form");
+            var d = {};
+            d._tm = new Date();
+            var t = $('#' + formId).serializeArray();
+            $.each(t, function () {
+                d[this.name] = this.value;
+            });
+            //保存查询信息
+            /*$('#'+tableId).attr('data-keywords', (t[0]['value']));
+            $('#'+tableId).attr('data-start', (t[1]['value']));
+            $('#'+tableId).attr('data-end', (t[2]['value']));*/
+            if(tableId == 'mtAplList'){
+                var tableServer = session("mtAplTableServer");
+                $("#mtAplList").bootstrapTable('refresh',{'url':tableServer,query:d});
+            }else{
+                $('#' + tableId).bootstrapTable('refresh', {'query': d});
+            }
+        });
+        $(".btn-clear").click(function () {
+            var tableId = $(this).attr("feresh-table");
+            var formId = $(this).attr("data-form");
+            $('#' + formId)[0].reset();
+            $('#' + tableId).bootstrapTable('refresh');
+        });
+    });
+</script>

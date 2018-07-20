@@ -1,0 +1,196 @@
+{include file="index@public::header"}
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script>
+	//		var id=location.href.substr(location.href.indexOf('/id/')+4);
+	//		var needle=id.indexOf('.');
+	//		id=id.substr(0,needle);//地址栏取id
+	$(document).ready(function() {
+		//获取用户数据
+		var id=session('id');
+		var cstmstatus=session('cstmstatus');//获取客户状态
+		//如果没取到客户状态
+		if(cstmstatus==null||cstmstatus==undefined){
+			var url="{:url('customer/customer/flowInfo')}"
+			cstmpost('',url,{id:id},function(res){
+				if(res!=''){
+					cstmstatus=res;
+					//初始化下拉菜单  单选框
+					var res={data:{cstmstatus:cstmstatus,reason:''}};
+					assign(res);
+					//默认显示当前状态的reason radio
+					$("input").not('[value*='+cstmstatus+']').each(function(){
+						if($(this).val()==cstmstatus+'001'){
+							$(this).attr('checked','checked');
+						}
+						$(this).parent('div').hide();
+						$(this).hide();
+						$('input[value='+cstmstatus+'001]').attr('checked','checked');
+					});
+				}
+			});
+ 		}else {
+			//初始化下拉菜单  单选框
+			var res = {data: {cstmstatus: cstmstatus, reason: ''}};
+			assign(res);
+			//默认显示当前状态的reason radio
+			$("input").not('[value*=' + cstmstatus + ']').each(function () {
+				if ($(this).val() == cstmstatus + '001') {
+					$(this).attr('checked', 'checked');
+				}
+				$(this).parent('div').hide();
+				$(this).hide();
+				$('input[value=' + cstmstatus + '001]').attr('checked', 'checked');
+			});
+		}
+		//保存id
+		$('#etprsId').val(id);
+		//跟进列表;
+		var param=new Object();
+		param._tm = new Date();
+		if(id!=""){
+			param.id=id;
+		}
+		var taburl="{:url('/customer/Customer/flowList')}"
+		$('#flowTable').bootstrapTable('refresh',{'url':taburl,query:param});
+		// 保存跟进信息
+		$("#addFlow").on("click",function () {
+			var url = "{:url('/customer/Customer/saveFlowInfo')}";
+			var data = serializeData("flowForm");
+			cstmpost("#addFlow", url, data, function (data) {
+				if (data["code"] == '1') {
+					toastr.success(data["msg"]);
+					$('#desc').val('');
+					setTimeout(function () {
+						$('#flowTable').bootstrapTable('refresh',{'url':taburl,query:param});
+//						location.href=history.back();
+					}, 500);
+				} else {
+					toastr.error(data["msg"]);
+				}
+			});
+		});
+
+		//状态改变,更改显示的reason
+		$('#cstmstatus').change(function(){
+			var code=$('#cstmstatus').val();
+			$('input[id='+code+'001]').attr('checked','checked');
+			$('input[value*='+code+']').each(function(){
+				$(this).parent('div').show();
+			})
+			$("input").not('[value*='+code+']').each(function(){
+				$(this).attr('checked',false);
+				$(this).parent('div').hide();
+				$(this).hide();
+			})
+		})
+	})
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+                                    <li class="news accout-msg " >
+                                        <a id="edit" href="{:url('/customer/Customer/editcustomer')}" >
+                                            <i class="icon fa-edit" aria-hidden="true"></i> 客户信息
+                                            <span class="badge badge-danger"></span>
+                                        </a>
+                                    </li>
+                                    <li class="account-log  active" id="flow">
+                                        <a href="#log" aria-controls="log" role="tab" data-toggle="tab">
+                                            <i class="icon fa-file-text-o" aria-hidden="true"></i> 跟进记录
+                                        </a>
+                                    </li>
+                                </ul>
+								<div class="tab-pane animation-slide-left tab-log margin-top-15" role="tabpanel" id="log">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example">
+													<form class="form-horizontal" id="flowForm">
+														<div class="form-group col-md-1"></div>
+														<div class="form-group col-md-10">
+															<div class="form-group col-sm-4 ">
+				                                                    <select class="form-control" id="cstmstatus" name="cstmstatus">
+                                                                    </select>
+				                                                </div>
+				                                                <div class="form-group col-sm-12 " id="reason" name="reason">
+				                                                </div>
+				                                                <div class="form-group col-md-12 ">
+				                                                    <textarea class="form-control" placeholder="备注，100字以内" id="desc" name="desc" maxlength="100"></textarea>
+					                                            </div>
+																<div class="form-group col-md-12">
+																	<input type="hidden" name="etprsId" id="etprsId">
+					                                            </div>
+				                                            </div>
+														<div class="form-group col-md-1"></div>
+														<div class="clearfix visible-sm-block"></div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+				                        <div class="btn-actions text-center">
+											<button type="button" class="btn btn-primary margin-3" id="addFlow">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;</button>
+											<a href="index"><button type="button" class="btn btn-danger margin-3">&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;取消&nbsp;&nbsp;</button></a>
+
+										</div>
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap margin-top-60 margin-bottom-0">
+												<div class="example margin-bottom-0">
+													<form class="form-horizontal">
+														<div class="form-group col-md-1"></div>
+														<div class="form-group col-md-10">
+															<!--data-side-pagination="server"-->
+															<table id="flowTable" class="table table-bordered margin-bottom-0 text-center followtable"    data-toggle="table"
+																   data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+																<thead>
+																<tr>
+																	<th class="text-center" data-field="addtime">跟进时间</th>
+																	<th class="text-center" data-field="adduserId">跟进人</th>
+																	<th class="text-center" data-field="cstmstatusText">客户状态</th>
+																	<th class="text-center" data-field="reasonText">跟进原因</th>
+																	<th class="text-center" data-field="desc">跟进详情</th>
+																</tr>
+																</thead>
+															</table>
+														</div>
+														<div class="form-group col-md-1"></div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+				                        <!--<div class="row row-lg">-->
+				                            <!--<div class="col-md-12">-->
+				                                <!--<div class="example-wrap"id="flowInfo">-->
+                                                    <!--<div class="example" >-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+				                            <!--</div>-->
+				                        <!--</div>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{include file="index@public::footer"}

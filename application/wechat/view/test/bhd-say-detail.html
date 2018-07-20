@@ -1,0 +1,61 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+    .weui-panel {margin: 0;background:none;}
+    .weui-panel ul{width:100%;overflow:hidden;}
+    .weui-panel ul li{width:100%;overflow:hidden;margin-bottom:15px;padding-bottom:10px;background:#FFF;}
+    .weui-panel ul li .title{overflow:hidden;padding:10px 15px 5px 15px;text-align:center;}
+    .weui-panel ul li .title h3{color: #666;}
+    .weui-panel ul li .title h3 label{color: #32adf8;float:none}
+    .weui-panel ul li .title span{float:right;font-size:14px;color:#999;}
+    .weui-panel ul li .title span label{color:#f39b0f;}
+    .weui-panel ul li p{padding:0 15px;color: #999;font-size:14px;}
+    .weui-panel ul li p i{margin-top:-2px;}
+    .weui-panel ul li p.nr{color:#999;line-height:24px;margin-top:10px;padding-top:10px;border-top:1px solid #f2f2f2;}
+    .weui-panel ul li p span{float:right;border:1px solid #f39b0f;color:#f39b0f;padding:2px 6px;font-size:12px;border-radius:2px;}
+    .weui-panel ul li img{width:100%;height:auto;}
+    .weui-panel.weui-panel_access{border-bottom:none;}
+    .weui-panel:after{border-bottom:none;}
+</style>
+</head>
+<body ontouchstart>
+<div class="navbox">
+	<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+	<div class="center">公告详情</div>
+</div>
+<div class="page__pd first-header last-footer" style="padding:0 15px;">
+	<div class="weui-panel weui-panel_access">
+	    <ul id="list" style="margin-top:15px;">
+	    	<li>
+	    		<a>
+			        <div class="title"><h3></h3></div>
+			        <p style="text-align: right;" class='time'></p>
+			        <p class="nr">
+			        	
+			        </p>
+		        </a>
+	        </li>
+        </ul>
+	</div>	
+</div>
+{include file="wechat@public/footer"}
+<script>
+	let url = '{:url("/user/notice/getNoticeInfo")}'
+	let data = {
+		id:sessionStorage.getItem('noticeId')
+	}
+	cstmpost('',url,data,function(res){
+		$('.title').html(res.data.title);
+		$('.time').html(res.data.addtime);
+		$('.nr').html(res.data.content);
+	})
+	let readurl = '{:url("/user/notice/readNotice")}'
+	let readdata = {
+		id:sessionStorage.getItem('msgId')
+	}
+	cstmpost('',readurl,readdata,function(res){
+	})
+</script>

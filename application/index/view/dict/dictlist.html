@@ -1,0 +1,124 @@
+{include file="index@public/header"}
+{include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script>
+    $(function () {
+        $("#adddict").click(function () {
+            //设置接口url，当前这种方式，只在html页面有效
+            var url="{:url('/index/Dict/addDict')}";
+            //定义好的函数，直接使用。
+            //参数1：弹出页面url
+            //参数2：标题
+            //参数3：弹出框大小：modal-lg 空 modal-sm
+            baseadd(url,"添加字典","");
+        });
+
+
+    });
+
+    function actionFormatter(value, row) {
+        //初始化列表后面的操作
+        return '<a href="javascript:void(0)" class="edit ml10" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;' +
+                '<a class="del ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+    }
+
+
+    window.actEvt = {
+        //对应编辑超链接  edit类
+        'click .edit': function (e, value, row, index) {
+            //设置接口url，当前这种方式，只在html页面有效
+            var url="{:url('/index/Dict/addDict')}";
+            //将当前记录的ID保存到session里
+            session("dictId",row.id);
+            //弹出编辑框
+            baseadd(url,"编辑","");
+        },
+        'click .del': function (e, value, row, index) {
+            //设置接口url，当前这种方式，只在html页面有效
+            var url = "{:url('/index/Dict/deleteDict')}";
+            //利用封装好的函数传值删除。
+            //参数1：table表名,删除数据后根据此参数刷新列表
+            //参数2
+            //参数3：需要删除的记录ID
+            basedelete("dicts", url, row.id);
+        },
+    };
+</script>
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <div class="nav-tabs-horizontal" data-approve="nav-tabs">
+                                    <ul class="nav nav-tabs" role="tablist">
+
+                                        <li class="active" role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsOne" aria-controls="exampleTabsOne"
+                                               role="tab">字典管理<span id="wait"></span></a>
+                                        </li>
+
+                                    </ul>
+                                    <div class="tab-content padding-top-20">
+                                        <div class="tab-pane animation-slide-left active" id="exampleTabsOne"
+                                             role="tabpanel">
+                                            <div class="row row-lg" id="allToolbar">
+                                                <div class="col-md-12">
+                                                    <div class="example">
+                                                        <div class="form-group col-md-4 padding-left-0">
+                                                            <button type="button" class="btn btn-outline btn-info enter-etprs" id="adddict">&nbsp;&nbsp;<i
+                                                                    class="fa fa-edit" aria-hidden="true"></i>&nbsp;新增&nbsp;&nbsp;
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--//data-side-pagination 是否服务端分页，server：服务端分页-->
+                                            <!--data-url:接口地址-->
+                                            <!--data-show-refresh 是否显示刷新按钮-->
+                                            <!--data-toolbar-->
+                                            <!--data-pagination="true" 是否分页-->
+                                            <!--data-page-list="[5, 10, 20, 50, 100, 200]"-->
+                                            <table class="table table-bordered text-center" id="dicts"
+                                                   data-side-pagination="false"
+                                                   data-toggle="table"
+                                                   data-url="{:url('/index/Dict/sysDict')}"
+                                                   data-show-refresh="true"
+                                                   data-show-toggle="false"
+                                                   data-show-columns="false"
+                                                   data-toolbar="#allToolbar"
+                                                   data-pagination="true"
+                                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                                <thead>
+                                                <tr>
+                                                    <th data-field="name" class="text-center">名称</th>
+                                                    <th data-field="code" class="text-center">代码</th>
+                                                    <th data-field="action" class="text-center"
+                                                        data-formatter="actionFormatter" data-events="actEvt">操作
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                            <!--data-field 对应后台传输的数据-->
+                                            <!--data-formatter 对应js函数-->
+                                            <!--data-events 对应data-formatter返回html的操作-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

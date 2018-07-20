@@ -1,0 +1,441 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<style>
+    .kv-upload-progress {
+        display: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var upurl = "{:url('/etprs/Etprs/ajaxUploads')}";
+        var oFileInput = new FileInput();
+        oFileInput.Init("buslicFile", upurl, [], "buslic", "buslicPreview");
+        oFileInput.Init("bpFile", upurl, [], "bp", "bpPreview");
+
+        // 当页面存在初始数据   编辑入驻客户信息时候
+        var id = session("editInfoId");
+        var url = "{:url('/Etprs/Etprs/getEtprsInfo')}";
+        var data = {};
+        data.etprsId = id;
+        cstmpost("#", url, data, function (res) {
+            if (res.code == 0) {
+                // 扩展信息不存在
+                $("#etprsName").val(res.etprsName);
+                $("#etprsId").val(res.etprsId);
+                $("#addtime").val(res.addtime);
+                $("#legalname").val(res.legalname);
+            }
+            assign(res);
+            var databak = {};
+            databak.code = 0;
+            var response = {};
+            response.bp = res.bp;
+            response.buslic = res.buslic;
+            databak.data = response;
+            assign(databak)
+        });
+
+        // 下一步,保存企业信息
+        $("#addEtprs").on("click", function () {
+            var url = "{:url('/Etprs/Etprs/saveEtprsExtra')}";
+            var data = serializeData("etprsForm");
+            cstmpost("#addEtprs", url, data, function (res) {
+                session("etprsId", res["etprsId"]);
+                session("detailViewId", id)
+                var jumpurl = "{:url('/Etprs/Etprs/detail')}";
+                if (res["code"] == '1') {
+                    toastr.success(res["msg"]);
+                    setTimeout(function () {
+                        //location.href=jumpurl;
+                        window.history.go(-1);
+                    }, 500);
+                } else {
+                    toastr.error(res["msg"]);
+                }
+            });
+        });
+
+    });
+
+    function FileInput2() {
+        var oFile2 = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile2.Init = function (ctrlName, url, initImg, hidefield, previewBox) {
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview: false,
+                language: 'zh', //设置语言
+                uploadUrl: url + "?cate=" + ctrlName + "&ext=ppt,pptx,pdf&size=50", //上传的地址..
+                allowedFileExtensions: ['ppt', 'pptx', 'pdf'],//接收的文件后缀
+                showPreview: false,
+                xhr_process: false,
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: false,//是否显示拖拽区域
+                //initialPreview: initImg,
+                maxFileSize: 51200,//单位为kb，如果为0表示不限制文件大小
+
+                maxFileCount: 0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount: false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function (event, files) {
+                $(this).fileinput("upload");
+            }).on("filecleared", function (event, files) {
+                if (hidefield != "") {
+                    $("#" + hidefield).val('');
+                }
+                $("." + previewBox).html('');
+            });
+
+            //导入文件上传完成之后的事件
+            $("#" + ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                var fId = data["response"]["id"]
+                if (hidefield != "") {
+                    $("#" + hidefield).val(data["response"]["id"]);
+                }
+                var html = '<li role="presentation">\
+                        <a href="javascript:downFile(' + fId + ');"  role="menuitem" >' + data["response"]["fileName"] + '</a>\
+                        </li>';
+                $("." + previewBox).html(html);
+                toastr.success("上传成功");
+            });
+        }
+        return oFile2;
+    }
+
+    // 楼层获取  id   默认值
+    function initBuild(domID, bdefault, floor) {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if ($("." + domID).attr('class') != 'control-label') {
+            bdefault = bdefault ? bdefault : '';
+            var ophtml = '';
+            $.get(url, function (res) {
+                ophtml = res
+                $("." + domID).html(res);
+            });
+            if (domID == 'rqst_floor') {
+                $.get(url, {bd: bdefault}, function (res) {
+                    ophtml = res
+                    $("." + domID).html(res);
+                });
+
+            }
+        }
+    }
+
+    function downFile(id) {
+        var url = "{:url('/etprs/Etprs/download/id/" + id + "')}";
+        window.open(url, "_blank");
+    }
+</script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">扩展信息</h1>
+            </div>
+            <div class="page-content">
+                <form class="form-horizontal" action="" id="etprsForm">
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业基本信息</h4>
+                                        </div>
+                                        <input type="hidden" name="etprsId" id="etprsId">
+                                        <input type="hidden" name="id" id="extraId">
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">企业名称：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="etprsName" name="name"
+                                                           placeholder="" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">行业类型：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <select class="form-control" id="industry" name="industry">
+                                                    </select>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">注册时间：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group">
+									                                    <span class="input-group-addon">
+									                                        <i class="icon wb-calendar"
+                                                                               aria-hidden="true"></i>
+									                                    </span>
+                                                        <input type="text" class="form-control"
+                                                               data-plugin="datepicker" data-language="zh-CN" readonly
+                                                               disabled id="addtime">
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">注册资本（万元）：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="rgstment"
+                                                           name="rgstment"
+                                                           placeholder="" autocomplete="off">
+                                                </div>
+                                                <!--<label class="col-sm-2 control-label padding-bottom-20">入驻时间：</label>-->
+                                                <!--<div class="col-sm-4 padding-bottom-20">-->
+                                                <!--<div class="input-group">-->
+                                                <!--<span class="input-group-addon">-->
+                                                <!--<i class="icon wb-calendar"-->
+                                                <!--aria-hidden="true"></i>-->
+                                                <!--</span>-->
+                                                <!--<input type="text" class="form-control"-->
+                                                <!--data-plugin="datepicker" data-language="zh-CN">-->
+                                                <!--</div>-->
+                                                <!--</div>-->
+                                                <label class="col-sm-2 control-label padding-bottom-20">占用场地面积（㎡）：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="iqbtarea"
+                                                           name="iqbtarea"
+                                                           placeholder="" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">是否注册在此：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="isRgstHere">
+
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">是否已迁徙：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="isMigrate">
+
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">是否高新企业：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="highetprs">
+
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">企业状态：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <select class="form-control" id="etprsStatus" name="etprsStatus">
+
+                                                    </select>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">是否毕业：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="cadut">
+
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">毕业时是否被并购：</label>
+                                                <div class="col-sm-4 padding-bottom-20" id="isMerger">
+
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业融资情况</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">融资轮次：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <select class="form-control" id="roFinace" name="roFinace">
+
+                                                    </select>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">当前估值（万元）：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="valuation"
+                                                           name="valuation"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业经济概况</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">总收入（万元）：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="income" name="income"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">净利润（万元）：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="profit" name="profit"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">税收（万元）：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="tax" name="tax"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业人员情况</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">从业人员人数：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="total" name="total"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">大专及以上学历人数：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="junior" name="junior"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">博士学历人数：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="doctor" name="doctor"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">海归人员人数：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="overseas"
+                                                           name="overseas"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业知识产权情况</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20">已申请知识产权数量：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="iprapl" name="iprapl"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">软件著作权数量：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="soft" name="soft"
+                                                           placeholder="请输入" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">企业信息</h4>
+                                        </div>
+                                        <div class="example">
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 法人或团队负责人：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="legalname" id="legalname" placeholder="法人或团队负责人姓名" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">营业执照上传：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="buslicFile" value="" data-size="0.5">
+                                                            <input type="hidden" data-placeholder="营业执照上传"  name="buslic" id="buslic" class="opt-require" value=''>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu buslicPreview" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'jpg','jpeg','gif','png'，不能超过500KB" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 项目计划书：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="bpFile" value="" data-ext="ppt,pptx,pdf" data-size="50">
+                                                            <input type="hidden" data-placeholder="项目计划书"  name="bp" id="bp" class="opt-require" value=''>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu bpPreview" aria-labelledby="exampleColorDropdown1" role="menu">
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'ppt','pptx','pdf'，不能超过50M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                </form>
+                <div class="btn-actions text-center">
+                    <button type="button" class="btn btn-primary margin-3" id="addEtprs">&nbsp;&nbsp;<i
+                            class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

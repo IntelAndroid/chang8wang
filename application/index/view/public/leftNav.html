@@ -1,0 +1,75 @@
+<script type="text/javascript">
+    $(function () {
+//        $("#tablistul").html(html);
+        var url="{:url('/index/Index/initmenu')}";
+        cstmpost("",url,{}, function (data) {
+//            alert(Json.stringify(data));return;
+//            console.log(data);
+            var tophtml="";
+            var html="";
+            var act='';
+            var tabact='';
+            var sess_act="";
+            var tab_act="";
+            $.each(data,function (j,tabmenu) {
+                var tabId=tabmenu["id"];
+                tab_act=session("tab_act");
+                if((tab_act==''||tab_act==null)&&j==0){
+                    tabact="active";
+                }else {
+                    tabact = tabmenu.flag === tab_act ? "active" : "";
+                }
+                html+='' +
+                        '<div class="tab-pane animation-fade height-full '+tabact+'" id="admui-navTabsItem-'+tabId+'" role="tabpanel"><ul class="site-menu">';
+                tophtml+='<li role="presentation" class="'+tabact+'">'+
+                        '                            <a data-toggle="tab" href="#admui-navTabsItem-'+tabId+'" aria-controls="admui-navTabsItem-'+tabId+'" role="tab" aria-expanded="false" onclick="topact(\'' + tabmenu.flag + '\')">'+
+                        '                                <i class="icon wb-library"></i> <span>'+tabmenu.title+'</span>'+
+                        '                            </a>'+
+                        '                        </li>';
+                $.each(tabmenu['children'],function (i,menu) {
+                    var currurl = location.href;
+                    if (menu.url != '' && currurl.lastIndexOf(menu.url) >= 0) {
+                        sess_act = menu.flag;
+                        session("site_menu_act", sess_act);
+                        session("tab_act", tabmenu.flag);
+                    }
+                    if (sess_act == '' || sess_act == undefined) {
+                        sess_act = session("site_menu_act");
+                    }
+                    act = menu.flag === sess_act ? "active" : "";
+                    html += ['<li class="site-menu-item  ' + act + '">',
+                        '<a href="javascript:void(0);" class="menu-act" onclick="act(\'' + menu.url + '\',\'' + menu.flag + '\')">',
+                        '<i class="' + menu.icon + '"></i>',
+                        '<p><span class="site-menu-title">' + menu.title + '</span></p>',
+                        '</a>',
+                        '</li>'].join("");
+                });
+                html+='</ul></div>';
+            });
+            console.log(tophtml);
+            console.log(html);
+            $("#tablistul").html(tophtml);
+            $("#admui-navTabs").html(html);
+        });
+        
+        $(".menu-act").click(function () {
+            var url=$(this).attr("data-url");
+        });
+    });
+    function act(url,flag){
+        session("site_menu_act",flag);
+        location.href=url;
+    }
+    function topact(flag){
+        session("tab_act", flag);
+    }
+</script>
+<input type="hidden" value="{:url('/meetroom/Meetroom/getMtroomList')}" id="mtroomUrl">
+<!--left nav-->
+<nav class="site-menubar">
+    <div class="site-menubar-body">
+        <div class="tab-content height-full" id="admui-navTabs" >
+
+        </div>
+    </div>
+</nav>

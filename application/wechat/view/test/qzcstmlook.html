@@ -1,0 +1,480 @@
+{include file="wechat@public/header"}
+
+<style>
+
+	a {
+
+		text-decoration: none;
+
+	}
+
+
+
+	a:visited {
+
+		text-decoration: none;
+
+	}
+
+
+
+	a:hover {
+
+		text-decoration: none;
+
+	}
+
+
+
+	a:active {
+
+		text-decoration: none;
+
+	}
+
+
+
+	.weui-cell__hd .weui-label {
+
+		color: #595757;
+
+		font-size: 15px;
+
+	}
+
+
+
+	.weui-cell__bd {
+
+		color: #878787;
+
+		font-size: 15px;
+
+	}
+
+
+
+	.weui-input {
+
+		text-align: right;
+
+	}
+
+
+
+	.weui-select {
+
+		direction: rtl;
+
+		color: #878787;
+
+	}
+
+
+
+
+
+</style>
+
+
+
+</head>
+
+
+
+<body ontouchstart>
+
+	<script>
+
+		function initBuild() {
+
+
+
+		}
+
+		$(function () {
+
+			var id=session('etprsId');
+
+			/*初始化页面:赋值*/
+
+			var url = "{:url('customer/customer/cusInfo')}"
+
+			cstmpost('', url,{id:id}, function (res) {
+
+				if (res.code == 1) {
+
+					//保存客户状态到session
+
+					session('cstmstatus',res.data.cstmstatus);
+
+					assign(res); 
+					
+					var mobile=$("#mobile").val(); 
+					$("#mobileBtn").attr("href","tel:"+mobile);  
+                    
+					$('.center').html(res.data.name);//页面标题
+
+					// $("option[value=" + res.data.type +"]",".customerType").attr('selected','selected')
+
+					// $("option[value=" + res.data.source +"]",".sourceCanal").attr('selected','selected')
+
+					// $("option[value=" + res.data.cstmstatus +"]",".customerState").attr('selected','selected')
+
+					initCheckbox(6001,res.data.source);
+
+					initCheckbox(6002,res.data.cstmstatus);
+
+					initCheckbox(6003,res.data.type);
+
+				}
+
+			})
+
+			/*保存客户信息*/
+
+			$('.save-btn').click(function () {
+
+				var data = serializeData('etprsInfo');
+
+				data.id = id;
+
+				var saveurl = "{:url('customer/customer/saveCusInfo')}";
+
+				cstmpost('.save-btn', saveurl, data, function (res) {
+
+					if (res.code == 1) {
+
+						$.toptip('保存成功','success');
+
+						location.href="{:url('wechat/test/attract')}"
+
+					} else {
+
+						$.toptip(res.msg,'warning')
+
+					}
+
+				})
+
+			})
+
+		// 文本域文字提示
+
+			$(".weui-textarea").bind('input propertychange',function(){
+
+				console.log('aaa')
+
+				$('.textareaLength').html($('.weui-textarea').val().length)
+
+			})
+
+		})
+
+	</script>
+
+	<div class="weui-tab">
+
+		<div class="weui-tab__bd">
+
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+
+				<div class="navbox">
+
+					<a href="attract.html">
+
+						<div class="left">
+
+							<i class="icon iconfont icon-back"></i>
+
+						</div>
+
+					</a>
+
+					<div class="center"></div>
+
+				</div>
+
+				<div class="choosebox first-header">
+
+					<div class="weui-row weui-no-gutter">
+
+						<div class="weui-col-50 active">
+
+							<a href="qzcstm.html">客户信息</a>
+
+						</div>
+
+						<div class="weui-col-50 infor">
+
+							<a href="{:url('wechat/test/addflow')}" id="flowBtn">跟进信息</a>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<form action="" id="etprsInfo">
+
+					<div class="weui-cells weui-cells_form" style="margin-top:0;">
+
+						<div class="weui-cell">
+
+							<div class="weui-cell__hd">
+
+								<label class="weui-label">客户名称</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<input class="weui-input" type="text" id="name" name="name" placeholder="请输入客户名称">
+
+							</div>
+
+						</div>
+
+						<div class="weui-cell weui-cell_select weui-cell_select-after">
+
+							<div class="weui-cell__hd">
+
+								<label class="weui-label">客户类型</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<select class="weui-select customerType" name='type'>
+
+								</select>
+
+							</div>
+
+						</div>
+
+						<div class="weui-cell">
+
+							<div class="weui-cell__hd">
+
+								<label class="weui-label">联系人</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<input class="weui-input" type="text" id="contact" name="contact">
+
+							</div>
+
+						</div>
+
+						<div class="weui-cell">
+
+							<div class="weui-cell__hd">
+
+								<label class="weui-label">联系电话</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<input class="weui-input" type="tel" id="mobile" name="mobile">
+
+							</div>
+
+						</div>
+
+						<div class="weui-cell weui-cell_select weui-cell_select-after">
+
+							<div class="weui-cell__hd">
+
+								<label for="" class="weui-label">来源渠道</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<select class="weui-select sourceCanal" name='source'>
+
+								</select>
+
+							</div>
+
+						</div>
+
+						<div class="weui-cell weui-cell_select weui-cell_select-after">
+
+							<div class="weui-cell__hd">
+
+								<label for="" class="weui-label">状态</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<select class="weui-select customerState" name='cstmstatus'>
+
+								</select>
+
+							</div>
+
+						</div>
+
+						<div class="weui-cell">
+
+							<div class="weui-cell__hd">
+
+								<label class="weui-label">意向需求</label>
+
+							</div>
+
+							<div class="weui-cell__bd">
+
+								<input class="weui-input" type="text" name="rqst_roomNo" id="rqst_room">
+
+							</div>
+
+						</div>
+
+					<div class="weui-cell">
+
+						<div class="weui-cell__hd"><label  class="weui-label">需求时间-起</label></div>
+
+						<div class="weui-cell__bd" style="direction: rtl;">
+
+							<input class="weui-input" type="date" id="rqst_start" name="rqst_start">
+
+						</div>
+
+					</div>
+
+					<div class="weui-cell">
+
+						<div class="weui-cell__hd"><label  class="weui-label">需求时间-止 </label></div>
+
+						<div class="weui-cell__bd" style="direction: rtl;">
+
+							<input class="weui-input" type="date" id="rqst_end" name="rqst_end">
+
+						</div>
+
+					</div>
+
+				</div>
+
+					<div class="weui-cells__title">详细需求</div>
+
+					<div class="weui-cells weui-cells_form">
+
+						<div class="weui-cell">
+
+							<div class="weui-cell__bd">
+
+								<textarea class="weui-textarea" placeholder="请输入文本" rows="3" id="rqst" name="rqst" max-length="200"></textarea>
+
+								<div class="weui-textarea-counter">
+
+									<span class="textareaLength">0</span>/200</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
+				</form>
+
+				<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+
+					<div class="weui-row weui-no-gutter weui-tabbar" id='bottom-color'>
+
+						<div class="weui-col-50 telephon" style="background:none;">
+                            <!--me id="mobileBtn"  href=""-->
+							<a class="weui-btn" id="mobileBtn" href="javascript:" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;">电话咨询</a>
+
+						</div>
+
+						<div class="weui-col-50" style="background:none;">
+
+							<a class="weui-btn save-btn" href="javascript:" style="font-size:16px;background:#f39b0f;">保存</a>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		{include file="wechat@public/footer"}
+
+		<script>
+
+			// 渲染checkbox  字典表数据
+
+			function initCheckbox(code,res) {
+
+				if (!code || code == 0 || code == undefined) {
+
+					return false;
+
+				}
+
+				for (var i = 0; i < sysData.length; i++) {
+
+					if (sysData[i].code.indexOf(code, 0) === 0) {
+
+						var $option='';
+
+						if(sysData[i].code==res) {
+
+							$option = '<option value="' + sysData[i].code + '" selected>' + sysData[i].name + '</option>';
+
+						}else{
+
+							$option = '<option value="' + sysData[i].code + '" >' + sysData[i].name + '</option>';
+
+						}
+
+						if (code == '6001') {
+
+							if (sysData[i].level != '1') {
+
+								$('.sourceCanal').append($option);
+
+							}
+
+						} else if (code == '6002') {
+
+							if (sysData[i].level != '1' && sysData[i].level == '2') {
+
+								$('.customerState').append($option);
+
+							}
+
+						} else if (code == '6003') {
+
+							if (sysData[i].level != '1') {
+
+								$('.customerType').append($option);
+
+							}
+
+						}
+
+					}
+
+				}
+
+				// return selhtml;
+
+				$('.textareaLength').html($('.weui-textarea').val().length)
+
+			};
+
+
+
+		</script>

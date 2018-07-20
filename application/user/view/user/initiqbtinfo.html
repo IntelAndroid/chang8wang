@@ -1,0 +1,167 @@
+<div class="modal-header"><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+    //三级联动
+    function initDistinct(code,title){
+        $("input[name='districtId']").val(code);
+    }
+
+
+</script>
+
+<form id="iqbtInfo" method="post" tableId="aplpdtId" class="form-horizontal">
+    <div class="modal-body">
+        <div id="content">
+                <div class="panel">
+                    <div class="panel-body container-fluid padding-top-0">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                    <div class="example">
+                                        <!--<form class="form-horizontal" id="iqbtForm">-->
+                                        <div class="form-group col-md-12">
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 空间名称：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <input type="text" class="form-control" id="name" name="name" placeholder="空间名称" autocomplete="off">
+                                            </div>
+                                            <label class="col-sm-4 control-label padding-bottom-20">空间类型：</label>
+                                            <div class="col-sm-8 padding-bottom-20" >
+                                                <select class="form-control" id="iqbttype" name="type">
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 联系人：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <input type="text" class="form-control" id="contact" name="contact" placeholder="联系人" autocomplete="off">
+                                            </div>
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 联系电话：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <input type="text" class="form-control" name="mobile" id="mobile" placeholder="联系电话" autocomplete="off">
+                                            </div>
+
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 空间位置：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <div class="col-sm-12">
+                                                    <!--省市区联动开始-->
+                                                    <link rel="stylesheet" href="__PUBLIC__/themes/theme.css">
+                                                    <link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+                                                    <div class="docs-methods">
+                                                        <div id="distpicker">
+                                                            <div class="form-group width-full">
+                                                                <input id="districtId" class="form-control"  type="text"  data-toggle="city-picker" value="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <script src="__PUBLIC__/themes/city-picker.data.js"></script>
+                                                    <script src="__PUBLIC__/themes/city-picker.js"></script>
+                                                    <!--省市区联动结束-->
+                                                    <input  id="districtCode" type="hidden" name="districtId">
+                                                    <script>
+                                                        var iqbtId=session("restIqbtId");
+                                                        var qr=session();
+                                                        var iurl = "{:url('/iqbt/Iqbt/initIqbtInfo')}";
+                                                        cstmpost("", iurl, {iqbtId:iqbtId}, function (data) {
+                                                            if (data["code"] == '1') {
+                                                                assign(data);
+                                                                $("#qr").attr("src","__ROOT__"+data["data"]["qr_img"]);
+                                                                $('[data-toggle="city-picker"]').citypicker();
+                                                                $(".city-picker-span").width("240");
+                                                                $("#msg").html("完善信息后，请耐心等待管理员审核。");
+                                                            } else {
+                                                                toastr.error(data["msg"]);
+                                                            }
+                                                        });
+                                                        $("#iqbtId").val(iqbtId);
+
+                                                    </script>
+                                                </div>
+                                            </div>
+
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 详细地址：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <input type="text" class="form-control"  id="address" name="address" placeholder="输入详细街道门牌号" autocomplete="off">
+                                            </div>
+
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 公司名称：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <input type="text" class="form-control" id="company" name="company" placeholder="公司名称" autocomplete="off">
+                                            </div>
+
+                                            <label class="col-sm-4 control-label padding-bottom-20"><span class="required">*</span> 了解渠道：</label>
+                                            <div class="col-sm-8 padding-bottom-20">
+                                                <select class="form-control" id="from" name="from">
+                                                </select>
+                                            </div>
+
+                                            <label class="col-sm-4 control-label padding-bottom-20">请先关注公众号，如已关注，请到公众号中绑定当前登录帐号：</label>
+                                            <div class="col-sm-8 padding-bottom-20" style="text-align: center;">
+                                                    <img src="" id="qr" style="height:145px; width:145px;">
+                                            </div>
+                                        </div>
+                                        <!--</form>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="id" id="iqbtId" value="0">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <span style="color:red;" id="msg"></span>
+        <button type="button" class="btn btn-primary btn-save" id="saveIqbt"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-primary btn-save admui-signOut" id="logout"> <span
+                class="bold">退出</span></button>
+    </div>
+</form>
+<script>
+    $(document).ready(function() {
+        // 保存空间信息
+        $("#saveIqbt").on("click", function () {
+            var url = "{:url('/user/rgst/saveIqbtinfo')}";
+            var data = serializeData("iqbtInfo");
+            cstmpost("#saveIqbt", url, data, function (data) {
+//                console.log(data);
+                if (data["code"] == '1') {
+                    toastr.success(data["msg"]);
+                    $("#msg").html("完善信息后，请耐心等待管理员审核。");
+                } else {
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+
+        /*var res={data:{iqbttype:'6004001',from:"6025004"}};
+         assign(res);*/
+
+        $(".admui-signOut").click(function () {
+            localStorage.setItem("user_avatar","");
+            sessionStorage.clear();
+            location.href="{:url('/user/Login/logout')}";
+        });
+    });
+
+    function gologin(){
+        location.href="{:url('user/login/login')}";
+    }
+
+    //保存成功弹窗
+    function successWindow(){
+        /*var mobile=$('#mobile').val();
+         var data='<div class="modal-header">' +
+         '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+         '<h4 class="modal-title" id="myModalLabel"></h4></div>' +
+         '<div class="modal-body"><h4 class="modal-body">注册成功，使用期限:7天。</h4>您的账号为:'+mobile+',默认密码:888888。<br/>请您妥善保管，您可跳转到登录页，登录之后可修改密码。<br/>' +
+         '</div>' +
+         '<div class="modal-footer">' +
+         '<a href={:url("user/login/login")}><button class="btn btn-primary" id="conDelBtn" >去登录</button></a>' +
+         '</div>';
+         show_modal("注册成功",data,"");*/
+    }
+
+
+</script>

@@ -1,0 +1,403 @@
+{include file="index@public/header"}
+<!--选择时间插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/fontawesome-iconpicker/iconpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jt-timepicker/jquery-timepicker.css">
+<!--选择时间插件-->
+<!--<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/jt-timepicker/jquery.timepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/datepair-js/jquery.datepair.min.js"></script>-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<!--编辑器-->
+<link href="__VD__/summernote/summernote.css" rel="stylesheet">
+<script src="__VD__/summernote/summernote.min.js"></script>
+<script>
+	// 渲染checkbox
+	function initCheckbox(fname, code, level, sdefault) {
+		if (!code || code == 0 || code == undefined) {
+			return false;
+		}
+		var selhtml = '';
+		for (var i = 0; i < sysData.length; i++) {
+			if (sysData[i].code && sysData[i].code.indexOf(code, 0) === 0 && sysData[i].level == level) {
+				if (sdefault.includes(sysData[i].code)) {
+					selhtml += ['<div class="col-md-1 padding-0 margin-0">',
+						'<div class="checkbox-custom checkbox-primary checkbox-inline">',
+						'				                                        <input type="checkbox" name="' + fname + '" id="' + sysData[i].code + '" value="' + sysData[i].code + '" checked>',
+						'				                                        <label for="' + sysData[i].code + '">' + sysData[i].name + '</label>',
+						'				                                    </div></div>'].join("");
+				} else {
+					selhtml += ['<div class="col-md-1 padding-0 margin-0">',
+						'<div class="checkbox-custom checkbox-primary checkbox-inline">',
+						'				                                        <input type="checkbox" name="' + fname + '" id="' + sysData[i].code + '" value="' + sysData[i].code + '" >',
+						'				                                        <label for="' + sysData[i].code + '">' + sysData[i].name + '</label>',
+						'				                                    </div></div>'].join("");
+
+				}
+			}
+		}
+
+		return selhtml;
+	}
+	//活动人数未填提示框
+	function basedelete(tableId, url) {
+		var id = $('#signId').val();
+		var data = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">如果活动人数未填写,默认活动人数没有上限,确定要保存活动信息么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="common_delete(\'' + url + '\',\'' + id + '\',\'' + tableId + '\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+		show_modal("活动人数未填写", data, "modal-sm");
+	}
+	//确定保存活动
+	function common_delete(url, id, tableId) {
+		$('#total').val(0);
+		$('#submit').click();
+	}
+	//更改审核状态时弹窗
+	function changeAudit(tableId, url) {
+		var data = '<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">有待审核的活动申请,请将申请审核完毕后再更改审核状态。</div><div class="modal-footer"><button class="btn btn-primary"  data-dismiss="modal"  >确定</button></div>';
+		show_modal("有待审核的活动申请", data, "modal-sm");
+	}
+	//编辑器上传图片
+	function uploadPic(files){
+		var smnturl="{:url('/index/Index/smntUpload',array('dir'=>'notice'))}";
+		var smnt = $('#detail');
+		smntUploadFile(files, smnt, smnturl, "__PUBLIC__");
+	}
+	$(function () {
+		//保存活动id
+		var id = session('actId');
+		$('#actId').val(id);
+		var url = "{:url('/activity/activity/getActInfo')}";
+
+		//初始化页面数据
+		cstmpost('', url, { id: id }, function (res) {
+			//如果不收费,隐藏单价框
+			if (res.data.free == 7002001) {
+				$('#pricediv').hide();
+			}
+			//初始化图片:如果图片不为空
+			if (res.data['poster'] != '') {
+				var htmll = "<img src=__PUBLIC__" + res.data['poster'] + ">";//封面
+				$('#input-file-now01').next().next().children('span').html(htmll);
+				$('#input-file-now01').next().next().css('display', 'block');
+			}
+			var detail = res.data.detail;
+			delete res.data.detail;
+			if( res.data.total==0){
+				delete res.data.total;
+			}
+			assign(res);
+			//初始化活动详情
+			$('.note-editable').html(detail);
+			//初始化时间选择控件(数据初始化之后再初始化控件)
+			$('[data-toggle="city-picker"]').citypicker();
+		})
+		//初始化编辑器
+		$(".summernote").summernote({
+			lang:"zh-CN",
+			height: 400
+		});
+		//费用点击事件
+		$("#freediv").on('click', 'input', function () {
+			if ($(this).val() == 7002001) {
+				$('#pricediv').hide();
+			} else {
+				$('#pricediv').show();
+				$('#audit input[value="7002001"]').click();
+			}
+		})
+		// 是否审核
+		$('#audit').on('click', 'input', function () {
+			var val = $('input:radio[name="free"]:checked').val();
+			if (val == 7002002 && $(this).val() == 7002002) {
+				$('#audit input[value="7002001"]').click();
+				toastr.warning('收费活动必须审核');
+			}
+		});
+		//发布按钮
+		$('.submit').click(function () {
+			var data = serializeData('actForm');
+			//如果是保存草稿
+			if ($(this).attr('id') == "saveDraft") {
+				data["draft"] = "7002001";
+			}
+			//添加活动详情
+			var content = $('#detail').code();
+			content = $.trim(content);
+			var realContent=content.replace(/&nbsp;/g,'')
+			realContent=realContent.replace(/<p>/g,'')
+			realContent=realContent.replace(/<\/p>/g,'')
+			realContent=realContent.replace(/<br>/g,'')
+			realContent=$.trim(realContent);
+			if(realContent==''){
+				content='';
+			}
+			data["detail"] = content;
+			var url = "{:url('/activity/activity/saveAct')}";
+			cstmpost('submiot', url, data, function (res) {
+				if (res.code == 1) {
+					toastr.success(res.msg);
+					setTimeout(function () {
+						location.href ="{:url('/activity/activity/index')}";
+					}, 500);
+				} else {
+					if (res.msg == "total") {
+						basedelete();
+					} else if (res.msg == "audit") {
+						changeAudit();
+						$('#audit input[value="7002001"]').click();
+					} else {
+						toastr.error(res.msg);
+					}
+				}
+			})
+		})
+
+		$('.timepicker').datetimepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd hh:ii"});
+//		$('.timepicker').datetimepicker({
+//			autoclose: true,//选中之后自动隐藏日期选择框
+//			todayBtn: false,//今日按钮
+//			format: "yyyy-mm-dd hh:ii",
+//			showtitle:true,//lippor修改，选择时间时候，标题修改
+//			forceParse : true,//当选择器关闭的时候，是否强制解析输入框中的值。
+//			startView:1
+//		});
+
+	})
+	//三级联动
+	function initDistinct(code, title) {
+		$("input[name='districtId']").val(code);
+	}
+
+</script>
+<main class="site-page">
+	<div class="page-container" id="admui-pageContent">
+		<div class="page animation-fade page-account">
+			<div class="page-header">
+				<h1 class="page-title">编辑活动</h1>
+			</div>
+			<div class="page-content">
+				<div class="row">
+					<div class="col-md-12">
+						<form action="" id="actForm" class="form-horizontal">
+							<div class="panel">
+								<div class="panel-body container-fluid padding-top-0">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example example-buttons">
+													<h4 class="padding-bottom-10 btborder">基本信息</h4>
+												</div>
+												<div class="example">
+													<div class="form-group col-md-12">
+														<label class="col-sm-2 control-label"><span class="required">*</span> 活动名称：</label>
+														<div class="col-sm-4">
+															<input type="text" class="form-control activeName" id="name" name="name" placeholder="活动名称（不少于5个字）" autocomplete="off">
+															<input type="hidden" class="form-control activeName" id="actId" name="id">
+														</div>
+														<label class="col-sm-2 control-label padding-bottom-20"> 活动人数：</label>
+														<div class="col-sm-4 padding-bottom-20">
+															<div class="input-group">
+																<input type="text" class="form-control activePeonum" id="total" name="total" placeholder="请输入活动支持人数">
+																<span class="input-group-addon">人</span>
+															</div>
+														</div>
+														<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 开始时间：</label>
+														<div class="col-md-4 padding-bottom-20">
+															<div class="input-daterange-wrap">
+																<!--<div class="input-daterange">-->
+																	<div class="input-group">
+										                                    <span class="input-group-addon">
+										                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+										                                    </span>
+																		<input type="text" class="form-control datepair-date datepair-end timepicker" id="starttime" name="starttime">
+																	</div>
+																	<!--<div class="input-group">
+										                                    <span class="input-group-addon">
+										                                        <i class="icon wb-time" aria-hidden="true"></i>
+										                                    </span>
+																		<input type="text" class="form-control datepair-time datepair-end timepicker" id="starttime2" name="starttime2">
+																	</div>-->
+																<!--</div>-->
+															</div>
+														</div>
+														<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 结束时间：</label>
+														<div class="col-md-4 padding-bottom-20">
+															<div class="input-daterange-wrap">
+																<!--<div class="input-daterange">-->
+																	<div class="input-group">
+										                                    <span class="input-group-addon">
+										                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+										                                    </span>
+																		<input type="text" class="form-control datepair-date datepair-end timepicker" id="endtime" name="endtime" >
+																	</div>
+																	<!--<div class="input-group">-->
+										                                    <!--<span class="input-group-addon">-->
+										                                        <!--<i class="icon wb-time" aria-hidden="true"></i>-->
+										                                    <!--</span>-->
+																		<!--<input type="text" class="form-control datepair-time datepair-end timepicker" id="endtime" name="endtime" data-plugin="timepicker">-->
+																	<!--</div>-->
+																<!--</div>-->
+															</div>
+														</div>
+														<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 活动地点：</label>
+														<div class="col-md-4 padding-bottom-20">
+															<!--省市区联动开始-->
+															<link rel="stylesheet" href="__PUBLIC__/themes/theme.css">
+															<link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+															<div class="docs-methods">
+																<div id="distpicker">
+																	<div class="width-full">
+																		<input id="districtId" class="form-control" type="text" data-toggle="city-picker">
+																	</div>
+																</div>
+															</div>
+															<script src="__PUBLIC__/themes/city-picker.data.js"></script>
+															<script src="__PUBLIC__/themes/city-picker.js"></script>
+															<input id="districtCode" type="hidden" name="districtId">
+															<!--省市区联动结束-->
+														</div>
+														<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 详细地址：</label>
+														<div class="col-md-4 padding-bottom-20">
+															<input type="text" class="form-control activeSitea" id="address" name="address" placeholder="输入详细街道门牌号">
+														</div>
+
+
+														<div class="form-group col-md-12 padding-0 margin-0">
+															<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 活动海报 <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i>：</label>
+															<div class="col-sm-4 padding-bottom-20">
+																<div class="example-wrap">
+																	<div class="example">
+																		<input type="hidden" name="poster" id="posterId">
+																		<input type="file" class="form-control" id="input-file-now01" data-id="posterId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"
+																		 onchange="uploadFile($(this))" data-size="0.5" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="form-group col-md-12 padding-0 margin-0">
+															<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 活动标签：</label>
+															<div class="col-sm-10 padding-bottom-20" id="tagsCheck">
+															</div>
+															<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 活动详情：</label>
+															<div class="col-sm-10 padding-bottom-20">
+																<div class="summernote" id="detail" name="content">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="clearfix visible-sm-block"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel">
+								<div class="panel-body container-fluid padding-top-0">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example example-buttons">
+													<h4 class="padding-bottom-10 btborder">费用详情</h4>
+												</div>
+												<div class="example">
+													<div class="form-group col-sm-12 padding-0" id="freediv">
+														<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 是否免费：</label>
+														<div class="col-sm-4 padding-bottom-20" id="free">
+															<div class="radio-custom radio-primary radio-inline">
+																<input type="radio" name="free" value='7002001' class='pay'>
+																<label for="free">是</label>
+															</div>
+															<div class="radio-custom radio-primary radio-inline">
+																<input type="radio" id="charge" name="free" checked value='7002002' class='pay'>
+																<label for="charge">否</label>
+															</div>
+														</div>
+														<div class="form-group col-sm-6 padding-0" id="pricediv">
+															<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 单价：</label>
+															<div class='col-sm-4 padding-bottom-20'>
+																<div class="input-group">
+																	<input type="text" class="form-control unitPrice" id="price" name="price" placeholder="请输入单价">
+																	<span class="input-group-addon">元/人</span>
+																</div>
+															</div>
+														</div>
+														<div class="clearfix visible-sm-block"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel">
+								<div class="panel-body container-fluid padding-top-0">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example example-buttons">
+													<h4 class="padding-bottom-10 btborder">主办方联系方式</h4>
+												</div>
+												<div class="example">
+													<div class="form-group col-md-12">
+														<label class="col-sm-2 control-label padding-bottom-20">联系人：</label>
+														<div class="col-sm-4 padding-bottom-20">
+															<input type="text" class="form-control contact" id="contact" name="contact" placeholder="请输入联系人"> </div>
+														<label class="col-sm-2 control-label padding-bottom-20">联系电话：</label>
+														<div class="col-sm-4 padding-bottom-20">
+															<input type="text" class="form-control tele" id="mobile" name="mobile" placeholder="请输入联系电话">
+														</div>
+														<label class="col-sm-2 control-label padding-bottom-20">联系邮箱：</label>
+														<div class="col-sm-4 padding-bottom-20">
+															<input type="text" class="form-control email" id="email" name="email" placeholder="请输入联系邮箱">
+														</div>
+														<div class="form-group col-md-12 padding-0 margin-0">
+															<label class="col-sm-2 control-label padding-bottom-20">是否发布：</label>
+															<div class="col-sm-4 padding-bottom-20" id="publish">
+															</div>
+															<label class="col-sm-2 control-label padding-bottom-20">是否需要审核：</label>
+															<div class="col-sm-4 padding-bottom-20" id="audit">
+															</div>
+														</div>
+													</div>
+													<!--<div class="form-group col-md-12 text-center">-->
+													<!--<p class="font-size-14 margin-left-20 text-danger">平台将不参与活动的交易，如活动涉及报名费用，请自行线下与报名方沟通缴费相关事宜。</p>-->
+													<!--<label class="control-label"><input id="agree" type="checkbox" name="agree" value="0"/>已阅读并同意《<a href="javascript:void(0)">服务协议</a>》</label>-->
+													<!--</div>-->
+													<div class="clearfix visible-sm-block"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+
+					</div>
+					<div class="btn-actions text-center">
+						<button type="button" class="btn btn-primary confirm submit" id="submit">&nbsp;&nbsp;<i class="fa fa-bullhorn" aria-hidden="true"></i>&nbsp;确认发布&nbsp;&nbsp;</button>
+						<button type="button" class="btn btn-warning saveDraft submit" id="saveDraft">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存草稿&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<!--<script src='__PUBLIC__/themes/activeNew.js'></script>-->
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/vendor/webui-popover/webui-popover.css"> {include file="index@public/footer"}

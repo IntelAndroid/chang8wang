@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>入驻管理</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <!--阿里图库-->
+    <link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/demo.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/iconfont.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/lib/weui.min.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/css/jquery-weui.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/css/demos.css">
+    <link rel="stylesheet" href="__PUBLIC__/wechat/css/public.css">
+    <style>
+        a{text-decoration: none;}
+        a:visited{text-decoration: none;}
+        a:hover {text-decoration: none;}
+        a:active{text-decoration:none;}
+        .weui-panel {margin: 0;}
+        .weui-media-box {padding: 8px 15px;}
+        .weui-cell__bd .weui-media-box__hd {width: 50px;height: 50px;line-height: 50px;color:#FFF;font-size:16px;border-radius:50%;background:#32adf9;text-align:center;position: relative;}
+        .weui-cell__bd .weui-media-box__hd1 {background:#f39b0f;}
+        .weui-media-box__desc {-webkit-line-clamp: 1;}
+        .weui-media-box__title {margin-top: -4px;font-size:15px;color:#595757;font-weight:bold;}
+        .weui-media-box__title-after{color:#b7b7b7;font-weight:500;float:right;}
+        .weui-media-box__desc .call{float:right;color:#32adf9;}
+        .weui-cell__ft {font-size:14px;}
+        .weui-cell__ft .exit{background:#32adf9;line-height:46px;}
+        .weui-cell__ft .contract{background:#f39b0f;line-height:46px;}
+    </style>
+</head>
+<body ontouchstart>
+<div class="weui-tab">
+    <div class="weui-tab__bd">
+        <div class="weui-tab__bd-item weui-tab__bd-item--active">
+            <div class="navbox">
+                <a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+                <div class="center">入驻管理</div>
+                <a href="search.html"><div class="right"><i class="icon iconfont icon-search"></i></div></a>
+            </div>
+            <div class="lr_nb first-header">
+                <div class="slider_wrap line">
+                    <div class="wx_items">
+                        <div class="item_cell" data-item="4">
+                            <span>待入驻(<span id="wait"></span>)</span>
+                        </div>
+                        <div class="item_cell current" data-item="3">
+                            <span>已入驻(<span id="settled"></span>)</span>
+                        </div>
+                        <div class="item_cell" data-item="2">
+                            <span>退租(<span id="quit"></span>)</span>
+                        </div>
+                        <div class="item_cell" data-item="1">
+                            <span>全部(<span id="total"></span>)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bd last-footer">
+                <div class="page__bd">
+                    <div class="weui-cells" style="margin-top:0;">
+                        <div class="weui-cell weui-cell_swiped">
+                            <div class="weui-cell__bd">
+                                <div class="weui-cell" style="padding:0;">
+                                    <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" style="width:100%;">
+                                        <div class="weui-media-box__hd">
+                                            王涛
+                                        </div>
+                                        <div class="weui-media-box__bd">
+                                            <h4 class="weui-media-box__title">新智能</h4>
+                                            <p class="weui-media-box__desc">
+                                                <i class="icon iconfont icon-phone"></i> 15806553672
+                                                <span class="weui-media-box__title-after">2018/03/27</span>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="weui-cell__ft">
+                                <a class="weui-swiped-btn weui-swiped-btn_warn delete-swipeout exit" href="javascript:">退租</a>
+                                <a class="weui-swiped-btn weui-swiped-btn_default close-swipeout contract" href="javascript:">续约</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-tabbar">
+        <a href="" class="weui-tabbar__item weui-bar__item--on">
+            <!--<span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>-->
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-yewu"></i>
+            </div>
+            <p class="weui-tabbar__label">业务</p>
+        </a>
+        <a href="" class="weui-tabbar__item">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-shujubaobiao"></i>
+            </div>
+            <p class="weui-tabbar__label">数据</p>
+        </a>
+        <a href="" class="weui-tabbar__item">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-account"></i>
+            </div>
+            <p class="weui-tabbar__label">我的</p>
+        </a>
+    </div>
+</div>
+<script src="__PUBLIC__/wechat/lib/jquery-2.1.4.js"></script>
+<script src="__PUBLIC__/wechat/lib/fastclick.js"></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script src="__PUBLIC__/wechat/js/jquery-weui.js"></script>
+<script>
+    $(function () {
+        $(".wx_items .item_cell").click(function () {
+            $(this).addClass('current').siblings().removeClass('current');
+        });
+    });
+</script>
+<script>
+    $('.delete-swipeout').click(function () {
+        $(this).parents('.weui-cell').remove()
+    })
+    $('.close-swipeout').click(function () {
+        $(this).parents('.weui-cell').swipeout('close')
+    })
+</script>
+</body>
+</html>

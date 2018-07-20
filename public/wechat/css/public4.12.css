@@ -1,0 +1,55 @@
+body{background:#EDF3F9;}
+/*顶部固定导航*/
+.topbox{width:100%;height:45px;z-index:10;background:#FFF;position:fixed;top:0;left:0;padding:0 15px;border-bottom:1px solid #f4f4f4;}
+.topbox p.iqbtname{
+	width:100%;height:45px;font-size:16px;color:#2D2D2D;font-weight:bold;line-height:45px;overflow:hidden;
+	-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;
+	}
+.topbox p.iqbtname i{font-size:18px;}	
+/*下拉菜单对号颜色*/
+.weui-cells_radio .weui-check:checked+.weui-icon-checked:before{color:#32ADF9;}
+/*顶部导航*/
+.navbox{width:100%;height:45px;z-index:10;background:#FFF;position:fixed;top:0;left:0;padding:0;border-bottom:1px solid #f4f4f4;}
+.navbox .left{width:15%;height:45px;float:left;line-height:45px;color:#32ADF9;text-align:center;}
+.navbox .left .iconfont{font-size:20px;font-weight:bold;}
+.navbox .center{width:70%;height:45px;float:left;line-height:45px;font-size:16px;font-weight:bold;color:#2D2D2D;text-align:center;}
+.navbox .right{width:15%;height:45px;float:right;line-height:45px;font-weight:bold;color:#32ADF9;text-align:center;}
+.navbox .right .iconfont{font-size:18px;font-weight:bold;color:#32ADF9;}
+/*九宫格*/
+.weui-grids{background:#FFF;padding:0 15px;margin-bottom:10px;border-bottom:1px solid #e2e2e2;}
+.weui-grids:before{border-top:none;}
+.weui-grids:after{border-left:none;}
+.weui-grid{padding:12px 10px;}
+.weui-grid:before{border-right:none;}
+.weui-grid:after{border-bottom:none;}
+.weui-grid .weui-grid__label{color:#686868;font-size:14px;}
+.weui-grid__icon{width:50px;height:50px;}
+.first-header{margin-top:45px;}
+.last-footer{margin-bottom:62px;}
+/*招商管理状态选择*/
+.choosebox{width:100%;height:36px;background:#32adf9;line-height:36px;text-align:center;font-size:14px;}
+.choosebox a{color:#FFF;}
+.choosebox .active a{font-weight:bold;}
+
+/*水平滚动导航栏 start*/
+.lr_nb { width:100%;height:36px;line-height:36px;background:#32adfa;font-size:14px;}
+.lr_nb .slider_wrap {
+   width:100%;overflow:hidden;overflow-x:scroll;-webkit-overflow-scrolling:touch;/*允许独立的滚动区域和触摸回弹*/
+}
+.lr_nb .slider_wrap.line .wx_items {white-space:nowrap;}/*规定段落中的文本不进行换行*/
+.lr_nb .slider_wrap.line .wx_items .item_cell {display:inline-block;height:40px;padding:0 10px;}
+.lr_nb .slider_wrap.line .wx_items .item_cell span {color:#fff;white-space:nowrap;}
+.lr_nb .slider_wrap.line .wx_items .item_cell.current{font-weight:bold;}
+
+/*没有搜索结果*/
+.searchresult{width:100%;overflow:hidden;text-align: center;}
+.searchresult img.noresultpic{width:80px;height:auto;display:inline-block;margin:70px auto 10px auto;}
+.searchresult p.noresultword{width:100%;color:#BCBCBC;font-size:14px;}
+/*底部导航*/
+.weui-tabbar{background:#FFF;}
+.weui-tabbar:before{border-top:none;}
+.weui-tabbar__item{padding-top:0;}
+.weui-tabbar__item .weui-tabbar__icon i{color:#B0B3B2;}
+.weui-tabbar__item .weui-tabbar__label{color:#B0B3B2;font-size:12px;padding:2px 0;}
+.weui-tabbar__item.weui-bar__item--on .weui-tabbar__icon i{color:#32ADF9;}
+.weui-tabbar__item.weui-bar__item--on .weui-tabbar__label{color:#32ADF9;}

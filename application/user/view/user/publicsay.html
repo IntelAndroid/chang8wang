@@ -1,0 +1,336 @@
+{include file="index@public:header"}
+{include file="index@public/search"}
+<!--山川图片-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<style>
+    /*上传图片通用样式*/
+    .upload-ul {
+        position: relative;
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+        width: 100%;
+    }
+
+    .upload-ul dd {
+        position: relative;
+        display: inline-block;
+        width: 120px;
+        height: 90px;
+        margin: 0 6px 6px 0;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .upload-pick {
+        background: url(__PUBLIC__/webupload/images/upload-bj.png) no-repeat 0 0;
+    }
+
+    .upload-pick:hover {
+        background: url(__PUBLIC__/webupload/images/upload-bj.png) no-repeat 0 -90px;
+    }
+
+    .webuploader-pick {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+    }
+
+    .webuploader-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .webuploader-container label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .webuploader-element-invisible {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        clip: rect(1px 1px 1px 1px);
+        clip: rect(1px, 1px, 1px, 1px);
+    }
+
+    .viewThumb {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border-radius: .3rem;
+    }
+
+    .viewThumb img {
+        width: 100%;
+        height: 100%
+    }
+
+    .diyBar {
+        position: absolute;
+        display: none;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url(__PUBLIC__/webupload/images/bgblack.png);
+        z-index: 3;
+    }
+
+    .diyProgress {
+        position: absolute;
+        left: 0;
+        top: 33px;
+        width: 100%;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        text-align: center;
+        color: #FFF;
+        background: rgba(10, 168, 241, .7);
+        z-index: 3;
+    }
+
+    .diyControl {
+        position: absolute;
+        display: none;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        background: url(__PUBLIC__/webupload/images/bgblack.png);
+        z-index: 3;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    .viewThumb:hover .diyControl {
+        display: block;
+    }
+
+    .diyControl span {
+        display: inline-block;
+        padding: 2px 13px;
+        width: 10px;
+        height: 11px;
+        text-align: center;
+    }
+
+    .diyControl span i {
+        display: block;
+        width: 12px;
+        height: 11px;
+        opacity: .7;
+    }
+
+    .diyControl span i:hover {
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .diyLeft {
+        margin-left: 0;
+    }
+
+    .diyLeft {
+        margin-right: 3px;
+    }
+
+    .diyLeft i {
+        margin-left: 0;
+        background: url(__PUBLIC__/webupload/images/upload-icon1.png) no-repeat 0 0;
+    }
+
+    .diyCancel i {
+        background: url(__PUBLIC__/webupload/images/upload-icon1.png) no-repeat 0 -11px;
+    }
+
+    .diyRight i {
+        margin-right: 3px;
+        margin-left: 3px;
+        background: url(__PUBLIC__/webupload/images/upload-icon1.png) no-repeat 0 -22px;
+    }
+
+    .goods-edit .upload-tip {
+        font: 12px/23px "Microsoft YaHei";
+        color: #a3a3a3;
+        vertical-align: top;
+    }
+</style>
+
+    <main class="site-page">
+        <div class="page-container" id="admui-pageContent">
+            <div class="page animation-fade page-account">
+                <div class="page-header">
+                    <h1 class="page-title">通知管理</h1>
+                </div>
+                <div class="page-content">
+                    <div class="row row-lg">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-body nav-tabs-animate">
+                                    <div class="example">
+                                        <form action="" id="waitForm">
+                                        <div class="form-group col-md-3 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">通知标题</span>
+                                                <input type="text" class="form-control activeName title"   name="title" placeholder="请输入通知标题">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-3 padding-left-0">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">通知状态</span>
+                                                <select class="form-control activeName area" id="" name="status">
+                                                    <option value=''>全部</option>
+                                                    <option value='7002001'>已发布</option>
+                                                    <option value='7002002'>未发布</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-3 padding-left-0">
+                                            <div class="btn-actions">
+                                                <button type="button" class="btn btn-primary btn-search" feresh-table="actTable" data-form="waitForm" id="addChlidMenu">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+                                                <a href="public-add.html"><button type="button" class="btn btn-info btn-xls" >&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;新增&nbsp;&nbsp;</button></a>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                    <table id="actTable" class="table table-bordered text-center cdtable" data-keywords="" data-side-pagination="server" data-toolbar="true" data-show-toggle="false" data-toggle="table"  data-search="false"
+                                       data-url="{:url('user/notice/getNoticeList')}" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" data-field="addtime">发布时间</th>
+                                                <th class="text-center" data-field="title">标题</th>
+                                                <th class="text-center" data-formatter="status">状态</th>
+                                                <th class="text-center" data-formatter="usertype">推送对象</th>
+                                                <th class="text-center" data-field="districtStr">推送区域</th>
+                                                <th class="text-center" data-field="pushNum">已推送（人）</th>
+                                                <th class="text-center" data-field="readNum">已阅读（人）</th>
+                                                <!-- <th class="text-center" data-formatter="checknumFmt">待审核</th> -->
+                                                <th class="text-center" data-formatter="actFmt"> 操作</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{include file="index@public/footer"}
+<script>
+    // 列表页初始化
+    function actFmt(value, row, index) {
+        var status=row.status;
+        var html=''
+        if(row.publish=="7002001"){
+        html +=['<div class="btn-actions margin-left-5 inline-block">\
+                <a href="public-look.html"><button type="button" class="btn btn-outline btn-sm btn-primary" id="look" value="'
+                + row.id +'">查看</button></a>\
+                </div>'].join("");
+                return html;
+        }
+//                html +=['<a onclick="cancelSign(' + row.id + ')"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default sign" id="sign"  role="button" aria-hidden="true" data-toggle="modal" data-original-title="取消报名" title="取消报名">&nbsp;&nbsp;<i class="icon wb-close" aria-hidden="true"></i></button></a>'].join("");
+        html +=['<div class="btn-actions margin-left-5 inline-block">\
+                <a href="public-add.html"><button type="button" class="btn btn-outline btn-sm btn-warning" id="edit" value="'
+                + row.id +'">编辑</button></a>\
+            </div>\
+            <div class="btn-actions margin-left-5 inline-block">\
+            <a><button type="button" class="btn btn-outline btn-sm btn-success" id="relea" value="'
+            + row.districtId +'" valueId="'+ row.id +'">发布</button><button style="display:none" value="" class="disnone">'
+            + row.content +'</button></a>\
+            </div>'].join("");
+        return html;
+    }
+        function status(value, row, index) {
+        var status=row.status;
+        var html=''
+        if(row.publish=="7002001"){
+                html +=['已发布'].join("");
+                        return html;
+        }
+            html +=['未发布'].join("");
+        return html;
+    }
+    // 推送对象
+    function usertype(value, row, index) {
+        var html=''
+        if(row.usertype=="6019001"){
+                html +=['孵化器管理员'].join("");
+                        return html;
+        }
+        if(row.usertype=="6019002"){
+                html +=['企业用户'].join("");
+                        return html;
+        }
+        if(row.usertype==""){
+                html +=['孵化器管理员,企业用户'].join("");
+                        return html;
+        }
+        return html;
+    }
+    // 点击此查看
+   $('body').on('click','#look',function(){
+        sessionStorage.setItem('id',$(this).attr('value'))
+   })
+//    点击编辑
+   $('body').on('click','#edit',function(){
+        sessionStorage.setItem('id',$(this).attr('value'))
+   })
+//    点击新增
+   $('body').on('click','.btn-xls',function(){
+        sessionStorage.setItem('id','')
+   })
+//    列表页发布
+   $('body').on('click','#relea',function(){
+        let url = "{:url('/user/notice/pubNotice')}";
+        if($(this).parents('tr').children('td:eq(3)').text() == '孵化器管理员'){
+            var user = 6019001;
+        }else if($(this).parents('tr').children('td:eq(3)').text() == '企业用户'){
+            var user = 6019002;
+        } else {
+            var user = '';
+        }
+       let data = {
+        id:$(this).attr('valueId'),
+        title:$(this).parents('tr').children('td:eq(1)').text(),
+        usertype:user ,
+        districtId:$(this).attr('value'),
+        content:$('.disnone').html(),
+        publish:'7002001',
+       }
+       cstmpost('',url,data,function(res){
+        if(res.code){
+                toastr.success(res.msg)
+            setTimeout(function(){
+                $('#actTable').bootstrapTable('refresh');
+            },500)
+                return false;
+            } else {
+                toastr.error(res.msg)
+            }
+       })
+   })
+</script>   

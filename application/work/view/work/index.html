@@ -1,0 +1,176 @@
+{include file="index@public/header"} {include file="index@public/search"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script><!--me +  -->
+<script src="__PUBLIC__/js/bootstrap_validate.js"></script> 
+<script src="__PUBLIC__/js/common.js"></script>
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<!-- <script>
+    Breakpoints();
+</script>
+<script src="__PUBLIC__/vendor/jquery/jquery.min.js"></script>
+选择城市
+<link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+<script src="__PUBLIC__/themes/city-picker.data.js"></script>
+<script src="__PUBLIC__/themes/city-picker.js"></script> -->
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+        	<div class="page-header">
+                <h1 class="page-title">工作台</h1>
+            </div>
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+                                    <li class="news accout-msg active" role="presentation">
+                                        <a href="#message" aria-controls="message" role="tab" data-toggle="tab">待办事项</a>
+                                    </li>
+                                    <li role="presentation" class="account-log">
+                                        <a href="#log" aria-controls="log" role="tab" data-toggle="tab">已完成</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content margin-top-15">
+                                 <!-- 待办事项 -->
+                                    <div class="tab-pane animation-slide-left tab-message active" role="tabpanel" id="message">
+                                        <div class="row row-lg">
+				                            <div class="col-md-12">
+				                                <div class="example-wrap">
+				                                    <div class="example">
+				                                        <style>
+										            		.customerkind {overflow:hidden;}
+										            		.customerkind .panel a{text-decoration: none;}
+										            		.customerkind .panel-body{padding:50px;text-align:center;}
+										            		.customerkind .panel-body p{color:#FFF;font-size:16px;font-weight:bold;}
+										            		.customerkind .panel-body .label-content i{font-size:40px;color:#FFF;}
+										            	</style>
+										            	<div class="panel">
+										                    <div class="panel-body">
+										                        <div class="col-md-12 padding-0">
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #2591d1;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/visit')}">
+													                            <div class="panel-body">
+													                                <p>预约参观（{$data['visitCount']}）</p>
+													                                <!--<div class="label-content">
+													                                	<i class="icon iconfont icon-remind"></i>
+													                                </div>-->
+													                            </div>
+												                            </a>
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #f49c45;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/endtime')}">
+													                            <div class="panel-body">
+													                                <p>到期提醒（{$data['endtime']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #4cb556;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/mtrapl')}">
+													                            <div class="panel-body">
+													                                <p>会议室申请（{$data['mtrAplCount']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #e85656;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/actapl')}">
+													                            <div class="panel-body">
+													                                <p>活动申请（{$data['actAplCount']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind" style="margin-top:20px">
+												                        <div class="panel" style="background: #e85656;margin-bottom:0;">
+												                        	<a href="{:url('/user/user/look-line')}">
+													                            <div class="panel-body">
+													                                <p>消息中心（{$data['noticeCount']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                </div>    
+										                    </div>
+										                </div>
+				                                    </div>
+				                                </div>
+				                            </div>
+				                        </div>
+                                    </div>
+                                    
+                                <!-- 已完成 -->
+                                    <div class="tab-pane animation-slide-left tab-log" role="tabpanel" id="log">
+                                        <div class="row row-lg">
+				                            <div class="col-md-12">
+				                                <div class="example-wrap">
+				                                    <div class="example">
+				                                        <div class="panel">
+										                    <div class="panel-body">
+										                        <div class="col-md-12 padding-0">
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #2591d1;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/visitfin')}">
+													                            <div class="panel-body">
+													                                <p>预约参观（{$data['visitCountFin']}）</p>
+													                                <!--<div class="label-content">
+													                                	<i class="icon iconfont icon-remind"></i>
+													                                </div>-->
+													                            </div>
+												                            </a>
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #f49c45;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/endtimefin')}">
+													                            <div class="panel-body">
+													                                <p>到期提醒（{$data['endtimeFin']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #4cb556;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/mtraplfin')}">
+													                            <div class="panel-body">
+													                                <p>会议室申请（{$data['mtrAplCountFin']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                    <div class="col-md-3 customerkind">
+												                        <div class="panel" style="background: #e85656;margin-bottom:0;">
+												                        	<a href="{:url('/work/work/actaplfin')}">
+													                            <div class="panel-body">
+													                                <p>活动申请（{$data['actAplCountFin']}）</p>
+													                            </div>
+													                        </a>    
+												                        </div>
+												                    </div>
+												                </div>    
+										                    </div>
+										                </div>
+				                                    </div>
+				                                </div>
+				                            </div>
+				                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

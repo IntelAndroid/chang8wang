@@ -1,0 +1,289 @@
+{include file="index@public/header"}
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script>
+	$(function(){
+		//如果是企业端点过来
+		var signcode=session('sign');
+		var status=session('status');
+		if(signcode==7000000 && status=='未开始'){
+			$('#signBtn').show();
+		}
+		//活动id
+		var id=session('actId');
+		var url="{:url('/activity/activity/getActInfo')}";
+		//初始化页面数据
+		cstmpost('',url,{id:id},function(res){
+			//如果是草稿,显示编辑按钮
+			if(res.data.draft==7002001){
+				$('#edithref').show();
+			}
+			//如果不收费,隐藏单价框
+			if(res.data.free==7002001){
+				$('#pricediv').remove();
+			}
+			//初始化海报
+			if(res.data.poster!='') {
+				$('#posterimg').html('<img class="img-responsive" id="posterimg" src= "__PUBLIC__'+res.data.poster+'" alt="..." width="220">');
+			}
+			var detail=res.data.detail;
+			delete res.data.detail;
+			//活动人数为零,显示无上限
+			if(res.data.total==0){
+				res.data.total="无上限";
+				$('#people').html('<label class="control-label activePeonum" id="total"></label>');
+			}
+			assign(res);
+			//初始化活动详情
+			$('#detail').html(detail);
+			//保存actId
+			$('#actId').val(res.data.id);
+		})
+		//保存报名
+		$('#saveSign').click(function(){
+			var data=serializeData('signForm');
+			data.total=$('#total').val();
+			var url="{:url('activity/activity/saveSign')}";
+			cstmpost('#saveSign',url,data,function(res){
+				if(res.code==1){
+					toastr.success(res.msg);
+					$('#signBtn').hide();
+					$('.close').click();
+					setTimeout(function(){
+					},500);
+				}else{
+					toastr.error(res.msg);
+				}
+			});
+		})
+	})
+</script>
+	<main class="site-page">
+		<div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+			<!--弹出层-->
+			<div class="modal-dialog modal-center">
+				<form class="modal-content " id="signForm">
+					<div class="modal-header">
+						<button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+							<i class="icon wb-close" aria-hidden="true"></i>
+						</button>
+						<h4 class="modal-title">填写报名信息 </h4>
+					</div>
+					<div class="modal-body">
+						<div class="form form-horizontal logs-settings">
+							<div class="form-group row">
+								<label class="col-xs-3 control-label">企业名称：</label>
+								<div class="col-xs-9">
+									<input type="text" class="form-control" name="etprs" id="etprs" readonly value="{$Think.session.user.etprsName}">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-xs-3 control-label">姓名：</label>
+								<div class="col-xs-9">
+									<input type="text" class="form-control name" name="name" placeholder="请输入姓名">
+									<input type="hidden" id="actId" class="form-control name" name="actId" >
+									<input type="hidden" id="audit" class="form-control name" name="audit" >
+									<!--<input type="hidden" id="total" class="form-control name" name="total" >-->
+									<input type="hidden" id="signstatus" class="form-control name" name="signstatus" >
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-xs-3 control-label">人数：</label>
+								<div class="col-xs-9">
+									<div class="input-group">
+										<input type="number" class="form-control peopleNum" name="num" placeholder="请输入参与人数">
+										<span class="input-group-addon" >人</span>
+									</div>
+								</div>
+							</div>
+							<!--<div class="form-group row">-->
+								<!--&lt;!&ndash;<label class="col-xs-3 control-label">性别：</label>&ndash;&gt;-->
+								<!--&lt;!&ndash;<div class="col-xs-9">&ndash;&gt;-->
+									<!--&lt;!&ndash;<div class="radio-custom radio-primary radio-inline">&ndash;&gt;-->
+										<!--&lt;!&ndash;<input type="radio" id="man" name="sex" checked value='7003001' class='pay'>&ndash;&gt;-->
+										<!--&lt;!&ndash;<label for="man">男</label>&ndash;&gt;-->
+									<!--&lt;!&ndash;</div>&ndash;&gt;-->
+									<!--&lt;!&ndash;<div class="radio-custom radio-primary radio-inline">&ndash;&gt;-->
+										<!--&lt;!&ndash;<input type="radio" id="woman" name="sex"  value='7003002' class='pay'>&ndash;&gt;-->
+										<!--&lt;!&ndash;<label for="woman">女</label>&ndash;&gt;-->
+									<!--&lt;!&ndash;</div>&ndash;&gt;-->
+								<!--&lt;!&ndash;</div>&ndash;&gt;-->
+							<!--</div>-->
+							<div class="form-group row">
+								<label class="col-xs-3 control-label">联系方式：</label>
+								<div class="col-xs-9">
+									<input type="text" class="form-control tele" name="mobile" placeholder="请输入联系方式">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="btn-actions pull-right margin-left-15">
+							<a class="btn btn-default" data-dismiss="modal">取消</a>
+						</div>
+						<div class="btn-actions pull-right margin-left-15">
+							<button class="btn btn-primary enterprise" type="button" id="saveSign">保存</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="page-container" id="admui-pageContent">
+			<div class="page animation-fade page-account">
+				<div class="page-header">
+					<h1 class="page-title">活动详情<button type="button" class="btn btn-success pull-right" data-target="#logsForm" data-toggle="modal" aria-hidden="true" id="signBtn" style="display:none">&nbsp;&nbsp;<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;立即报名&nbsp;&nbsp;</button>
+					<span class="label label-success margin-left-20" id="iqbtstatus"></span>
+					<a id="edithref" href="{:url('/activity/activity/editact')}" style="display: none;"><button type="button" class="btn btn-info pull-right">&nbsp;&nbsp;<i class="fa fa-edit" aria-hidden="true"></i>&nbsp;编辑&nbsp;&nbsp;</button></a>
+					</h1>
+				</div>
+				<div class="page-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel">
+								<div class="panel-body container-fluid padding-top-0">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example example-buttons">
+													<h4 class="padding-bottom-10 btborder">基本信息</h4>
+												</div>
+												<div class="example">
+													<form class="form-horizontal">
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 活动名称：</label>
+															<div class="col-sm-4">
+																<label class="control-label activeName" id="name"></label>
+															</div>
+															<label class="col-sm-2 control-label"> 活动地点：</label>
+															<div class="col-sm-4">
+																	<label class="control-label activeSite" id="addressStr"> </label>
+															</div>
+														</div>
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 活动时间：</label>
+															<div class="col-sm-4">
+																<label class="control-label activeTime" id="timeStr"></label>
+															</div>
+															<label class="col-sm-2 control-label"> 活动人数：</label>
+															<div class="col-sm-4" id="people">
+																<label class="control-label activePeonum" id="total"></label>人
+															</div>
+														</div>
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 活动海报：</label>
+															<div class="col-sm-4 padding-top-10" id="posterimg">
+
+															</div>
+														</div>
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 活动标签：</label>
+															<div class="col-sm-4">
+																<label class="control-label activeLabel" id="tagsText"></label>
+															</div>
+														</div>
+														<style>
+															.activeDetail img{max-width:100%;}
+														</style>
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 活动详情：</label>
+															<div class="col-sm-10">
+																<label class="control-label text-left activeDetail" id="detail"></label>
+															</div>
+														</div>
+
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel">
+								<div class="panel-body container-fluid padding-top-0">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example example-buttons">
+													<h4 class="padding-bottom-10 btborder" >费用详情</h4>
+												</div>
+												<div class="example">
+													<form class="form-horizontal">
+														<div class="form-group col-sm-12 padding-0">
+															<label class="col-sm-2 control-label "> 是否免费：</label>
+															<div class="col-sm-4">
+																<label class='control-label activePay' id="freeText"></label>
+															</div>
+															<div class="form-group col-sm-6 padding-0" id="pricediv">
+																<label class="col-sm-2 control-label"> 单价：</label>
+																<div class='col-sm-4'>
+																	<label class="control-label"><span class="activePrice" id="price"></span>元/人</label>
+																</div>
+															</div>
+														</div>
+														<div class="clearfix visible-sm-block"></div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel">
+								<div class="panel-body container-fluid padding-top-0">
+									<div class="row row-lg">
+										<div class="col-md-12">
+											<div class="example-wrap">
+												<div class="example example-buttons">
+													<h4 class="padding-bottom-10 btborder">主办方联系方式</h4>
+												</div>
+												<div class="example">
+													<form class="form-horizontal">
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 联系人：</label>
+															<div class="col-sm-4">
+																<label class="control-label activeContact" id="contact"></label>
+															</div>
+															<label class="col-sm-2 control-label"> 联系电话：</label>
+															<div class="col-sm-4">
+																<label class="control-label activeTele"  id="mobile"></label>
+															</div>
+														</div>
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 联系邮箱：</label>
+															<div class="col-sm-4">
+																<label class="control-label activeEmail" id="email"></label>
+															</div>
+															<label class="col-sm-2 control-label"> 是否发布：</label>
+															<div class="col-sm-4">
+																<label class="control-label" id="publishText"></label>
+															</div>
+														</div>
+														<div class="form-group col-md-12 padding-0">
+															<label class="col-sm-2 control-label"> 是否需要审核：</label>
+															<div class="col-sm-4">
+																<label class="control-label" id="auditText"></label>
+															</div>
+														</div>
+
+														<div class="clearfix visible-sm-block"></div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</main>
+{include file="index@public/footer"}

@@ -1,0 +1,190 @@
+{include file="index@public/header"}
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.css">
+<script src="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+ <script src="__PUBLIC__/js/roomCharts.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+
+<script>
+    $(document).ready(function(){
+        var url = "{:url('/Etprs/Etprs/roomAlloction')}";
+        sum(2,url);
+    });
+
+
+</script>
+<div class="modal fade example-modal-lg" aria-hidden="true" aria-labelledby="exampleOptionalLarge" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img class="img-responsive width-full" src="" id="buildPicUrl">
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <!--<div class="page-header">-->
+                <!--<h1 class="page-title">图形格式显示</h1>-->
+            <!--</div>-->
+
+            <div class="page-content">
+                <div class="row row-lg">
+                    <div class="col-md-12">
+                        <div class="panel">
+
+                            <div class="panel-body nav-tabs-animate">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li  role="presentation">
+                                    <a  href="{:url('/room/Room/roominfo')}" aria-controls="exampleTabsOne"
+                                       role="tab">列表查看</a>
+                                </li>
+                                <li class="active" role="presentation">
+                                    <a  href="{:url('/room/Room/showCharts')}" aria-controls="exampleTabsTwo"
+                                        role="tab">图表查看</a>
+                                </li>
+                                <!--<li role="presentation">-->
+                                    <!--<a data-toggle="tab" href="#exampleTabsThree"-->
+                                       <!--aria-controls="exampleTabsThree" role="tab">数据统计</a>-->
+                                <!--</li>-->
+                            </ul>
+                                <div class="example">
+                                    <div class="form-group col-md-2 padding-left-0">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">楼座</span>
+                                            <select data-plugin="selectpicker" class='build' data-url="{:url('/Etprs/Etprs/roomAlloction')}">
+                                                <!-- <option value="金座">金座</option>
+                                                <option value="银座">银座</option> -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-2 padding-left-0">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">楼层</span>
+                                            <select data-plugin="selectpicker" class='floor'>
+                                                <!-- <option value="1">1</option>
+                                                <option value="2">2</option> -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-2 padding-left-0">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">房间编号</span>
+                                            <input type="text" class="form-control room" id="" placeholder="请输入房间编号">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-2 padding-left-0">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">出租状态</span>
+                                            <select data-plugin="selectpicker" class='statu'>
+                                                <option value="">全部</option>
+                                                <option value="2">已入驻</option>
+                                                <option value="0">空闲</option>
+                                                <option value="1">已占用</option>
+                                                <option value="3">自用</option>
+                                                <!--<option value="4">公用</option>-->
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group col-md-4 padding-left-0">
+                                        <div class="btn-actions">
+                                            <button type="button" class="btn btn-primary polling" id="addChlidMenu" data-url="{:url('/Etprs/Etprs/roomAlloction')}">查询</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example">
+                                    <div class="col-md-10 pull-left padding-0 roomleft">
+                                        <div class="col-md-12 bg-blue-grey-100 padding-10">
+                                            <ul class="list-unstyled margin-bottom-0">
+                                                <li class="inline-block margin-right-30">
+                                                    <div class="pull-left color-box bg-grey-600"></div>
+                                                    <div class="margin-left-35">
+                                                        <p class="font-size-14 grey-600 margin-0">空闲</p>
+                                                    </div>
+                                                </li>
+                                                <li class="inline-block margin-right-30">
+                                                    <div class="pull-left color-box bg-green-600"></div>
+                                                    <div class="margin-left-35">
+                                                        <p class="font-size-14 grey-600 margin-0">已入驻</p>
+                                                    </div>
+                                                </li>
+                                                <li class="inline-block margin-right-30">
+                                                    <div class="pull-left color-box bg-orange-600"></div>
+                                                    <div class="margin-left-35">
+                                                        <p class="font-size-14 grey-600 margin-0">已占用</p>
+                                                    </div>
+                                                </li>
+                                                <li class="inline-block margin-right-30">
+                                                    <div class="pull-left color-box bg-primary-600"></div>
+                                                    <div class="margin-left-35">
+                                                        <p class="font-size-14 grey-600 margin-0">自用</p>
+                                                    </div>
+                                                </li>
+                                                <li class="inline-block margin-right-30">
+                                                    <div class="pull-left color-box bg-brown-600"></div>
+                                                    <div class="margin-left-35">
+                                                        <p class="font-size-14 grey-600 margin-0">公用</p>
+                                                    </div>
+                                                </li>
+                                                <li class="inline-block margin-right-30 pull-right text-right">
+                                                    <div class="pull-left"><i class="icon iconfont icon-desk font-size-20"></i></div>
+                                                    <div class="margin-left-30">
+                                                        <p class="font-size-14 grey-600 margin-0">工位</p>
+                                                    </div>
+                                                </li>
+                                                <li class="inline-block margin-right-30 pull-right text-right">
+                                                    <div class="pull-left"><i class="icon iconfont icon-wodefangjian font-size-20"></i></div>
+                                                    <div class="margin-left-30">
+                                                        <p class="font-size-14 grey-600 margin-0">房间</p>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-12 padding-0 margin-top-10 colligation">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 bg-blue-grey-100 pull-right padding-left-15 padding-right-15 padding-top-40 padding-bottom-40 roomright">
+                                        <div class="example-wrap">
+                                            <div class="example">
+                                                <form class="form-horizontal">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <p>入驻客户：<span class="custom"></span></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <p>工位数: <span class="start"></span></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <p>面积: <span class="end"></span></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <p>单价: <span class="pay"></span></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="clearfix visible-sm-block"></div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix visible-sm-block"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

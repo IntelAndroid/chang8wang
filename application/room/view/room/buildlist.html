@@ -1,0 +1,371 @@
+{include file="index@public/header"}
+<!--上传图片插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/dropify/dropify.css">
+<script>
+    /**
+     * 上传图片
+     * files  file
+     */
+    function uploadFile(files, imageClass) {
+        var dom = files;
+        // 赋值的hidden input  id
+        var id = files.attr('data-id');
+        // 是否可以选择多图
+        var isMultyple = files.attr('data-isMultyple');
+        // 预览框
+        var previewBox = files.attr('data-previewBox');
+        // 最大上传图片数量
+        var limitNum = files.attr('data-limit');
+        // 上传类型限制
+        var dir = files.attr('data-dir');
+        // 右侧下载队列
+        var downClass = files.attr('data-down');
+        if (dir == "" || dir == undefined) {
+            dir = 'default';
+        }
+        var ext = files.attr('data-ext');
+        if (ext) {
+            var ext = ext.split(",");
+        } else {
+            ext = 'jpg,jpeg,png,gif';
+        }
+        var size = files.attr('data-size');
+        if (size == "" || size == undefined) {
+            size = 2;
+        }
+        if (isMultyple) {
+            if ($("#" + id).val() != '' && $("#" + id).val() != 0) {
+                var idArr = $("#" + id).val().split(",");
+            } else {
+                var idArr = new Array();
+            }
+            if (idArr.length >= limitNum) {
+                toastr.error("最多可以上传" + limitNum + "张图片");
+                return
+            }
+        }
+        if (imageClass) {
+            var imageBox = $("#" + imageClass).find('img');
+        }
+        var url = files.attr('data-url');
+        var files = files.get(0).files[0];
+        var obj = files;
+        data = new FormData();
+        data.append("file", obj);
+        data.append("dir", dir);
+        data.append("ext", ext);
+        data.append("size", size);
+        $.ajax({
+            data: data,
+            type: "POST",
+            url: url,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.code == 0) {
+                    toastr.error(res.msg);
+                    return
+                }
+                if (isMultyple) {
+                    toastr.success("文件上传成功");
+                    var example = '<dd id="fileBox_WU_FILE_'+res.id+'" class="diyUploadHover">' +
+                            '			<div class="viewThumb">					' +
+                            '    <input type="hidden">				' +
+                            '	    <div class="diyBar"> 		' +
+                            '					<div class="diyProgress">0%</div> 	' +
+                            '				    </div> 				' +
+                            '	    <p class="diyControl" data-field="'+id+'" onclick="removeCurImg($(this),'+res.id+')">' +
+                            '<span class="diyCancel" ><i></i></span>' +
+                            '</p>					<img src="__PUBLIC__'+res.path+'"></div> 				</dd>';
+                    $('.' + previewBox).append(example);
+                    if ($("#" + id).val() != '' && $("#" + id).val() != 0) {
+                        var idArr = $("#" + id).val().split(",");
+                    } else {
+                        var idArr = new Array();
+                    }
+
+                    idArr.push(res.id);
+                    idArr = idArr.join(",");
+                    $("#" + id).val(idArr);
+                } else {
+                    $("#" + id).val(res.id);
+                    if (imageClass) {
+                        imageBox.attr('src', res.path);
+                    } else {
+                        toastr.success("文件上传成功");
+                        // 加入下载队列
+                        var html = '<li role="presentation">\
+                        <a onclick="downFile" data-id="' + res.id + '" role="menuitem" >' + res.fileName + '</a>\
+                        </li>';
+                        $("." + downClass).html(html);
+                    }
+                }
+            }
+        }, 'JSON');
+    }
+    //楼座点击事件
+    function buildRoom(id){
+        session('buildId',id);
+        location.href="{:url('room/room/roominfo')}"
+    }
+
+    $(function(){
+        /*获取楼座列表*/
+        var url="{:url('room/room/getbuildlist')}";
+        cstmpost('',url,'',function(res){
+            assign(res['total'])
+            var html='';
+            for(var i=0;i<(res.data).length;i++){
+                html+=[' <li class="inline-block">',
+                    '    <a >'].join("");
+                if(res.data[i].savePath!=''){
+                    html+='<img class="img-responsive" src="__PUBLIC__/'+res.data[i].savePath+'" alt="..." width="300" > ';
+                }else{
+                    html+='<img class="img-responsive" src="__PUBLIC__/images/default-build.jpg" alt="..." width="300" >';
+                }
+                html+=[' <p style="cursor:pointer" class="text-center margin-top-10" onclick="buildRoom('+res.data[i].id+')">',
+                    '    <span class="block">'+res.data[i].name+'</span>',
+                    '    <span class="block">空闲办公室：'+res.data[i].freeroomNum+'间（共'+res.data[i].roomNum+'间）</span>',
+                    '    <span class="block">空闲工位：'+res.data[i].freecubicleNum+'个（共'+res.data[i].cubicleNum+'个）</span>',
+                    '    </p>',
+                    '</a>',
+                    '    <button  type="button" class="btn btn-default btn-sm" data-name="'+res.data[i].name+'" data-buildId="'+res.data[i].id+'" data-pic="'+res.data[i].pic+'" data-savePath="'+res.data[i].savePath+'" data-target="#editDiv"  data-toggle="modal" title="点击修改楼座" >&nbsp;编辑&nbsp;</button>',
+                    '    </li>'].join("");
+            }
+            $('.buildingbox').html(html);
+        })
+        /*新增楼座*/
+        $('#addSave').click(function(){
+            var data=serializeData('compileRoleForm');
+            var url="{:url('room/room/addBuild')}";
+            cstmpost('#addSave',url,data,function(res){
+                if(res.code==1){
+                    toastr.success(res.msg);
+                    setTimeout(function(){
+                        location.reload();
+                    },500)
+                }else{
+                    toastr.warning(res.msg)
+                }
+            })
+        })
+        /*编辑点击事件*/
+        $('.buildingbox').on('click','.btn-sm',function(){
+            var buildname=$(this).attr('data-name');
+            var buildId=$(this).attr('data-buildId');
+            var pic=$(this).attr('data-pic');
+            var savePath=$(this).attr('data-savePath');
+            $('#editname').val(buildname);
+            $('#buildId').val(buildId);
+            $('#picId').val(pic);
+            //如果图片不为空:初始化图片
+            if (pic!=0) {
+                var htmll = "<img src=__PUBLIC__" + savePath+ ">";
+            }else{
+                var htmll = "";
+            }
+            $('#input-file-now01').next().next().children('span').html(htmll);
+            $('#input-file-now01').next().next().css('display', 'block');
+        })
+        /*编辑楼座-保存*/
+        $('#editSave').click(function(){
+            var data=serializeData('editForm');
+            var url="{:url('room/room/addBuild')}";
+            cstmpost('#editSave',url,data,function(res){
+                if(res.code==1){
+                    toastr.success(res.msg);
+                    setTimeout(function(){
+                        location.reload();
+                    },500)
+                }else{
+                    toastr.warning(res.msg)
+                }
+            })
+        })
+    })
+
+</script>
+<div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-center">
+        <form class="modal-content " id="compileRoleForm">
+            <div class="modal-header">
+                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                	<i class="icon wb-close" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title">新增楼座</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal logs-settings">
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">楼座名称</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">楼座图片</label>
+                        <div class="col-xs-9">
+                            <input type="hidden" name="pic" id="pic">
+                            <input type="file" class="form-control" id="input-file-now" data-id="pic"
+                                   data-url="{:url('/etprs/Etprs/ajaxUploads')}"
+                                   onchange="uploadFile($(this))" data-size="2"
+                                   data-dir="buildpic" data-plugin="dropify"
+                                   data-default-file="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">上传要求</label>
+                        <div class="col-xs-9">
+                             <p>最多可上传1张图片,图片类型jpg\png\gif\bmp, 单个文件不超过8M,图片大小960*540px</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-actions pull-right margin-left-15">
+                    <a class="btn btn-default" data-dismiss="modal">取消</a>
+                </div>
+                <div class="btn-actions pull-right margin-left-15">
+                    <button class="btn btn-primary" type="submit" id="addSave">保存</button>
+                    <!--<span class="badge up badge-primary">1</span>-->
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="modal" id="editDiv" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-center">
+        <form class="modal-content " id="editForm">
+            <div class="modal-header">
+                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                    <i class="icon wb-close" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title">编辑楼座</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal logs-settings">
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">楼座名称</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" name="name" id="editname">
+                            <input type="hidden" class="form-control" name="id" id="buildId">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">楼座图片</label>
+                        <div class="col-xs-9">
+                            <input type="hidden" name="pic" id="picId">
+                            <input type="file" class="form-control" id="input-file-now01" data-id="picId"
+                                   data-url="{:url('/etprs/Etprs/ajaxUploads')}"
+                                   onchange="uploadFile($(this))" data-size="2"
+                                   data-dir="buildpic" data-plugin="dropify"
+                                   data-default-file="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">上传要求</label>
+                        <div class="col-xs-9">
+                            <p>最多可上传1张图片,图片类型jpg\png\gif\bmp, 单个文件不超过8M,图片大小960*540px</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-actions pull-right margin-left-15">
+                    <a class="btn btn-default" data-dismiss="modal">取消</a>
+                </div>
+                <div class="btn-actions pull-right margin-left-15">
+                    <button class="btn btn-primary" type="submit" id="editSave">保存</button>
+                    <!--<span class="badge up badge-primary">1</span>-->
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+        	<div class="page-header">
+                <h1 class="page-title">房间管理</h1>
+            </div>
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                        	<div class="panel-body">
+                                <ul class="list-unstyled margin-bottom-0" style="border-bottom:1px solid #e4eaec;">
+		                        	<li class="inline-block margin-right-30">
+		                                <div class="pull-left color-box bg-grey-600"></div>
+		                                <div class="margin-left-30">
+		                                    <p class="font-size-14 grey-600 text-center">楼座数量</p>
+		                                    <p class="font-size-18 text-primary text-center" id="buildNum"></p>
+		                                </div>
+		                            </li>
+		                            <li class="inline-block margin-right-30">
+		                                <div class="pull-left color-box bg-green-600"></div>
+		                                <div class="margin-left-30">
+		                                    <p class="font-size-14 grey-600 text-center">总面积</p>
+		                                    <p class="font-size-18 text-primary text-center" id="totalarea"></p>
+		                                </div>
+		                            </li>
+		                            <li class="inline-block margin-right-30">
+		                                <div class="pull-left color-box bg-orange-600"></div>
+		                                <div class="margin-left-30">
+		                                    <p class="font-size-14 grey-600 text-center">空闲面积</p>
+		                                    <p class="font-size-18 text-primary text-center" id="freearea"></p>
+		                                </div>
+		                            </li>
+		                            <li class="inline-block margin-right-30">
+		                                <div class="pull-left color-box bg-primary-600"></div>
+		                                <div class="margin-left-30">
+		                                    <p class="font-size-14 grey-600 text-center">空闲率</p>
+		                                    <p class="font-size-18 text-primary text-center" id="freeRate"></p>
+		                                </div>
+		                            </li>
+		                            <div class="btn-actions pull-right margin-top-20 margin-left-15">
+			                        	<button type="button" class="btn btn-outline btn-success add-row"  data-target="#logsForm" data-toggle="modal" aria-hidden="true" role="button">&nbsp;&nbsp;<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;新增楼座&nbsp;&nbsp;</button>
+	                            	</div>
+		                        </ul> 
+		                        
+		                        <div class="example-wrap">
+                                    <div class="example">
+                                    	<style>
+                                    		.buildingbox li{position:relative;}
+                                    		.buildingbox li button{position:absolute;top:0;right:0;}
+                                    		.buildingbox li a:hover{text-decoration: none;}
+                                    	</style>
+                                    	<ul class="buildingbox">
+
+                                        </ul>
+                                    </div>
+                                </div>
+		                        
+		                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{include file="index@public/footer"}
+
+
+<!--上传图片插件-->
+<script src="__VD__/blueimp-tmpl/tmpl.min.js"></script>
+<script src="__VD__/blueimp-canvas-to-blob/canvas-to-blob.min.js"></script>
+<script src="__VD__/blueimp-load-image/load-image.all.min.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload-process.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload-image.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload-audio.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload-video.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload-validate.js"></script>
+<script src="__VD__/blueimp-file-upload/jquery.fileupload-ui.js"></script>
+<script src="__VD__/dropify/dropify.min.js"></script>
+<script src="__JS__/examples/forms/dropify.js"></script>

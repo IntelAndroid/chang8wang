@@ -1,0 +1,102 @@
+{include file="wechat@public/header"}
+<!--阿里图库-->
+<link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/demo.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/iconfont/iconfont.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/lib/weui.min.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/css/jquery-weui.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/css/demos.css">
+<link rel="stylesheet" href="__PUBLIC__/wechat/css/public.css">
+    <!--me  -->
+	    <link href="__PUBLIC__/plugins/toastr/toastr.css" rel="stylesheet" type="text/css">
+	    <script src="__PUBLIC__/plugins/toastr/toastr.js"></script>
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+	.weui-cell__bd img{width:36px;height:36px;border-radius:18px;float:right;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+	.weui-row .weui-col-50{background:#3296fa;}
+	.weui-row .weui-col-50.active{background:#32adf9;}
+</style>
+</head>
+<body ontouchstart>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">个人中心</div>
+			</div>
+			<div class="weui-cells weui-cells_form first-header">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">头像</label></div>
+			        <div class="weui-cell__bd">
+			          	<img src="__PUBLIC__/{if empty($data.savePath)}images/head.png
+											 {else}$data.savePath
+											 {/if}" 
+							 alt="" style="width:36px;height:36px">  
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">联系人</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" name="contact" value="{$data.contact}" readonly="readonly" /><!--placeholder="新智能"-->
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">联系方式</label></div>
+			        <div class="weui-cell__bd">
+			          <input class="weui-input" id='show-warning' type="tel" name="mobile" value="{$data.mobile}" readonly="readonly"/>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">公司名称</label></div>
+			        <div class="weui-cell__bd">
+			          <input class="weui-input" type="tel" name="etprsName" value="{$data.etprsName}" readonly="readonly"/>
+			        </div>
+			    </div>
+		    </div>
+		    <div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="{:url('/wechat/user/suserinfo')}" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;">编辑</a>
+				    </div>
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="{:url('/wechat/user/password')}" style="font-size:16px;background:#f39b0f;">修改密码</a>
+				    </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+	<div class="weui-tabbar">
+		<a href="" class="weui-tabbar__item weui-bar__item--on">
+			<!--<span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>-->
+			<div class="weui-tabbar__icon">
+				<i class="icon iconfont icon-yewu"></i>
+			</div>
+			<p class="weui-tabbar__label">业务</p>
+		</a>
+		<a href="" class="weui-tabbar__item">
+			<div class="weui-tabbar__icon">
+				<i class="icon iconfont icon-shujubaobiao"></i>
+			</div>
+			<p class="weui-tabbar__label">数据</p>
+		</a>
+		<a href="" class="weui-tabbar__item">
+			<div class="weui-tabbar__icon">
+				<i class="icon iconfont icon-account"></i>
+			</div>
+			<p class="weui-tabbar__label">我的</p>
+		</a>
+	</div>
+</div>
+{include file="wechat@public/bottom"}
+{include file="wechat@public/footer"}
+<script>
+	$('.fo-bottom').addClass('weui-bar__item--on');
+	$('.fo-bottom').siblings().removeClass('weui-bar__item--on');
+</script>

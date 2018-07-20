@@ -1,0 +1,299 @@
+{include file="index@public:header"}
+
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<script>
+	$(document).ready(function(){
+		// 下一步,保存企业信息
+		$("#addEtprs").on("click", function () {
+			var url = "{:url('/Etprs/Etprs/saveEtprsInfo')}";
+			var data = serializeData("etprsForm");
+			cstmpost("#addEtprs", url, data, function (data) {
+				if (data["code"] == '1') {
+					toastr.success(data["msg"]);
+					setTimeout(function () {
+						location.href = data["url"];
+					}, 500);
+				} else {
+					toastr.error(data["msg"]);
+				}
+			});
+		});
+		var url = "{:url('/etprs/Etprs/uploadFile')}";
+		var oFileInput = new FileInput();
+		var heaaderText = $("#huserheader").attr('data-path');
+		if (heaaderText == "" || heaaderText == undefined || heaaderText == null) {
+			oFileInput.Init("userheader", url, [], "huserheader", "buslicpreview");
+		} else {
+			oFileInput.Init("userheader", url, ["<img src='__PUBLIC__/" + heaaderText + "' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"], "huserheader", "buslicpreview2");
+		}
+
+		var heaaderText2 = $("#huserheader2").attr('data-path');
+		if (heaaderText2 == "" || heaaderText2 == undefined || heaaderText2 == null) {
+			oFileInput.Init("userheader2", url, [], "huserheader2", "buslicpreview2");
+		} else {
+			oFileInput.Init("userheader2", url, ["<img src='__PUBLIC__/" + heaaderText2 + "' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"], "huserheader2", "buslicpreview2");
+		}
+	});
+	function FileInput() {
+		var oFile = new Object();
+		//初始化fileinput控件（第一次初始化）
+		oFile.Init = function (ctrlName, url, initImg, hidefield, previewBox) {
+			//alert(JSON.stringify(initImg));
+			var control = $('#' + ctrlName);
+			//初始化上传控件的样式
+			control.fileinput({
+				//showPreview:true,
+				language: 'zh', //设置语言
+				uploadUrl: url + "?cate=" + ctrlName, //上传的地址..
+				allowedFileExtensions: ['jpg', 'jpeg', 'gif', 'png'],//接收的文件后缀
+				showPreview: false,
+				xhr_process: false,
+				showUpload: false, //是否显示上传按钮
+				showCaption: true,//是否显示标题
+				browseClass: "btn btn-primary btn-inline", //按钮样式
+				dropZoneEnabled: false,//是否显示拖拽区域
+				//initialPreview: initImg,
+				maxFileSize: 3100,//单位为kb，如果为0表示不限制文件大小
+
+				maxFileCount: 0, //表示允许同时上传的最大文件个数
+				enctype: 'multipart/form-data',
+				validateInitialCount: false,
+				previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+				msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+			}).on("filebatchselected", function (event, files) {
+				$(this).fileinput("upload");
+			}).on("filecleared", function (event, files) {
+				if (hidefield != "") {
+					$("#" + hidefield).val('');
+				}
+				$("." + previewBox).html('');
+			});
+
+			//导入文件上传完成之后的事件
+			$("#" + ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+				if (hidefield != "") {
+					$("#" + hidefield).val(data["response"]["data"]);
+				}
+				var url2 = "/etprs/Etprs/getFileName/id/" + data["response"]["data"];
+				$.get(url2, function (res) {
+					var html = '<li role="presentation"><a target="_blank" href="/etprs/Etprs/download/id/' + data["response"]["data"] + '">' + res.fileName + '</a></li>';
+					$("." + previewBox).prepend(html);
+				}, 'JSON')
+				toastr.success("上传成功");
+			});
+		}
+		return oFile;
+	}
+
+</script>
+
+</head>
+
+<body>
+	<main class="site-page">
+		<div class="page-container" id="admui-pageContent">
+			<div class="page animation-fade page-forms">
+				<div class="page-header">
+					<h1 class="page-title">首页</h1>
+				</div>
+				<div class="page-content">
+					<style>
+						.customerkind {
+							width: 20%;
+							overflow: hidden;
+						}
+
+						.customerkind .panel a {
+							text-decoration: none;
+						}
+
+						.customerkind .panel-body {
+							padding: 15px;
+							text-align: center;
+						}
+
+						.customerkind .panel-body p {
+							margin-bottom: 15px;
+							color: #FFF;
+							font-size: 16px;
+							font-weight: bold;
+						}
+
+						.customerkind .panel-body .label-content i {
+							font-size: 40px;
+							color: #FFF;
+						}
+					</style>
+					<div class="panel">
+						<div class="panel-body">
+							<div class="col-md-12 padding-0">
+								<div class="col-md-2 customerkind"></div>
+								<div class="col-md-2 customerkind">
+									<div class="panel" style="background: #f49c45;margin-bottom:0;">
+										<a href="look-line.html">
+											<div class="panel-body">
+												<p>通知公告（<span class='number'></span>）</p>
+												<div class="label-content">
+													<i class="icon iconfont icon-remind"></i>
+												</div>
+											</div>
+										</a>
+									</div>
+								</div>
+								<div class="col-md-2 customerkind">
+									<div class="panel" style="background: #4cb556;margin-bottom:0;">
+										<a href="{:url('iqbt/Iqbt/myenterinfo')}">
+											<div class="panel-body">
+												<p>企业信息维护</p>
+												<div class="label-content">
+													<i class="icon iconfont icon-survey"></i>
+												</div>
+											</div>
+										</a>
+									</div>
+								</div>
+								<div class="col-md-2 customerkind">
+									<div class="panel" style="background: #e85656;margin-bottom:0;">
+										<a href="data.html">
+											<div class="panel-body">
+												<p>数据统计</p>
+												<div class="label-content">
+													<i class="icon iconfont icon-shujubaobiao"></i>
+												</div>
+											</div>
+										</a>
+									</div>
+								</div>
+								<div class="col-md-2 customerkind"></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel">
+						<div class="panel-body container-fluid padding-top-0">
+							<div class="row row-lg">
+								<div class="col-md-12">
+									<div class="example-wrap">
+										<div class="example example-buttons">
+											<h4 class="padding-bottom-10 btborder">入驻信息</h4>
+										</div>
+										<div class="example">
+											<form class="form-horizontal">
+												<div class="form-group col-md-12 padding-0">
+													<!--警告：has-warning 成功：has-success 出错：has-error-->
+													<label class="col-sm-2 control-label">空间名称：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id='name'>未获取数据</label>
+													</div>
+													<label class="col-sm-2 control-label">房间信息：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id='roomInfo'>未获取数据</label>
+													</div>
+												</div>
+												<div class="form-group col-md-12 padding-0">
+													<label class="col-sm-2 control-label">联系人：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id="man">未获取数据</label>
+													</div>
+													<label class="col-sm-2 control-label">联系方式：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id="telephone">未获取数据</label>
+													</div>
+												</div>
+												<div class="form-group col-md-12 padding-0">
+													<label class="col-sm-2 control-label">合同编号：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id="number">未获取数据</label>
+													</div>
+													<label class="col-sm-2 control-label">合同：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id="contract">未获取数据</label>
+													</div>
+												</div>
+												<div class="form-group col-md-12 padding-0">
+													<label class="col-sm-2 control-label">合同开始日期：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id="starttime">未获取数据</label>
+													</div>
+													<label class="col-sm-2 control-label">合同结束日期：</label>
+													<div class="col-sm-4">
+														<label class="control-label" id="endtime">未获取数据</label>
+													</div>
+												</div>
+												<div class="clearfix visible-sm-block"></div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer class="site-footer">
+		<div class="site-footer-legal">创8网 &copy;
+			<a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+		</div>
+		<div class="site-footer-right">
+			当前版本：v1.3.0
+			<a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+				<i class="icon fa-cloud-upload"></i>
+			</a>
+		</div>
+	</footer>
+
+	<!-- 插件 -->
+	<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+	<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+	<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+	<!--选择时间插件-->
+	<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+	<!-- 消息通知 -->
+	<script src="__PUBLIC__/js/notify-msg.js"></script>
+	<script src='__PUBLIC__/themes/theme.js'></script>
+
+</body>
+<script src="__PUBLIC__/vendor/formatter-js/jquery.formatter.min.js"></script>
+<script>
+	let url = "{:url('iqbt/iqbt/getMyIqbt')}"
+	cstmpost('', url, '', function (res) {
+		if (res.rows) {
+			let roomInfo = '';
+			$.each(res.rows[0].roomInfo, function (i) {
+				if (roomInfo == '') {
+					roomInfo = roomInfo + res.rows[0].roomInfo[i]
+				} else {
+					roomInfo = roomInfo + ';' + res.rows[0].roomInfo[i]
+				}
+			})
+			$('#name').html(res.rows[0].name)
+			$('#roomInfo').html(roomInfo)
+			$('#man').html(res.rows[0].contact)
+			$('#telephone').html(res.rows[0].mobile)
+			$('#number').html(res.rows[0].pactNo)
+			$('#contract').html(res.rows[0].fileName)
+			$('#starttime').html(res.rows[0].starttime)
+			$('#endtime').html(res.rows[0].endtime)
+		} else {
+			toastr.error(res.msg)
+		}
+
+	})
+	// 公告未读条数
+	let infor = "{:url('user/notice/getUnreadNum')}";
+	cstmpost('', infor, '', function (res) {
+		$('.number').html(res)
+	})
+</script>
+
+</html>

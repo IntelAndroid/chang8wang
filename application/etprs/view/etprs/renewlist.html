@@ -1,0 +1,230 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/themes/fileinput/css/fileinput.min.css">
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<script>
+    $(document).ready(function(){
+        var url = "{:url('/Etprs/Etprs/renew')}";
+        var data = {};
+        data.etprsId = session('renewEtprsId');
+        cstmpost("#",url,data, function (res) {
+            if(res["code"]=='1'){
+                assign(res)
+            }else{
+                toastr.error(res["msg"]);
+            }
+        });
+        var upurl="{:url('/etprs/Etprs/ajaxUploads')}";
+        var oFileInput = new FileInput();
+        oFileInput.Init("pactFile",upurl,[],"pact","pactPreview");
+        $("#confirmRenew").on("click", function () {
+            var url="{:url('/Etprs/Etprs/saveRenew')}";
+            var jumpurl="{:url('/etprs/Etprs/etprsList')}";
+            var data=serializeData("renewForm");
+            cstmpost("#confirmRenew",url,data, function (res) {
+                if(res["code"]=='1'){
+                    toastr.success(res["msg"]);
+                    setTimeout(function(){
+                        location.href=jumpurl;
+                    },500);
+                }else{
+                    toastr.error(res["msg"]);
+                }
+            });
+        });
+    });
+    // 楼层获取  id   默认值
+    function initBuild(domID,bdefault,floor)
+    {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if($("."+domID).attr('class') != 'control-label') {
+            bdefault = bdefault ? bdefault : '';
+            var ophtml = '';
+            $.get(url, function (res) {
+                ophtml = res
+                $("." + domID).html(res);
+            });
+            if (domID == 'rqst_floor') {
+                $.get(url, {bd: bdefault}, function (res) {
+                    ophtml = res
+                    $("." + domID).html(res);
+                });
+
+            }
+        }
+    }
+    function downFile(id){
+        var url="{:url('/etprs/Etprs/download/id/"+id+"')}";
+        window.open(url,"_blank");
+    }
+</script>
+<body>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">续约</h1>
+            </div>
+            <div class="page-content">
+                <div class="panel">
+                    <div class="panel-body container-fluid padding-top-0">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                    <div class="example example-buttons">
+                                        <h4 class="padding-bottom-10 btborder">基本信息</h4>
+                                    </div>
+                                    <div class="example">
+                                        <form class="form-horizontal">
+                                            <div class="form-group col-md-12 padding-0">
+                                                <label class="col-sm-2 control-label"><span class="required">*</span> 客户名称：</label>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label" id="name"></label>
+                                                </div>
+                                                <label class="col-sm-2 control-label"><span class="required">*</span> 客户类型：</label>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label" id="typeName"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-12 padding-0">
+                                                <label class="col-sm-2 control-label"><span class="required">*</span> 联系人：</label>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label" id="contact"></label>
+                                                </div>
+                                                <label class="col-sm-2 control-label"><span class="required">*</span> 联系电话：</label>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label" id="mobile"></label>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-body container-fluid padding-top-0">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                    <div class="example example-buttons">
+                                        <h4 class="padding-bottom-10 btborder">房间信息</h4>
+                                    </div>
+                                    <div class="example">
+                                        <form class="form-horizontal">
+                                            <div class="form-group col-md-12 padding-0">
+                                                <label class="col-sm-2 control-label">合同开始时间：</label>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label" id="pact_start"></label>
+                                                </div>
+                                                <label class="col-sm-2 control-label">合同结束时间：</label>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label" id="pact_end"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-12 padding-0">
+                                                <label class="col-sm-2 control-label">已分配房间：</label>
+                                                <div class="col-sm-4" id="roomListArr">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-body container-fluid padding-top-0">
+                        <div class="row row-lg">
+                            <div class="col-md-12">
+                                <div class="example-wrap">
+                                    <div class="example example-buttons">
+                                        <h4 class="padding-bottom-10 btborder">续约信息</h4>
+                                    </div>
+                                    <div class="example">
+                                        <form class="form-horizontal" id="renewForm">
+                                            <input type="hidden" id="id" name="etprsId">
+                                            <div class="form-group col-md-12">
+                                                <div class="col-md-12 padding-0 margin-0">
+                                                    <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 续约房间：</label>
+                                                    <div class="col-sm-4 padding-bottom-20" id="roomIdNames">
+                                                        <!--<div class="checkbox-custom checkbox-primary checkbox-inline">
+                                                            <input type="checkbox" id="inputUnchecked" checked>
+                                                            <label for="inputUnchecked">101</label>
+                                                        </div>
+                                                        <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                                            <input type="checkbox" id="inputChecked">
+                                                            <label for="inputChecked">4A</label>
+                                                        </div>-->
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 合同开始时间：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group">
+					                                    <span class="input-group-addon">
+					                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+					                                    </span>
+                                                        <input type="text" class="form-control" id="pact_next" readonly name="pact_start" data-plugin="datepickerbak" data-language="zh-CN">
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 合同结束时间：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="input-group">
+					                                    <span class="input-group-addon">
+					                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+					                                    </span>
+                                                        <input type="text" class="form-control" name="pact_end" data-plugin="datepicker" data-language="zh-CN">
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同编号：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="pactNo" placeholder="合同编号" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">合同上传：</label>
+
+                                                <div class="col-sm-4 padding-bottom-10">
+                                                    <div class="input-group input-group-file">
+                                                        <span class="input-group-btn width-full">
+                                                            <input type="file" class="form-control" id="pactFile" value="" data-ext="jpg,jpeg,png,doc,docx,pdf" data-size="5">
+                                                            <input type="hidden" data-placeholder="合同上传"  name="pact" id="pact" class="opt-require" value=''>
+                                                        </span>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="-1">
+                                                                <i class="icon wb-download" aria-hidden="true"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu pactPreview" aria-labelledby="exampleColorDropdown1" role="menu">
+
+                                                            </ul>
+                                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" data-trigger="click" data-original-title="支持格式：'jpg,jpeg,png,doc,docx,pdf';<br/>文件大小：不能超过2M" title="">
+                                                                ？
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix visible-sm-block"></div>
+                                            </div>
+                                            <div class="clearfix visible-sm-block"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-actions text-center">
+                    <button type="button" class="btn btn-primary margin-3" id="confirmRenew">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-danger margin-3" onClick="javascript :history.back(-1);">&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;取消&nbsp;&nbsp;</button>
+                    <!--<button type="button" class="btn btn-warning margin-3" id="saveChlidMenu">&nbsp;&nbsp;<i class="fa fa-reply-all" aria-hidden="true"></i>&nbsp;返回&nbsp;&nbsp;</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

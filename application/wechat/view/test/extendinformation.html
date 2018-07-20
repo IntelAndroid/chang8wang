@@ -1,0 +1,266 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+	.weui-input{text-align:right;}
+	.weui-label{width:150px;}
+	.weui-select{direction: rtl;color:#878787;}
+
+
+</style>
+</head>
+<body ontouchstart>
+<script>
+	$(function(){
+		// 当页面存在初始数据   编辑入驻客户信息时候
+		var id = session("etprsId");
+		var url = "{:url('/Etprs/Etprs/getEtprsInfo')}";
+		var data = {};
+		data.etprsId = id;
+		cstmpost("#", url, data, function (res) {
+			console.log(res);
+			if (res.code == 0) {
+				// 扩展信息不存在
+				$("#etprsName").val(res.etprsName);
+				$("#etprsId").val(res.etprsId);
+				$("#addtime").val(res.addtime);
+				$("#legalname").val(res.legalname);
+			}
+			assign(res);
+			var databak = {};
+			databak.code = 0;
+			var response = {};
+			response.bp = res.bp;
+			response.buslic = res.buslic;
+			databak.data = response;
+			assign(databak)
+		});
+		// 下一步,保存企业信息
+		$("#addEtprs").on("click", function () {
+			var url = "{:url('/Etprs/Etprs/saveEtprsExtra')}";
+			var data = serializeData("etprsForm");
+			data.etprsId = id;
+			cstmpost("#addEtprs", url, data, function (res) {
+				var jumpurl = "{:url('/Etprs/Etprs/detail')}";
+				if (res["code"] == '1') {
+					$.toptip(res["msg"],'success');
+					setTimeout(function () {
+						//location.href=jumpurl;
+						window.history.go(-1);
+					}, 500);
+				} else {
+					$.toptip(res["msg"],'warning');
+				}
+			});
+		});
+	})
+
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">详细信息</div>
+			</div>
+		    <div class="choosebox first-header">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-50">
+				      	<a href="in-information.html">入驻信息</a> 
+				    </div>
+				    <div class="weui-col-50 active">
+				      	<a href="extendinformation.html">扩展信息</a>
+				    </div>
+			    </div>
+		    </div>
+			<form action="" id="etprsForm">
+			<div class="weui-cells weui-cells_form" style="margin-top:0;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">企业名称</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="etprsName" name="name"><!--placeholder="新智能"-->
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+			            <label for="" class="weui-label">行业类型</label>
+			        </div>
+			        <div class="weui-cell__bd">
+				        <select class="weui-select" id="industry" name="industry">
+				        </select>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label for="" class="weui-label">注册时间</label></div>
+			        <div class="weui-cell__bd" style="direction: rtl;">
+			          	<input class="weui-input" type="text" id="addtime" readonly >
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label for="" class="weui-label">注册资本（万元）</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="rgstment" name="rgstment">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label for="" class="weui-label">场地面积（㎡）</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="iqbtarea" name="iqbtarea">
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+			            <label for="" class="weui-label">是否注册在此</label>
+			        </div>
+			        <div class="weui-cell__bd"  >
+				        <select class="weui-select">
+				            <option value="7002001">是</option>
+				            <option value="7002002">否</option>
+				        </select>
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+			            <label for="" class="weui-label">是否已迁徙</label>
+			        </div>
+			        <div class="weui-cell__bd">
+				        <select class="weui-select">
+				            <option value="7002001">是</option>
+				            <option value="7002002">否</option>
+				        </select>
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+			            <label for="" class="weui-label">是否高新企业</label>
+			        </div>
+			        <div class="weui-cell__bd">
+				        <select class="weui-select">
+				            <option value="7002001">是</option>
+				            <option value="7002002">否</option>
+				        </select>
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+						<label for="" class="weui-label">企业状态</label>
+					</div>
+			        <div class="weui-cell__bd">
+						<select class="weui-select" id="etprsStatus" name="etprsStatus">
+						</select>
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+			            <label for="" class="weui-label">是否毕业</label>
+			        </div>
+			        <div class="weui-cell__bd">
+				        <select class="weui-select">
+				            <option value="7002001">是</option>
+				            <option value="7002002">否</option>
+				        </select>
+			        </div>
+			    </div>
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd">
+			            <label for="" class="weui-label">毕业时是否被并购</label>
+			        </div>
+			        <div class="weui-cell__bd">
+				        <select class="weui-select">
+				            <option value="7002001">是</option>
+				            <option value="7002002">否</option>
+				        </select>
+			        </div>
+			    </div>
+		    </div>
+		    <div class="weui-cells weui-cells_form" style="margin-top:10px;">
+			    <div class="weui-cell weui-cell_select weui-cell_select-after">
+			        <div class="weui-cell__hd"><label class="weui-label">融资轮次</label></div>
+			        <div class="weui-cell__bd">
+						<select class="weui-select" id="roFinace" name="roFinace">
+
+						</select>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">当前估值（万元）</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" value="1000">
+			        </div>
+			    </div>
+		    </div>
+		    <div class="weui-cells weui-cells_form" style="margin-top:10px;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">总收入（万元）</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="income" name="income">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">净利润（万元）</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text"   id="profit" name="profit">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">税收（万元）</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text"  id="tax" name="tax">
+			        </div>
+			    </div>
+		    </div>
+		    <div class="weui-cells weui-cells_form" style="margin-top:10px;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">从业人员人数</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="total" name="total">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">大专及以上学历人数</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="junior" name="junior">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">博士学历人数</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="doctor" name="doctor">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">海归人员人数</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="overseas" name="overseas">
+			        </div>
+			    </div>
+		    </div>
+		    <div class="weui-cells weui-cells_form" style="margin-top:10px;">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">已申请知识产权数量</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="iprapl" name="iprapl">
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">软件著作权数量</label></div>
+			        <div class="weui-cell__bd">
+			          	<input class="weui-input" type="text" id="soft" name="soft">
+			        </div>
+			    </div>
+		    </div>
+			</form>
+		    <div class="choosebox last-footer" style="background:none;margin-top:20px;">
+		        <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-100" style="background:none;">
+				      	<a class="weui-btn" href="javascript:" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;" id="addEtprs">保存</a>
+				    </div>
+			    </div>
+		    </div>
+		</div>
+	</div>
+{include file="wechat@public/footer"}

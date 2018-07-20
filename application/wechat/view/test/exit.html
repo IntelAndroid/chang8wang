@@ -1,0 +1,216 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;text-align:right;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+	.weui-row .weui-col-50{text-align:left;}
+	.weui-row .weui-col-33{text-align:left;}
+	/*单选框*/
+	.weui-cells_checkbox{margin-top:0;text-align:right;}
+	.weui-cells_checkbox .weui-check__label{display:inline-block;padding-right:0;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__hd{display:inline-block;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__bd{display:inline-block;}
+	.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#0193e8;}
+	.weui-cells:after{border-bottom:none;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+
+	$(document).ready(function(){
+		// 当页面存在初始数据   编辑入驻客户信息时候
+		var url = "{:url('/Etprs/Etprs/quit')}";
+		var data = {};
+		data.id = session("quitEtprsId");
+		$("#etprsId").val(session("quitEtprsId"));
+		cstmpost("#",url,data, function (res) {
+			if(res["code"]=='1'){
+				delete res.data.rqst_build;
+				assign(res)
+			}else{
+				alert(res["msg"]);
+			}
+		});
+		// 企业毕业
+		$("#quitEtprs").on("click", function () {
+			var url="{:url('/Etprs/Etprs/saveQuit')}";
+			var data=serializeData("quitForm");
+			cstmpost("#quitEtprs",url,data, function (res) {
+				var jumpurl="{:url('/wechat/test/entermanage')}";
+				if(res["code"]=='1'){
+					alert(res["msg"]);
+					setTimeout(function(){
+						location.href=jumpurl;
+					},500);
+				}else{
+					toastr.error(res["msg"]);
+				}
+			});
+		});
+	});
+</script>
+<div class="weui-tab">
+	<div class="weui-tab__bd">
+		<div class="weui-tab__bd-item weui-tab__bd-item--active">	
+			<div class="navbox">
+				<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+				<div class="center">退租</div>
+			</div>
+			<div class="weui-cells weui-cells_form first-header">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">入驻客户</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="name">  </p>
+
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">客户类型</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="typeName"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">联系人</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="contact"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">联系电话</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="mobile"></p>
+			        </div>
+			    </div>
+			</div>
+			<div class="weui-cells weui-cells_form">
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">合同开始时间</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="pact_start"></p>
+			        </div>
+			    </div>
+			    <div class="weui-cell">
+			        <div class="weui-cell__hd"><label class="weui-label">合同结束时间</label></div>
+			        <div class="weui-cell__bd">
+			          	<p id="pact_end"></p>
+			        </div>
+			    </div>
+			</div>
+			<div class="weui-cells__title">已分配房间</div>
+			<div class="weui-cells weui-cells_form">
+			    <div class="weui-cell">
+			        <div class="weui-cell__bd">
+			        	<div class="weui-row weui-no-gutter" id="roomList">
+			    			<!--<div class="weui-col-33"><span>D座-2001</span></div>-->
+			    			<!--<div class="weui-col-33"><span>D座-2002</span></div>-->
+			    			<!--<div class="weui-col-33"><span>D座-2003</span></div>-->
+			    		</div>
+			        </div>
+			    </div>
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__bd">-->
+			        	<!--<div class="weui-row weui-no-gutter">-->
+			    			<!--<div class="weui-col-33"><span>D座-2001</span></div>-->
+			    		<!--</div>	-->
+			        <!--</div>-->
+			    <!--</div>-->
+				<form class="form-horizontal" id="quitForm">
+					<input type="hidden" name="etprsId" id="etprsId" value="">
+					<input type="hidden" name="roomIds" id="roomIds">
+				</form>
+			</div>
+			<!--<div class="weui-cells__title">退租房间</div>-->
+			<!--<div class="weui-cells weui-cells_form">-->
+			    <!--<div class="weui-cell" style="padding:0;">-->
+			        <!--<div class="weui-cell__bd">-->
+			            <!--<div class="weui-cells weui-cells_checkbox">-->
+			            	<!--<div class="weui-row weui-no-gutter">-->
+			            		<!--<div class="weui-col-50">-->
+									<!--<label class="weui-cell weui-check__label" for="s7">-->
+									    <!--<div class="weui-cell__hd">-->
+									        <!--<input type="checkbox" name="checkbox1" class="weui-check" id="s7" checked="checked">-->
+									        <!--<i class="weui-icon-checked"></i>-->
+									    <!--</div>-->
+									    <!--<div class="weui-cell__bd">-->
+									        <!--<p>D座-2001</p>-->
+									    <!--</div>-->
+									<!--</label>-->
+								<!--</div>-->
+								<!--<div class="weui-col-50">-->
+									<!--<label class="weui-cell weui-check__label" for="s8">-->
+									    <!--<div class="weui-cell__hd">-->
+									        <!--<input type="checkbox" name="checkbox1" class="weui-check" id="s8">-->
+									        <!--<i class="weui-icon-checked"></i>-->
+									    <!--</div>-->
+									    <!--<div class="weui-cell__bd">-->
+									        <!--<p>D座-2002</p>-->
+									    <!--</div>-->
+									<!--</label>-->
+								<!--</div>-->
+				    			<!--<div class="weui-col-50">-->
+									<!--<label class="weui-cell weui-check__label" for="s9">-->
+									    <!--<div class="weui-cell__hd">-->
+									        <!--<input type="checkbox" name="checkbox1" class="weui-check" id="s9">-->
+									        <!--<i class="weui-icon-checked"></i>-->
+									    <!--</div>-->
+									    <!--<div class="weui-cell__bd">-->
+									        <!--<p>D座-2001</p>-->
+									    <!--</div>-->
+									<!--</label>-->
+								<!--</div>-->
+								<!--<div class="weui-col-50">-->
+									<!--<label class="weui-cell weui-check__label" for="s10">-->
+									    <!--<div class="weui-cell__hd">-->
+									        <!--<input type="checkbox" name="checkbox1" class="weui-check" id="s10">-->
+									        <!--<i class="weui-icon-checked"></i>-->
+									    <!--</div>-->
+									    <!--<div class="weui-cell__bd">-->
+									        <!--<p>D座-2002</p>-->
+									    <!--</div>-->
+									<!--</label>-->
+								<!--</div>-->
+							<!--</div>		-->
+						<!--</div>-->
+			        <!--</div>-->
+			    <!--</div>-->
+			<!--</div>-->
+			<!--<div class="weui-cells weui-cells_form">-->
+				<!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__hd"><label for="" class="weui-label">合同开始时间</label></div>-->
+			        <!--<div class="weui-cell__bd" style="direction: rtl;">-->
+			          	<!--<input class="weui-input" type="date" value="2018-03-23" disabled="disabled">-->
+			        <!--</div>-->
+			    <!--</div>-->
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__hd"><label for="" class="weui-label">合同结束时间</label></div>-->
+			        <!--<div class="weui-cell__bd" style="direction: rtl;">-->
+			          	<!--<input class="weui-input" type="date" value="请选择时间">-->
+			        <!--</div>-->
+			    <!--</div>-->
+			    <!--<div class="weui-cell">-->
+			        <!--<div class="weui-cell__hd"><label class="weui-label">合同编号</label></div>-->
+			        <!--<div class="weui-cell__bd">-->
+			          	<!--<input class="weui-input" type="text" value="000000000">-->
+			        <!--</div>-->
+			    <!--</div>-->
+			<!--</div>-->
+			<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+			    <div class="weui-row weui-no-gutter">
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="javascript:history.back(-1)" style="font-size:16px;background:#0093e7;">取消</a>
+				    </div>
+				    <div class="weui-col-50" style="background:none;">
+				      	<a class="weui-btn" href="javascript:" id="quitEtprs" style="font-size:16px;background:#f39b0f;">确认退租</a>
+				    </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+{include file="wechat@public/bottom"}
+{include file="wechat@public/footer"}

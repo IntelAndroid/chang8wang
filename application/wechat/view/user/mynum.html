@@ -1,0 +1,229 @@
+{include file="wechat@public/header"}
+<link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/0.3.0/weui.css">
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/zepto/1.1.6/zepto.min.js"></script>
+<!--me  -->
+	<!--<link href="__PUBLIC__/plugins/toastr/toastr.css" rel="stylesheet" type="text/css">-->
+	<!--<script src="__PUBLIC__/plugins/toastr/toastr.js"></script>-->
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;}
+	.weui-cell__bd img{width:36px;height:36px;border-radius:18px;float:right;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+	.weui_uploader{float:right}
+	.weui_uploader_file {
+		margin-right: 0;
+    	margin-bottom: 0;
+		width: 36px;
+		height: 36px;
+	}
+</style>
+</head>
+<body ontouchstart>
+<div class="navbox">
+	<a href="{:url('wechat/test/index')}"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+	<div class="center">我的</div>
+</div>
+<div class="choosebox first-header">
+    <div class="weui-row weui-no-gutter">
+	    <div class="weui-col-50">
+	      	<a href="{:url('wechat/user/myIcb')}">我的空间</a> 
+	    </div>
+	    <div class="weui-col-50 active">
+	      	<a href="">我的账号</a>
+	    </div>
+    </div>
+</div>   
+<form id="registerForm" style="background:#fff">
+	<div class="weui-cell">
+		<div class='weui-cell__hd'><label class="weui-label">头像</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui_uploader">
+				<div class="weui_uploader_bd" style="margin-right:0">
+					<ul class="weui_uploader_files">
+						<!-- 预览图插入到这 -->
+						<img src="__PUBLIC__/{if empty($data.savePath)}images/head.png
+											 {else}$data.savePath
+											 {/if}" 
+							alt="" style="width:36px;height:36px"/>
+					</ul>
+					<div class="weui_uploader_input_wrp">
+						<input class="weui_uploader_input js_file" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" data-id="avatar"
+								data-url="{:url('/etprs/Etprs/ajaxUploads')}"
+								data-previewBox="upload-ul" data-limit="5"
+								onchange="uploadFile($(this))"
+								data-size="0.5" data-dir="buildpic"
+								style="width: 100%;height:100%;opacity: 0;">
+						<input type="hidden"  id="avatar" name="avatar" value="{$data['avatar']}">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui_dialog_alert" style="display: none;">
+			<div class="weui_mask"></div>
+			<div class="weui_dialog">
+				<div class="weui_dialog_hd"> <strong class="weui_dialog_title">警告</strong>
+				</div>
+				<div class="weui_dialog_bd">弹窗内容，告知当前页面信息等</div>
+				<div class="weui_dialog_ft">
+					<a href="javascript:;" class="weui_btn_dialog primary">确定</a>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
+        <div class="weui-cell__bd">
+          	<input class="weui-input" type="text" name="realname" value="{$data['realname']}"><!--placeholder="新智能"-->
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">联系方式</label></div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" id='show-warning' type="tel" name="mobile" value="{$data['mobile']}">
+        </div>
+    </div>
+</div>
+</form>
+<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+    <div class="weui-row weui-no-gutter">
+	    <div class="weui-col-50" style="background:none;">
+	      	<a class="weui-btn" id="subm-btn" href="javascript:" style="height:40px;line-height:40px;font-size:16px;background:#0093e7;">保存</a>
+	    </div>
+	    <div class="weui-col-50" style="background:none;">
+	      	<a class="weui-btn"  href="{:url('/wechat/User/password')}" style="font-size:16px;background:#f39b0f;">修改密码</a>
+	    </div>
+    </div>
+</div>
+{include file="wechat@public/footer"}
+<script>
+	$(function() {
+		$('#subm-btn').click(function(){
+            var url="{:url('/wechat/User/saveMyNum')}";
+            var data=serializeData('registerForm');   // __PUBLIC__/js/base.js
+            // cstmpost()防止重复点击  __PUBLIC__/js/base.js
+            cstmpost('#subm-btn',url,data,function(res){  //?
+            	if(res.code==1){
+                	//toastr.error(res.msg);
+            		$.toptip(res.msg,'success');
+					setTimeout(function(){
+						location.href="{:url('wechat/User/myNum')}"
+					},500)
+                }else{
+                	//toastr.error(res.msg);
+                	$.toptip(res.msg,'warning');
+                }
+          });
+		});
+	});
+
+		$('.fo-bottom').addClass('weui-bar__item--on');
+		$('.fo-bottom').siblings().removeClass('weui-bar__item--on');
+</script>
+<script>
+  $(document)
+  .on('click', '#show-warning', function() {
+    $.toptip('修改后账号也随之改变', 'warning');
+  })
+</script>
+	<script type="text/javascript">
+		// 允许上传的图片类型
+		var allowTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+		// 1024KB，也就是 1MB
+		var maxSize = 512 * 1024;
+		// 图片最大宽度
+		var maxWidth = 300;
+		// 最大上传图片数量
+		var maxCount = 1;
+		// $('.weui_uploader_input').click(function(){
+		// 	if ($('.weui_uploader_file').length >= maxCount) {
+		// 		// alert('该操作将会覆盖上一张图片')
+		// 			$.confirm("该操作将会覆盖上一张图片",  function() {
+		// 			// $.toast("文件已经删除!");
+		// 			}, function() {
+		// 			//取消操作
+		// 		});
+		// 		return
+		// 	}
+		// })
+		$('.js_file').on('change', function(event) {
+			var files = event.target.files;
+			// 如果没有选中文件，直接返回
+			if (files.length === 0) {
+				return;
+			}
+			for (var i = 0, len = files.length; i < len; i++) {
+				var file = files[i];
+				var reader = new FileReader();
+				// 如果类型不在允许的类型范围内
+				if (allowTypes.indexOf(file.type) === -1) {
+					$.toptip('该类型不允许上传','warning')
+					continue;
+				}
+				if (file.size > maxSize) {
+					$.toptip('图片太大，不允许上传','warning')
+					continue;
+				}
+				if ($('.weui_uploader_file').length >= maxCount) {
+
+					// $.toptip('该操作将会覆盖上一张图片','warning')
+					// return;
+					$('.weui_uploader_files').html('')
+				}
+				reader.onload = function(e) {
+					var img = new Image();
+					img.onload = function() {
+						// 不要超出最大宽度
+						var w = Math.min(maxWidth, img.width);
+						// 高度按比例计算
+						var h = img.height * (w / img.width);
+						var canvas = document.createElement('canvas');
+						var ctx = canvas.getContext('2d');
+						// 设置 canvas 的宽度和高度
+						canvas.width = w;
+						canvas.height = h;
+						ctx.drawImage(img, 0, 0, w, h);
+						var base64 = canvas.toDataURL('image/png');
+						// 插入到预览区
+//						var $preview = '<li class="weui_uploader_file weui_uploader_status" style="background-image:url(' + base64 + ')"><div class="weui_uploader_status_content">0%</div></li>';
+						var $preview = '<li class="weui_uploader_file weui_uploader_status" style="background-image:url(' + base64 + ')"></li>';
+						$('.weui_uploader_files').html($preview);
+						$('.weui_uploader_files').next().css('display','none');
+						var num = $('.weui_uploader_file').length;
+						$('.js_counter').text(num + '/' + maxCount);
+						// 然后假装在上传，可以post base64格式，也可以构造blob对象上传，也可以用微信JSSDK上传
+						var progress = 0;
+
+						// function uploading() {
+						// 	$preview.find('.weui_uploader_status_content').text(++progress + '%');
+						// 	if (progress < 100) {
+						// 		setTimeout(uploading, 30);
+						// 	} else {
+								// 如果是失败，塞一个失败图标
+								//$preview.find('.weui_uploader_status_content').html('<i class="weui_icon_warn"></i>');
+						$('.weui_uploader_status').removeClass('weui_uploader_status').find('.weui_uploader_status_content').remove();
+								$('#picker').html('1')
+						// 	}
+						// }
+						// setTimeout(uploading, 300);
+					};
+					img.src = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
+		});
+		// 点击图片再次上传
+		$('.weui_uploader_files').click(function(){
+			$('.weui_uploader_input').click();
+		});
+		// 若有默认图，则隐藏加号框
+		let numsrc = $('.weui_uploader_files').find('img').attr('src')
+		if(numsrc != '/iqbt3/public/'){
+			$('.weui_uploader_files').next().css('display','none');
+		}
+	</script>

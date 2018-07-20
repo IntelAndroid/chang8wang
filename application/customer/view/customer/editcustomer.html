@@ -1,0 +1,197 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<!--<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >-->
+<!--<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>-->
+<!--<script src="__PLUG__/file/input/js/locales/zh.js"></script>-->
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script>
+	// 楼层获取  id   默认值
+	function initBuild(domID,bdefault,floor)
+	{
+		var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+		if($("."+domID).attr('class') != 'control-label'&&domID == 'rqst_build') {
+			bdefault = bdefault ? bdefault : '';
+			cstmpost('',url, {bd: bdefault},function (res) {
+                var ophtml = '<option value="">选择楼座</option>';
+                for (var tmp in res) {
+                    if(tmp == bdefault){
+                        ophtml = ophtml + '<option value="'+tmp+'" selected>'+res[tmp]+'</option>';
+                    }else{
+                        ophtml = ophtml + '<option value="'+tmp+'">'+res[tmp]+'</option>';
+                    }
+                }
+                $("." + domID).html(ophtml);
+//				alert(JSON.stringify(floor));
+				$("."+domID).attr("data-default",floor);
+				$("."+domID).change();
+			});
+
+		}
+		/*if (domID == 'rqst_floor') {
+			cstmpost('',url,{bd: bdefault}, function (res) {
+				ophtml = res
+				$("." + domID).html(res);
+			});
+		}*/
+	}
+	//获取默认楼层
+	$(function() {
+//		//获取字典数据
+//		assign();
+		//保存id
+		var id=session('id');
+
+		$('#id').val(id);
+		$('#rqst_build').attr('data-url',"{:url('/etprs/Etprs/changeBuild')}");
+		//获取用户数据
+		cstmpost('',"{:url('/customer/Customer/cusInfo')}",{id:id},function(res){
+			assign(res);
+			session('cstmstatus',res.data.cstmstatus);
+		},'JSON');
+
+		$("#addCstm").on("click", function () {
+			var url = "{:url('/customer/Customer/saveCusInfo')}";
+			var data = serializeData("cstmInfo");
+			cstmpost("#addCstm", url, data, function (data) {
+				if (data["code"] == '1') {
+					toastr.success(data["msg"]);
+					setTimeout(function () {
+						location.href = "{:url('customer/Customer/index')}";
+					}, 500);
+				} else {
+					toastr.error(data["msg"]);
+				}
+			});
+		});
+		
+		//取消按钮,返回上一页
+		$('#cancel').click(function(){
+			location.fref=history.back();
+		})
+	})
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+                                    <li class="news accout-msg active" role="presentation">
+                                        <a href="#message" aria-controls="message" >
+                                            <i class="icon fa-edit" aria-hidden="true"></i> 客户信息
+                                            <span class="badge badge-danger"></span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="account-log " >
+                                        <a id="flow" href="{:url('/customer/Customer/addflow')}" aria-controls="log">
+                                            <i class="icon fa-file-text-o" aria-hidden="true"></i> 跟进记录
+                                        </a>
+                                    </li>
+                                </ul>
+								<div class="tab-content margin-top-15">
+									<div class="tab-pane animation-slide-left tab-message active" role="tabpanel" id="message">
+										<div class="row row-lg">
+											<div class="col-md-12">
+												<div class="example-wrap">
+													<div class="example">
+														<form class="form-horizontal" id="cstmInfo">
+															<div class="form-group col-sm-12"> <!--警告：has-warning 成功：has-success 出错：has-error-->
+																<input type="hidden" name="id" id="id">
+																<label class="col-sm-2 control-label padding-bottom-20">客户类型：</label>
+																<div class="col-sm-4 padding-bottom-20" id="type">
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 客户名称：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<input type="text" class="form-control" id="name" name="name" placeholder="客户名称" autocomplete="off">
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系人：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<input type="text" class="form-control" name="contact" id="contact"  placeholder="联系人" autocomplete="off">
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系电话：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<input type="text" class="form-control tele" name="mobile" id="mobile" placeholder="联系电话" autocomplete="off"  data-plugin="formatter" data-pattern="[[999]]-[[9999]]-[[9999]]">
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 来源渠道：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<select class="form-control"  id="source" name="source">
+																		<option>选择来源渠道</option>
+																	</select>
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 客户状态：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<select class="form-control"  id="cstmstatus" name="cstmstatus">
+																	</select>
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20">意向需求：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<div class="col-sm-6 padding-0">
+																		<select class="form-control rqst_build" id="rqst_build" name="rqst_build" data-url="{:url('/etprs/Etprs/changeBuild')}" >
+																			<option>选择空间</option>
+																		</select>
+																	</div>
+																	<div class="col-sm-3 padding-0">
+																		<select class="form-control rqst_floor"  id="rqst_floor" name="rqst_floor">
+																			<option>选择楼层</option>
+																		</select>
+																	</div>
+																	<div class="col-sm-3 padding-0">
+																		<input type="text" class="form-control" name="rqst_roomNo"  id="rqst_roomNo"  placeholder="填写房间" autocomplete="off">
+																	</div>
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20">需求时间：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+																		<div class="input-group">
+										                                        <span class="input-group-addon">
+										                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+										                                        </span>
+																			<input type="text" class="form-control" name="rqst_start" id="rqst_start">
+																		</div>
+																		<div class="input-group">
+																			<span class="input-group-addon"> 至 </span>
+																			<input type="text" class="form-control"  name="rqst_end" id="rqst_end">
+																		</div>
+																	</div>
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20">详细需求：</label>
+																<div class="col-sm-10 padding-bottom-20">
+																	<textarea class="form-control" placeholder="填写详细需求"  name="rqst" id="rqst"></textarea>
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20">创建时间：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<label class="control-label"><input type="text" id="addtime" readonly style="border:0px"></label>
+																</div>
+																<label class="col-sm-2 control-label padding-bottom-20">创建人：</label>
+																<div class="col-sm-4 padding-bottom-20">
+																	<label class="control-label"><input type="text" id="addUser" readonly style="border:0px"> </label>
+																</div>
+																<div class="clearfix visible-sm-block"></div>
+
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="btn-actions text-center">
+											<button type="button" class="btn btn-primary margin-3" id="addCstm">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;</button>
+											<button type="button" class="btn btn-danger margin-3" id="cancel">&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;取消&nbsp;&nbsp;</button>
+
+										</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+					</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{include file="index@public::footer"}

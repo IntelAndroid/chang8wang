@@ -1,0 +1,304 @@
+{include file="index@public:header"}
+<script src="__PUBLIC__/themes/fileinput/js/fileinput.min.js"></script>
+<script src="__PUBLIC__/themes/fileinput/js/locales/zh.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/vendor/select2/select2.full.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="__PUBLIC__/vendor/icheck/icheck.min.js"></script>
+<script src="__PUBLIC__/vendor/switchery/switchery.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.min.js"></script>
+<script src="__PUBLIC__/vendor/clockpicker/bootstrap-clockpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-colorpicker/bootstrap-colorpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-knob/jquery.knob.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="__PUBLIC__/vendor/card/jquery.card.js"></script>
+<script src="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/jt-timepicker/jquery.timepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/datepair-js/jquery.datepair.min.js"></script>
+<script src="__PUBLIC__/vendor/fontawesome-iconpicker/fontawesome-iconpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-strength/jquery-strength.min.js"></script>
+<script src="__PUBLIC__/vendor/multi-select/jquery.multi-select.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/bloodhound.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/typeahead.jquery.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/advanced.js"></script>
+<!--编辑器-->
+<link href="__VD__/summernote/summernote.css" rel="stylesheet">
+<script src="__VD__/summernote/summernote.min.js"></script>
+
+<!--选择城市-->
+<link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+<script src="__PUBLIC__/themes/city-picker.data.js"></script>
+<script src="__PUBLIC__/themes/city-picker.js"></script>
+<script>
+    Breakpoints();
+</script>
+<style>
+    .control {
+        display: block;
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #76838f;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #e4eaec;
+        border-radius: 3px;
+    }
+    .formCopy{
+        display: block;
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #76838f;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #e4eaec;
+        border-radius: 3px;
+    }
+</style>
+</head>
+
+<body>
+    <input type="hidden" id="cutimgurl" value="{:url('/etprs/Etprs/cutImg')}" />
+    <main class="site-page">
+        <div class="page-container" id="admui-pageContent">
+            <div class="page animation-fade page-forms">
+                <div class="page-header">
+                    <h4 class="padding-bottom-10 btborder">
+                        通知管理>新增
+                    </h4>
+                </div>
+                <div class="page-content">
+                    <form class="form-horizontal" id="iqbtInfo">
+                        <div class="panel">
+                            <div class="panel-body container-fluid padding-top-0">
+                                <div class="row row-lg">
+                                    <div class="col-md-12">
+                                        <div class="example-wrap">
+                                            <div class="example example-buttons">
+                                                <h4 class="padding-bottom-10 btborder">基本信息</h4>
+                                            </div>
+                                            <div class="example">
+                                                <!--<form class="form-horizontal" id="iqbtForm">-->
+                                                <div class="form-group col-md-12">
+                                                    <label class="col-sm-2 control-label padding-bottom-20">
+                                                        标　　题：</label>
+                                                    <div class="col-sm-10 padding-bottom-20">
+                                                        <input class="control col-sm-6" id="name">
+                                                    </div>
+                                                    <label class="col-sm-2 control-label padding-bottom-20">
+                                                        推送对象：</label>
+                                                    <div class="col-sm-10 padding-bottom-20">
+                                                        <select name="" id="" class="col-md-6 formCopy" id='contact'>
+                                                            <option class="checkbox-custom checkbox-primary checkbox-inline" value="">全部</option>
+
+                                                        </select>
+                                                    </div>
+                                                    <label class="col-sm-2 control-label padding-bottom-20">
+                                                        推送区域：</label>
+                                                    <div class="col-sm-10 padding-bottom-20">
+                                                        <div class="docs-methods col-sm-6">
+                                                            <div id="distpicker">
+                                                                <input id="city-picker3" class="form-control" readonly type="text" value="" data-toggle="city-picker">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">
+                                                    内　　容：</label>
+                                                <div class="col-sm-10 padding-bottom-20">
+                                                    <div class="form-group col-md-12 padding-0 margin-0">
+                                                        <div class="col-sm-10 padding-bottom-20" style='padding:0'>
+                                                            <div class="summernote" id="detail" name="content">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--</form>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-actions text-center" id="saveRoom">
+                                <button type="button" class="btn btn-primary margin-3" value="1">&nbsp;&nbsp;
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;</button>
+                                <button type="button" class="btn btn-danger margin-3" onClick="javascript :history.back(-1);" id="saveChlidMenu">&nbsp;&nbsp;
+                                    <i class="fa fa-close" aria-hidden="true"></i>&nbsp;取消&nbsp;&nbsp;</button>
+                                <button type="button" class="btn btn-success margin-3" value="2">&nbsp;&nbsp;
+                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;发布&nbsp;&nbsp;</button>
+                            </div>
+                        </div>
+                </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="site-footer-legal">创8网 &copy;
+            <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+        </div>
+        <div class="site-footer-right">
+            当前版本：v1.3.0
+            <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+                <i class="icon fa-cloud-upload"></i>
+            </a>
+        </div>
+    </footer>
+    <!--上传图片插件(与提示信息插件存在冲突，去掉后页面报错)-->
+    <!--<script src="__PUBLIC__/vendor/jquery-ui/jquery-ui.min.js"></script>为避免与弹出气泡冲突必须在jq文件后，引用-->
+    <script src="__PUBLIC__/vendor/blueimp-tmpl/tmpl.min.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-canvas-to-blob/canvas-to-blob.min.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-load-image/load-image.all.min.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-process.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-image.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-audio.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-video.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-validate.js"></script>
+    <script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-ui.js"></script>
+    <script src="__PUBLIC__/vendor/dropify/dropify.min.js"></script>
+    <script src="__PUBLIC__/js/examples/forms/dropify.js"></script>
+
+    <!-- 消息通知 -->
+    <script src="__PUBLIC__/js/notify-msg.js"></script>
+</body>
+<script src="__PUBLIC__/themes/addpicker.js"></script>
+<script>
+    //初始化编辑器
+    $(".summernote").summernote({
+        lang: "zh-CN",
+        height: 400
+    });
+
+    //编辑器上传图片
+    function uploadPic(files) {
+        var smnturl = "{:url('/index/Index/smntUpload',array('dir'=>'notice'))}";
+        var smnt = $('#detail');
+        smntUploadFile(files, smnt, smnturl, "__PUBLIC__");
+    }
+
+    // 渲染checkbox  字典表数据
+    initCheckbox(6019)
+    //初始化时间选择控件(数据初始化之后再初始化控件)
+    $('[data-toggle="city-picker"]').citypicker();
+    function initCheckbox(code) {
+        if (!code || code == 0 || code == undefined) {
+            return false;
+        }
+        for (var i = 0; i < sysData.length; i++) {
+            if (sysData[i].code.indexOf(code, 0) === 0) {
+                if (sysData[i].level != 1) {
+                    $option =
+                        '<option class="checkbox-custom checkbox-primary checkbox-inline" value="' + sysData[i].code + '">' + sysData[i].name + '</option>'
+                    $('.formCopy').append($option)
+                }
+            }
+            // return selhtml;
+        };
+        $('.formCopy').children('option:last').remove()
+    }
+
+    // 若为编辑页，带出数据
+    if (sessionStorage.getItem('id')) {
+        let url = "{:url('/user/notice/getNoticeInfo')}";
+        let data = {
+            id: sessionStorage.getItem('id')
+        };
+        cstmpost('', url, data, function (res) {
+            $('#name').val(res.data.title);
+            let districtStr = res.data.districtStr.split('/');
+            console.log(districtStr)
+            // 将后台获取的城市重新渲染
+            $('.note-editable').html(res.data.content);
+            $("#city-picker3").citypicker();
+                $("#city-picker3").citypicker("reset");
+                $("#city-picker3").citypicker("destroy");
+                $("#city-picker3").citypicker({
+                province: districtStr[0],
+                city: districtStr[1],
+                district: districtStr[2]
+                });
+            if(res.data.usertype ==''){
+                $('.formCopy').find('option:first').attr('selected','selected')
+            } else {
+                $.each($('.formCopy').find('option'),function(){
+                    if( $(this).attr('value') == res.data.usertype){
+                        $(this).attr('selected','selected')
+                    }
+                })
+            }
+    //初始化地区选择控件(数据初始化之后再初始化控件)
+    $('[data-toggle="city-picker"]').citypicker();
+
+        })
+
+    }
+    // 点击保存,发布按钮，传输数据
+    $('#saveRoom').on('click','button',function(){
+        if($(this).attr('value') == '1'){
+            var publish = 7002002;
+        } else if($(this).attr('value') == '2') {
+            var publish = 7002001;
+        }
+        let primaryurl = "{:url('/user/notice/pubNotice')}";
+        let content = $('#detail').code();
+        let usertype = '';
+        let a = 0;
+        let contact = $('.formCopy').find('option:selected').attr('value');
+        $.each($('#distpicker').find('.select-item'),function(i){
+            if($('#distpicker').find('.select-item').length == '1'){
+                usertype=$('#distpicker').find('.select-item').attr('data-code').substr(0,2)
+            } else if($('#distpicker').find('.select-item').length == '2'){
+                usertype=$('#distpicker').find('.select-item:last').attr('data-code').substr(0,4)
+            } else if($('#distpicker').find('.select-item').length == '3'){
+                usertype=$('#distpicker').find('.select-item:last').attr('data-code')
+            }
+        })
+        let primarydata = {
+            id:sessionStorage.getItem('id'),
+            title: $('#name').val(),
+            usertype: contact,
+            districtId: usertype,
+            content: content,
+            publish: publish,
+        };
+        cstmpost('', primaryurl, primarydata, function (res) {
+            if(res.code){
+                toastr.success(res.msg)
+                history.back(-1)
+                return false;
+            } else {
+                toastr.error(res.msg)
+            }
+        })
+        })
+    //三级联动
+	function initDistinct(code,title){
+		$("input[name='districtId']").val(code);
+	}
+   
+</script>
+
+</html>

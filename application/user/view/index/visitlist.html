@@ -1,0 +1,205 @@
+{include file="index@public::header"}
+{include file="index@public/search"}
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/themes/echarts.js"></script>
+
+<script>
+	Breakpoints();
+	function actFmt(value, row, index) {
+//		return '<a href={:url("/customer/Customer/editcustomer/id/'+row.id+'")} onClick="editCstm()" class="rapass ml10"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="编辑" title="编辑">'+
+//		return '<a  onclick="editCstm('+row.id+','+row.cstmstatus+')" class="rapass ml10"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="编辑" title="编辑">'+
+//				'<i class="icon wb-edit" aria-hidden="true"></i>'+
+//				'</button></a>'+
+//				'<a onclick="editFlow('+row.id+','+row.cstmstatus+')" class="rapass ml10"><button type="button" class="btn btn-sm btn-icon btn-flat btn-default" data-toggle="tooltip" data-original-title="跟进" title="跟进">'+
+//				'<i class="icon wb-flag" aria-hidden="true"></i>'+
+//				'</button></a>';
+
+
+		return '<a  onclick="editCstm('+row.id+','+row.cstmstatus+')" class="rapass ml10">' +
+				'<button type="button" class="btn btn-outline btn-primary btn-xs">&nbsp;编辑&nbsp;</button>&nbsp;'+
+				'</a>'+
+				'<a onclick="editFlow('+row.id+','+row.cstmstatus+')" class="rapass ml10">' +
+				'&nbsp;<button type="button" class="btn btn-outline btn-info btn-xs">跟进&nbsp;</button>'+
+				'</button></a>';
+
+
+	}
+	function nameFmt(value, row, index) {
+		if (row.backlog==0) {
+			return '<a href="javascript:void(0)" onclick="detail('+row.id+')" >' + row.name + '</a>';
+		}else{
+			return '<a href="javascript:void(0)" onclick="detail('+row.id+')" ><b>' + row.name + '</b></a>';
+		}
+	}
+	//	编辑按钮点击事件
+	function editCstm(id,cstm){
+		session('id',id);
+		session('cstmstatus',cstm);
+		location.href="{:url('/customer/Customer/editcustomer')}";
+	}
+	//	跟进按钮点击事件
+	function editFlow(id,cstm){
+		session('id',id);
+		session('cstmstatus',cstm);
+		location.href="{:url('/customer/Customer/addflow')}";
+	}
+	//客户名称 点击事件
+	function detail(id){
+		session('id',id);
+		location.href="{:url('/customer/Customer/detail')}";
+	}
+	$(function () {
+/*		var id=location.href.substr(location.href.indexOf('id=')+3);
+		alert(id);
+		var needle=id.indexOf('.');
+		id=id.substr(0,needle);//地址栏取id
+		alert(id);*/
+		//test
+		/*$('#searchname').on('input',function(){
+			var value=$(this).val();
+			$("input[name='start']").val(value);
+		})*/
+		//excel导出
+		$('.btn-xls').click(function(){
+			var postUrl="{:url('/work/work/getAllVisitList')}";
+			var search=$("#searchname").val();
+			var url=$(this).attr('data-url');
+			//检测是否有数据要下载
+			cstmpost('.btn-xls',postUrl,{name:search},function(res){
+				if(res.total==0){
+					toastr.warning('没有相关数据');
+				}else{
+					url=url.replace('/.html','');
+					if(search!='') {
+						url += "/name/" + search;
+					}
+					location.href=url;
+				}
+			})
+
+		})
+	});
+
+
+</script>
+
+<main class="site-page">
+	<div class="page-container" id="admui-pageContent">
+		<div class="page animation-fade page-account">
+			<div class="page-header">
+				<h1 class="page-title">信息中心>空间预约信息</h1>
+			</div>
+			<div class="page-content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel">
+							<div class="panel-body nav-tabs-animate">
+								<!--<ul class="nav nav-tabs nav-tabs-line" role="tablist">-->
+									<!--<li class="news accout-msg active" role="presentation">-->
+										<!--<a href="#message" aria-controls="message" role="tab" data-toggle="tab">-->
+                                           	<!--全部<span>（<span id="totalnum"></span>）</span>-->
+                                            <!--<span class="badge up badge-warning" id="newnum"></span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
+                                    <!--<li role="presentation" class="account-log">-->
+                                        <!--<a href="#log" aria-controls="log" role="tab" data-toggle="tab">-->
+                                            <!--潜在客户<span>（<span id="qnum"></span>）</span>-->
+                                            <!--<span class="badge up badge-warning" id="newnum2"></span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
+                                    <!--<li role="presentation" class="account-extend">-->
+                                        <!--<a href="#extend" aria-controls="extend" role="tab" data-toggle="tab">-->
+                                    		<!--意向客户<span>（<span id="ynum"></span>）</span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
+                                    <!--<li role="presentation" class="account-virtual">-->
+                                        <!--<a href="#virtual" aria-controls="virtual" role="tab" data-toggle="tab">-->
+                                    		<!--拟入驻客户<span>（<span id="nnum"></span>）</span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
+                                    <!--<li role="presentation" class="account-invalid">-->
+                                        <!--<a href="#invalid" aria-controls="invalid" role="tab" data-toggle="tab">-->
+                                    		<!--无效客户<span>（<span id="wnum"></span>）</span>-->
+                                        <!--</a>-->
+                                    <!--</li>-->
+									<!--<li role="presentation" class="account-picTable">-->
+										<!--<a href="#picTable" aria-controls="picTable" role="tab" data-toggle="tab" onclick='preserved()'>-->
+											<!--图表统计-->
+										<!--</a>-->
+									<!--</li>-->
+									<!--<div class="btn-actions pull-right margin-left-15">-->
+										<!--<a href="{:url('/customer/Customer/addCustomer')}"><button type="button" class="btn btn-outline btn-info">&nbsp;&nbsp;<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;新建客户&nbsp;&nbsp;</button></a>-->
+									<!--</div>-->
+									<!--<div class="btn-actions pull-right margin-left-15">-->
+										<!--<button type="button" class="btn btn-outline btn-primary" id="xlsIn">&nbsp;&nbsp;<i class="fa fa-share" aria-hidden="true"></i>&nbsp;批量导入&nbsp;&nbsp;</button>-->
+									<!--</div>-->
+                                <!--</ul>-->
+                                <div class="tab-content margin-top-15">
+                                	<!--全部-->
+                                    <div class="tab-pane animation-slide-left tab-message active" role="tabpanel" id="message">
+                                        <div class="row row-lg">
+				                            <div class="col-md-12">
+			                                    <div class="example">
+													<form action="" id="waitForm">
+														<div class="form-group col-md-3 padding-left-0">
+															<div class="input-group">
+																<span class="input-group-addon"> 空间名称</span>
+																<input id='searchname' name="name" type="text" class="form-control"  placeholder="请输入空间名称">
+															</div>
+														</div>
+														<!--<div class="form-group col-md-4 padding-left-0">-->
+															<!--<div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">-->
+																<!--<div class="input-group">-->
+																	<!--<span class="input-group-addon"><i class="icon wb-calendar"></i></span>-->
+																	<!--<input type="text" class="form-control" placeholder="开始时间" name="start">-->
+																<!--</div>-->
+																<!--<div class="input-group">-->
+																	<!--<span class="input-group-addon">至</span>-->
+																	<!--<input type="text" class="form-control" placeholder="结束时间" name="end" >-->
+																<!--</div>-->
+															<!--</div>-->
+														<!--</div>-->
+														<div class="form-group col-md-4 padding-left-0">
+															<div class="btn-actions">
+																<button type="button" class="btn btn-primary btn-search" feresh-table="FacTable" data-form="waitForm">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>
+																<!--<a href="{:url('customer/Customer/exportCus')}"><button type="button" class="btn btn-info" >&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button></a>-->
+																<button type="button" class="btn btn-info btn-xls" data-form="waitForm" data-url="{:url('/work/work/exportVisit/')}">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+															</div>
+														</div>
+													</form>
+					                            </div>
+						                    </div>
+						                </div>
+											<table id="FacTable" class="table table-bordered text-center" data-keywords="" data-side-pagination="server" data-toolbar="false" data-show-toggle="false" data-toggle="table"  data-search="false"
+												    data-url="{:url('/work/work/getAllVisitList')}" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                        	<thead>
+	                                            <tr>
+	                                                <!--<th  class="text-center"  data-formatter="nameFmt">客户名称</th>-->
+	                                                <th class="text-center" data-field="addtime" data-sortable="true">提交时间</th>
+	                                                <th class="text-center" data-field="name">企业名称</th>
+	                                                <th class="text-center" data-field="contact">联系人</th>
+	                                                <th class="text-center" data-field="mobile">联系电话</th>
+	                                                <th class="text-center" data-field="iqbtName">空间名称</th>
+	                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="__PUBLIC__/themes/chart.js"></script>
+
+{include file="index@public::footer"}

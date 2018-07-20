@@ -1,0 +1,371 @@
+{include file="user@login:header"}
+<!--弹出层插件-->
+<link rel="stylesheet" href="__PUBLIC__/vendor/webui-popover/webui-popover.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/alertify-js/alertify.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/formvalidation/formValidation.css">
+
+
+<!-- 插件 CSS -->
+<link rel="stylesheet" href="__PUBLIC__/vendor/select2/select2.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/icheck/icheck.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/switchery/switchery.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/clockpicker/clockpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-colorpicker/colorpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-touchspin/bootstrap-touchspin.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/card/card.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/fontawesome-iconpicker/iconpicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jt-timepicker/jquery-timepicker.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/jquery-strength/jquery-strength.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/multi-select/multi-select.css">
+<link rel="stylesheet" href="__PUBLIC__/vendor/typeahead-js/typeahead.css">
+
+<!-- page CSS-->
+<link rel="stylesheet" href="__PUBLIC__/css/examples/forms/layouts.css">
+
+
+<script>
+    Breakpoints();
+</script>
+
+
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+
+
+<!-- 插件 -->
+<script src="__PUBLIC__/themes/classic/global/js/plugins/responsive-tabs.js"></script>
+<script src="__PUBLIC__/vendor/ashoverscroll/jquery-asHoverScroll.min.js"></script>
+<script src="__PUBLIC__/vendor/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__PUBLIC__/vendor/screenfull/screenfull.min.js"></script>
+<script src="__PUBLIC__/vendor/select2/select2.full.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="__PUBLIC__/vendor/icheck/icheck.min.js"></script>
+<script src="__PUBLIC__/vendor/switchery/switchery.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-slider/bootstrap-slider.min.js"></script>
+<script src="__PUBLIC__/vendor/clockpicker/bootstrap-clockpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-colorpicker/bootstrap-colorpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-knob/jquery.knob.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="__PUBLIC__/vendor/card/jquery.card.js"></script>
+<script src="__PUBLIC__/vendor/jquery-labelauty/jquery-labelauty.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/jt-timepicker/jquery.timepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/datepair-js/jquery.datepair.min.js"></script>
+<script src="__PUBLIC__/vendor/fontawesome-iconpicker/fontawesome-iconpicker.min.js"></script>
+<script src="__PUBLIC__/vendor/jquery-strength/jquery-strength.min.js"></script>
+<script src="__PUBLIC__/vendor/multi-select/jquery.multi-select.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/bloodhound.min.js"></script>
+<script src="__PUBLIC__/vendor/typeahead-js/typeahead.jquery.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/advanced.js"></script>
+
+</head>
+<body style="padding-top:0;">
+<script>
+    $(document).ready(function() {
+        $('[data-toggle="city-picker"]').citypicker();
+        // 保存空间信息
+        $("#saveIqbt").on("click", function () {
+            var url = "{:url('/user/rgst/saveIqbt')}";
+            var data = serializeData("iqbtInfo");
+            cstmpost("#saveIqbt", url, data, function (data) {
+//                console.log(data);
+                if (data["code"] == '1') {
+                    toastr.success(data["msg"]);
+                    successWindow();
+                } else {
+                    toastr.error(data["msg"]);
+                }
+            });
+        });
+
+        var res={data:{iqbttype:'6004001',from:"6025004"}};
+        assign(res);
+    });
+    //三级联动
+    function initDistinct(code,title){
+        $("input[name='districtId']").val(code);
+    }
+    function gologin(){
+        location.href="{:url('user/login/login')}";
+    }
+
+    //保存成功弹窗
+    function successWindow(){
+        var mobile=$('#mobile').val();
+        var data='<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                '<h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                '<div class="modal-body"><h4 class="modal-body">注册成功，使用期限:7天。</h4>您的账号为:'+mobile+',默认密码:888888。<br/>请您妥善保管，您可跳转到登录页，登录之后可修改密码。<br/>' +
+                '</div>' +
+                '<div class="modal-footer">' +
+                '<a href={:url("user/login/login")}><button class="btn btn-primary" id="conDelBtn" >去登录</button></a>' +
+                '</div>';
+        show_modal("注册成功",data,"");
+    }
+</script>
+<input type="hidden" id="cutimgurl" value="{:url('/etprs/Etprs/cutImg')}" />
+<main class="site-page" style="margin-left:0; ">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-forms">
+            <div class="page-header">
+                <h1 class="page-title">请填写您的空间信息,待管理员审核通过,可免费试用7天</h1>
+            </div>
+            <div class="page-content">
+                <form class="form-horizontal" id="iqbtInfo">
+                    <div class="panel">
+                        <div class="panel-body container-fluid padding-top-0">
+                            <div class="row row-lg">
+                                <div class="col-md-12">
+                                    <div class="example-wrap">
+                                        <div class="example example-buttons">
+                                            <h4 class="padding-bottom-10 btborder">基本信息</h4>
+                                        </div>
+                                        <div class="example">
+                                            <!--<form class="form-horizontal" id="iqbtForm">-->
+                                            <div class="form-group col-md-12">
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 空间名称：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="name" name="name" placeholder="空间名称" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20">空间类型：</label>
+                                                <div class="col-sm-4 padding-bottom-20" >
+                                                    <select class="form-control" id="iqbttype" name="type">
+                                                    </select>
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系人：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="contact" name="contact" placeholder="联系人" autocomplete="off">
+                                                </div>
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 联系电话：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="联系电话" autocomplete="off">
+                                                </div>
+
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 空间位置：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <div class="col-sm-12">
+                                                        <!--省市区联动开始-->
+                                                        <link rel="stylesheet" href="__PUBLIC__/themes/theme.css">
+                                                        <link rel="stylesheet" href="__PUBLIC__/themes/city-picker.css">
+                                                        <div class="docs-methods">
+                                                            <div id="distpicker">
+                                                                <div class="form-group width-full">
+                                                                    <input id="districtId" class="form-control"  type="text"  data-toggle="city-picker" value="">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <script src="__PUBLIC__/themes/city-picker.data.js"></script>
+                                                        <script src="__PUBLIC__/themes/city-picker.js"></script>
+                                                        <!--省市区联动结束-->
+                                                        <input  id="districtCode" type="hidden" name="districtId">
+                                                    </div>
+                                                </div>
+
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 详细地址：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control"  id="address" name="address" placeholder="输入详细街道门牌号" autocomplete="off">
+                                                </div>
+
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 公司名称：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <input type="text" class="form-control" id="company" name="company" placeholder="公司名称" autocomplete="off">
+                                                </div>
+
+                                                <label class="col-sm-2 control-label padding-bottom-20"><span class="required">*</span> 了解渠道：</label>
+                                                <div class="col-sm-4 padding-bottom-20">
+                                                    <select class="form-control" id="from" name="from">
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                            <!--</form>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input name="saleId" type="hidden" value="{$uid|default=0}"/>
+                </form>
+            </div>
+            <div class="btn-actions text-center">
+                <button type="button" class="btn btn-primary" id="saveIqbt">&nbsp;&nbsp;<i class="fa fa-bullhorn" aria-hidden="true"></i>&nbsp;立即注册&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </div>
+</main>
+<!--新增案例弹出层start-->
+<div class="modal" id="logsForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-center">
+        <form class="modal-content" id="caseForm">
+            <div class="modal-header">
+                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                    <i class="icon wb-close" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title">新增案例</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal logs-settings">
+
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例名称</label>
+                        <div class="col-xs-9">
+                            <input type="hidden" id="id" name="iqbtId" value="0">
+                        </div>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" name="name" placeholder="请填写案例名称" id="newname">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例链接</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" name="url"  id="newurl" placeholder="请填写案例链接" value="http://">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例logo <i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i></label>
+                        <div class="col-xs-9">
+                            <input type="hidden" name="logo" id="caselogo" class="opt-require">
+                            <input type="file" class="form-control" id="input-file-now"  data-id="caselogo" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-size="0.5" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例简介</label>
+                        <div class="col-xs-9">
+                            <textarea class="form-control" placeholder="请填写案例链简介" name="desc" id="newdesc"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary"  id="addCase">保存</button>
+                <a class="btn btn-danger" data-dismiss="modal" href="index" id="cancel">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!--新增案例弹出层end-->
+<!--编辑案例弹出层start-->
+<div class="modal" id="editcaseForm" aria-hidden="true" aria-labelledby="logsForm" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-center">
+        <form class="modal-content" id="editcaseForm1">
+            <div class="modal-header">
+                <button type="button" class="close" aria-hidden="true" data-dismiss="modal">
+                    <i class="icon wb-close" aria-hidden="true"></i>
+                </button>
+                <h4 class="modal-title">编辑案例</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal logs-settings">
+
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例名称</label>
+                        <div class="col-xs-9">
+                            <input type="hidden" id="caseid" name="caseid">
+                        </div>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" id="casename" name="name" placeholder="请填写案例名称">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例链接</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control" id="caseurl"  name="url" placeholder="请填写案例链接">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例logo<i class="fa fa-info-circle font-size-14" data-plugin="webuiPopover" data-content="支持格式：'jpg','jpeg','gif','png';<br/>文件大小：不能超过500k" data-trigger="hover" tabindex="0"></i></label>
+                        <div class="col-xs-9">
+                            <input type="hidden" name="logo" id="caselogoId"  class="opt-require">
+                            <input type="file" class="form-control" id="input-file-now03"  data-id="caselogoId" data-url="{:url('/etprs/Etprs/ajaxUploads')}"  onchange="uploadFile($(this))" data-size="0.5" data-dir="buildpic" data-plugin="dropify" data-default-file="">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-2 control-label">案例简介</label>
+                        <div class="col-xs-9">
+                            <textarea class="form-control" placeholder="请填写案例链简介" id="casedesc" name="desc"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary"  id="saveCase">保存</button>
+                <a class="btn btn-danger" data-dismiss="modal" href="index">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!--编辑案例弹出层end-->
+<footer class="site-footer">
+    <div class="site-footer-legal">创8网 &copy;
+        <a href="http://qd.zlhuiyun.com/web/Index" target="_blank">qd.zlhuiyun.com</a>
+    </div>
+    <div class="site-footer-right">
+        当前版本：v1.3.0
+        <a class="margin-left-5" data-toggle="tooltip" title="升级" href="http://qd.zlhuiyun.com/web/Index" target="_blank">
+            <i class="icon fa-cloud-upload"></i>
+        </a>
+    </div>
+</footer>
+<!--上传图片插件(与提示信息插件存在冲突，去掉后页面报错)-->
+<!--<script src="__PUBLIC__/vendor/jquery-ui/jquery-ui.min.js"></script>为避免与弹出气泡冲突必须在jq文件后，引用-->
+<script src="__PUBLIC__/vendor/blueimp-tmpl/tmpl.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-canvas-to-blob/canvas-to-blob.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-load-image/load-image.all.min.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-process.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-image.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-audio.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-video.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-validate.js"></script>
+<script src="__PUBLIC__/vendor/blueimp-file-upload/jquery.fileupload-ui.js"></script>
+<script src="__PUBLIC__/vendor/dropify/dropify.min.js"></script>
+<script src="__PUBLIC__/js/examples/forms/dropify.js"></script>
+
+
+<!--弹出层插件-->
+<script src="__PUBLIC__/vendor/webui-popover/jquery.webui-popover.min.js"></script>
+<script src="__PUBLIC__/vendor/alertify-js/alertify.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+<script src="__PUBLIC__/vendor/datatables-responsive/dataTables.responsive.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/formValidation.min.js"></script>
+<script src="__PUBLIC__/vendor/formvalidation/framework/bootstrap.min.js"></script>
+<script src="__PUBLIC__/js/system/blacklist.js"></script>
+
+
+<!--图片裁剪插件-->
+<script src="__PUBLIC__/vendor/cropper/cropper.js"></script>
+<script src="__PUBLIC__/js/examples/forms/image-cropping.js"></script>
+
+<!--选择时间插件-->
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="__PUBLIC__/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="__PUBLIC__/vendor/multi-select/jquery.multi-select.min.js"></script>
+
+<!-- 消息通知 -->
+<script src="__PUBLIC__/js/notify-msg.js"></script>
+</body>
+<script src="__PUBLIC__/themes/addpicker.js"></script>
+</html>

@@ -1,0 +1,281 @@
+{include file="index@public/header"}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script>
+
+    //请求服务数据时所传参数
+    function queryParams(params){
+        return {
+            limit : params.limit, //每一页的数据行数，默认是上面设置的10(pageSize)
+            offset : params.offset, //当前页面,默认是上面设置的1(pageNumber)
+            id:session('actId')//这里是其他的参数，根据自己的需求定义，可以是多个
+        }
+    }
+    //请求成功方法
+    function responseHandler(result){
+//            console.log(result);
+//            var errcode = result.code;//在此做了错误代码的判断
+//            if(errcode == 0){
+//                alert("错误代码" + errcode);
+//                return;
+//            }
+        //如果没有错误则返回数据，渲染表格
+        return {
+            total: result.total, //总页数,前面的key必须为"total"
+            rows: result.rows //行数据，前面的key要与之前设置的dataField的值一致.
+        };
+    };
+    $(function(){
+        //活动状态筛选
+        $('#signstatus').on('change',function () {
+            var status = $('#signstatus option:selected').val();
+            if(status!=''){
+                param.status = status;
+            }else {
+                delete (param.status);
+            }
+            param._tm=new Date();
+            $('#signTable').bootstrapTable('refresh',{'url':url,query:param,cache:false});
+        });
+        var audit=session('audit');
+        var signstatus=session('signstatus');
+        if (audit==7002002){
+//            $("th[data-field='8']").remove();
+            $('#signTable').bootstrapTable('showColumn', '8');
+        }
+        var id=session('actId');
+        var url="{:url('activity/activity/getSignList')}";
+        var param=new Object();
+        var status=$('#signstatus option:selected').val();
+        param.id=id;
+        if (signstatus==1){
+            //如果是从审核人数(>0)点过来的,跳转到待审核列表
+            $('#signstatus option:eq(1)').attr('selected','selected');
+            $('#signstatus').change();
+            session('signstatus','')
+        }else {
+            $('#signTable').bootstrapTable('refresh',{'url':url,query:param});
+        }
+
+
+
+        //excel导出
+        $('#exportSign').click(function(){
+            var url="{:url('/activity/activity/getSignList')}";
+            status = $('#signstatus option:selected').val();
+            cstmpost('#exportSign',url,{id:id,status:status},function(res){
+                if(res.total==0){
+                    toastr.warning('没有相关数据');
+                }else{
+                    url="{:url('/activity/activity/exportSign')}";
+                    url=url.replace('.html','');
+                    url+="/id/"+id;
+                    if(status!=''){
+                        url+= "/status/" + status;
+                    }
+                    location.href=url;
+                }
+            })
+        })
+    })
+    //状态名称转化
+    function statusEx(value,row,index){
+        switch(row.status){
+            case"已提交":
+                var time=$.now();
+                if(time<row.endtime){
+                    return '<span class="text-warning">待审核</span>'
+                }else{
+                    return '<span class="text-default">已过期</span>'
+                }
+                break;
+            case"通过":
+                return'<span class="text-success">报名成功</span>';
+                break;
+            case"拒绝":
+                return '<span class="text-danger">已拒绝</span>';
+                break;
+            default:
+                return row.status;
+                break;
+        }
+    }
+
+    //企业入驻状态名称转化
+    function enterStatusEx(value,row,index){
+        if(row.enterstatus==6008005){
+            return '正式入驻'
+        }else{
+            return '未入驻'
+        }
+    }
+    //通过窗口
+    function passWin(id,status,num,actId){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要通过申请么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="changeStatus(\''+id+'\',\''+status+'\',\''+num+'\',\''+actId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    //拒绝窗口
+    function refuse(id,status,num,actId){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要拒绝申请么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="changeStatus(\''+id+'\',\''+status+'\',\''+num+'\',\''+actId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    //审核操作 列表填充
+    function check(value,row,index){
+        var audit=session('audit');
+        var time=$.now();
+//        console.log('当前时间:'+time+';'+'活动结束时间:'+row.endtime);
+        if(row.status=="已提交" && audit==7002001 && time<row.endtime){
+            return['<a onclick="passWin('+row.id+',7001002,'+row.num+','+row.actId+')"><button type="button" class="btn  btn-outline btn-xs btn-success pass" >',
+                ' &nbsp;通过&nbsp;</button>&nbsp;',
+                '</a>',
+                '<a onclick="refuse('+row.id+',7001003,'+row.num+','+row.actId+')">&nbsp;<button type="button" class="btn  btn-outline btn-xs btn-danger refuse" >',
+                '&nbsp;拒绝&nbsp;',
+                '</button></a>'].join("");
+        }
+    }
+
+    //审核
+    function changeStatus(id,status,num,actId){
+        var url="{:url('activity/activity/saveSign')}";
+        if(status==7001002){
+            var eid=".pass";
+        }else{
+            var eid=".refuse";
+        }
+        cstmpost(eid,url,{id:id,status:status,num:num,actId:actId},function(res){
+//            alert(JSON.stringify(res));
+            if(res.code==1){
+                toastr.success(res.msg);
+                var id=session('actId');
+                var tableurl="{:url('activity/activity/getSignList')}";
+                var param=new Object();
+                param.id=id;
+                var status = $('#signstatus option:selected').val();
+                if(status!=''){
+                    param.status = status;
+                }
+                param._tm=new Date();
+                $('#signTable').bootstrapTable('refresh',{'url':tableurl,query:param});
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(res.msg);
+            }
+        })
+    }
+
+</script>
+    <main class="site-page">
+        <div class="page-container" id="admui-pageContent">
+            <div class="page animation-fade page-account">
+                <div class="page-header">
+                    <h1 class="page-title">报名管理</h1>
+                </div>
+                <div class="page-content">
+                    <div class="row row-lg">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-body nav-tabs-animate">
+                                    <div class="example">
+                                        <div class="form-group col-md-2 padding-left-0">
+                                            <div class="input-group manage">
+                                                <span class="input-group-addon">报名状态</span>
+                                                <select data-plugin="selectpicker" id="signstatus">
+	                                            <option value="">全部</option>
+	                                            <option value="7001001">待审核</option>
+	                                            <option value="7001002">报名成功</option>
+	                                            <option value="7001003">已拒绝</option>
+	                                            <option value="7001000">已取消</option>
+	                                        </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-9 padding-left-1">
+                                            <div class="btn-actions" style='float:right'>
+                                                <!--<button type="button" class="btn btn-primary" id="addChlidMenu">&nbsp;&nbsp;<i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;</button>-->
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-1 padding-left-0">
+                                            <div class="btn-actions">
+                                                <button type="button" class="btn btn-info" id="exportSign">&nbsp;&nbsp;<i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--<div id="tab-1" class="tab-pane active">-->
+                                        <!--<div class="panel-body">-->
+                                            <!--<table id="signTable" class="table table-striped table-bordered"></table>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <table id="signTable" class="tab table-bordered text-center col-lg-12" data-keywords=""  data-toolbar="false" data-show-toggle="false" data-toggle="table"  data-search="false"
+                                           data-pagination="true" data-side-pagination=""
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                        <!--data-url="{:url('activity/activity/getSignList',['id'=>$Think.session.actId])}">-->
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" data-field="serialNo">订单编号</th>
+                                                <th class="text-center" data-field="etprs" >所属企业</th>
+                                                <th class="text-center" data-formatter="enterStatusEx" >入驻状态</th>
+                                                <th class="text-center" data-field="name" >报名人</th>
+                                                <th class="text-center" data-field="mobile">联系方式</th>
+                                                <th class="text-center" data-field="num">数量</th>
+                                                <th class="text-center" data-field="free">是否免费</th>
+                                                <th class="text-center" data-field="total">金额（元）</th>
+                                                <th class="text-center" data-field="addtime">报名时间</th>
+                                                <th class="text-center" data-formatter="statusEx">报名状态</th>
+                                                <th class="text-center" data-formatter="check">操作</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        $(".timebox").click(function () {
+            $(this).toggleClass("timeactive");
+        });
+   /*     $('#signTable').bootstrapTable({
+            url:"{:url('activity/activity/getSignList')}",
+            dataType:"json",
+            sortOrder: "asc",
+            colums :[{//列参数
+                field : "serialNo",
+                title : "订单编号",
+            },{
+                field : "etprs",
+                title : "所属企业",
+            },{
+                field : "name",
+                title : "报名人"
+            }]
+        });*/
+/*        $('#signTable').bootstrapTable({
+            url:"{:url('activity/activity/getSignList')}",
+//            dataField: 'rows',
+            pageNumber: 1, //初始化加载第一页，默认第一页
+            pagination:true,//是否分页
+////            queryParams:queryParams,//请求服务器时所传的参数
+////            sidePagination:'server',//指定服务器端分页
+            pageSize:10,//单页记录数
+            pageList:[10,20,30,40],//分页步进值
+////            responseHandler:responseHandler,//请求数据成功后，渲染表格前的方法
+            colums :[{//列参数
+                field : "serialNo",
+                title : "订单编号",
+            },{
+                field : "etprs",
+                title : "所属企业",
+            },{
+                field : "name",
+                title : "报名人"
+            }]
+        })*/
+    </script>
+{include file="index@public/footer"}

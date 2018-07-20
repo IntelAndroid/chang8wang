@@ -1,0 +1,611 @@
+{include file="index@public/header"} {include file="index@public/search"}
+<script src="__PUBLIC__/themes/echarts.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    // 入驻管理测试
+    function etpr() {
+        // 折线图月份集合
+        var month = ['月份'];
+        // 折线图种类人数
+        var typePeonum = [];
+        // 折线图单独种类
+        var typeOnone = [];
+        // 折线图series
+        var series = [];
+        // 折线图series
+        var seriesChildren = { type: 'line', smooth: true, seriesLayoutBy: 'row' };
+        var urlt = "{:url('customer/Customer/getEtprsData')}";
+        cstmpost('', urlt, '', function (res) {
+            console.log(res)
+            $('.customerStatus').html('')
+            $.each(res.cstmNum, function (c) {
+                var stateahatml = '<div class="col-md-2 customerkind"><div class="panel" style="background:' +
+                    res.cstmNum[c].color + '"><div class="panel-body"><p>' + res.cstmNum[c].name +
+                    '</p><div class="label-content"><div class="col-md-3 padding-left-0"><img src="' +
+                    res.cstmNum[c].pic + '"></div><div class="col-md-9 padding-left-0 padding-right-0"><p class="text-center"><span>' +
+                    res.cstmNum[c].num + '</span> 个</p></div></div></div></div></div>'
+
+                $('.customerStatus').append(stateahatml)
+            })
+            $.each(res.etprsTrend, function (e) {
+                month.push(res.etprsTrend[e].name)
+            })
+            typePeonum.push(month)
+            // 折线图种类人数(仅一月)
+            $.each(res.etprsTrend[0].etprsTrend, function (e) {
+                typeOnone = []
+                typeOnone.push(res.etprsTrend[0].etprsTrend[e].name);
+                typeOnone.push(res.etprsTrend[0].etprsTrend[e].num);
+                typePeonum.push(typeOnone);
+                series.push(seriesChildren);
+            })
+            // 折线图剩下月份人数
+            for (var n = 0; n < res.etprsTrend.length - 1; n++) {
+                var replace = res.etprsTrend[n + 1].etprsTrend
+                for (var m = 0; m < typePeonum.length - 1; m++) {
+                    typePeonum[m + 1].push(replace[m].num);
+                }
+            }
+            console.log(typePeonum)
+            // 折线图
+            var enter = echarts.init(document.getElementById('enter'), '');
+            option = {
+                backgroundColor: '#fff',
+                legend: {},
+                tooltip: {
+                    trigger: 'axis',
+                    showContent: true
+                },
+                dataset: {
+                    source: typePeonum
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        axisLabel: {
+                            show: true,
+                            textStyle: {
+                                color: '#000'
+                            }
+                        },
+                    }
+                ],
+                yAxis: {
+                    gridIndex: 0,
+                    axisLabel: {
+                        show: true,
+                        textStyle: {
+                            color: '#000'
+                        }
+                    },
+                },
+                series: series
+            };
+            enter.setOption(option);
+
+        })
+    }
+
+
+
+
+    $(function () {
+        var url = "{:url('/Etprs/Etprs/etprsListNum')}";
+        cstmpost("#", url, {}, function (res) {
+            assign(res)
+        });
+        $("#xlsIn").click(function () {
+            location.href = "{:url('/index/Index/etprsXlsData')}";
+        });
+        $(".btn-export").click(function () {
+            var url = "{:url('/etprs/Etprs/exportEtprs')}";
+            var table = $(this).prev().attr('feresh-table');
+            var geturl = $('#' + table).attr('data-url');
+            var form = $(this).attr("data-form");
+            var status = $(this).attr("data-status");
+            var data = serializeData(form);
+            cstmpost('.btn-export', geturl, data, function (res) {
+                if (res.total == 0) {
+                    toastr.warning('没有相关数据');
+                } else {
+                    data.status = status;
+                    var query = '';
+                    for (field in data) {
+                        if (data[field] != '') {
+                            if (query == '') {
+                                query = query + field + '=' + data[field];
+                            } else {
+                                query = query + '&' + field + '=' + data[field];
+                            }
+                        }
+                    }
+                    location.href = url + '?' + query
+                }
+            })
+
+        });
+
+        // 发起入驻，清空etprsId
+        $(".enter-etprs").click(function () {
+            var url = "{:url('/Etprs/Etprs/enter')}";
+            sessionStorage.removeItem("etprsId");
+            location.href = url;
+        });
+    });
+
+    function actionFormatter(value, row) {
+        var html = '';
+        switch (row.status) {
+            case '6008006':
+                html = '';
+                break;
+            case '6008005':
+                html = '<button type="button" class="btn btn-outline btn-warning btn-xs change">&nbsp;变更&nbsp;</button>&nbsp;\
+                        <button type="button" class="btn btn-outline btn-primary btn-xs renew">&nbsp;续约&nbsp;</button>&nbsp;\
+                        <button type="button" class="btn btn-outline btn-success btn-xs quit">&nbsp;毕业&nbsp;</button>';
+                break;
+            default:
+                var title = '分配';
+                if (row.statusName == "待签约") {
+                    title = "签约入驻";
+                } else if (row.statusName == "待分配") {
+                    title = "分配房间";
+                } else {
+                    title = '完善资料';
+                }
+
+                html = '<button type="button" class="btn btn-outline btn-success btn-xs handle">&nbsp;' + title + '&nbsp;</button>&nbsp;\n' ;
+                if(title == "签约入驻"){
+//                    html+= '<button type="button" class="btn btn-outline btn-warning btn-xs change">&nbsp; 房间变更&nbsp;</button>&nbsp;\n' ;
+                }
+                html+=   '<button type="button" class="btn btn-outline btn-danger btn-xs back">&nbsp;退出&nbsp;</button>';
+        }
+        return html;
+    }
+
+    function nameFormatter(value, row, index) {
+        return '<a href="javascript:goDetail(' + row.id + ');" >' + value + '</a>';
+    }
+
+    function goDetail(etprsId) {
+        var url = "{:url('/etprs/Etprs/detail')}";
+        session('detailViewId', etprsId);
+        location.href = url;
+    }
+
+    window.actionEvents = {
+        'click .handle': function (e, value, row, index) {
+            switch (row.status) {
+                // 进入发起入驻页面
+                case '6008002':
+                    session("etprsId", row.id);
+                    var url = "{:url('/etprs/Etprs/enter')}";
+                    location.href = url;
+                    break;
+                case '6008003':
+                    session("roomAlloEtprsId", row.id);
+                    var url = "{:url('/etprs/Etprs/roomAllo')}";
+                    location.href = url;
+                    break;
+                case '6008004':
+                    session("signId", row.pactId);
+                    session("signEtprsId", row.id);
+                    var url = "{:url('/etprs/Etprs/Sign')}";
+                    location.href = url;
+                    break;
+                default:
+                    break;
+            }
+        },
+        'click .back': function (e, value, row, index) {
+            var tableId = 'settledTable';
+            var url = "{:url('/etprs/Etprs/backCus')}";
+            var id = row.id;
+            var status = row.status;
+            var data = '<div class="modal-header"><button type="button" id="qiuttt" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定退出此客户吗?确认退出后，此用户将变为无效用户。</div><div class="modal-footer"><button class="btn btn-primary" onclick="quit(\'' + url + '\',\'' + id + '\',\'' + tableId + '\',\'' + status + '\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("确定退出吗?", data, "modal-sm");
+        },
+        'click .change': function (e, value, row, index) {
+            session("changeEtprsId", row.id);
+            var url = "{:url('/etprs/Etprs/change')}";
+            location.href = url;
+        },
+        'click .renew': function (e, value, row, index) {
+            session("renewEtprsId", row.id);
+            var url = "{:url('/etprs/Etprs/renewList')}";
+            location.href = url;
+        },
+        'click .quit': function (e, value, row, index) {
+            session('quitEtprsId', row.id);
+            var url = "{:url('/Etprs/Etprs/quitPage')}";
+            location.href = url;
+        }
+    };
+
+    // 改为 6008001
+    function quit(url, id, table, status) {
+        var data = {};
+        data.id = id;
+        data.status = status;
+        cstmpost("#qiuttt", url, data, function (res) {
+            if (res["code"] == '1') {
+                $("#myModalLabel").modal('hide');
+                toastr.success(res["msg"]);
+                location.reload();
+                //$('#'+table).bootstrapTable('refresh');
+            } else {
+                toastr.error(res["msg"]);
+            }
+        });
+    }
+
+
+</script>
+<main class="site-page">
+    <div class="page-container" id="admui-pageContent">
+        <div class="page animation-fade page-account">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body nav-tabs-animate">
+                                <div class="nav-tabs-horizontal" data-approve="nav-tabs">
+                                    <ul class="nav nav-tabs" role="tablist">
+
+                                        <li class="active" role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsOne" aria-controls="exampleTabsOne" role="tab">待入驻（<span id="wait"></span>）</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsTwo" aria-controls="exampleTabsTwo" role="tab">已入驻（<span id="settled"></span>）</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#exampleTabsThree" aria-controls="exampleTabsThree" role="tab">已毕业（<span id="quit"></span>）</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#allStatusTabs" aria-controls="allStatusTabs" role="tab">全部（<span id="total"></span>）</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a data-toggle="tab" href="#picTable" aria-controls="picTable" role="tab" onclick='etpr()'>图表统计</a>
+                                        </li>
+                                        <div class="btn-actions pull-right margin-left-10">
+                                            <button type="button" class="btn btn-outline btn-info enter-etprs">&nbsp;&nbsp;
+                                                <i class="fa fa-flag" aria-hidden="true"></i>&nbsp;发起入驻&nbsp;&nbsp;
+                                            </button>
+                                            <button type="button" class="btn btn-outline btn-primary" id="xlsIn">&nbsp;&nbsp;
+                                                <i class="fa fa-share" aria-hidden="true"></i>&nbsp;数据导入&nbsp;&nbsp;
+                                            </button>
+
+                                        </div>
+                                    </ul>
+                                    <div class="tab-content padding-top-20">
+
+                                        <div class="tab-pane animation-slide-left active" id="exampleTabsOne" role="tabpanel">
+                                            <div class="row row-lg" id="allToolbar">
+                                                <div class="col-md-12">
+                                                    <div class="example">
+                                                        <form action="" id="waitForm">
+                                                            <div class="form-group col-md-3 padding-left-0">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">客户名称</span>
+                                                                    <input name="name" type="text" class="form-control" placeholder="请输入客户名称或电话">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">
+                                                                            <i class="icon wb-calendar"></i>
+                                                                        </span>
+                                                                        <input type="text" class="form-control" placeholder="入驻时间始" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">至</span>
+                                                                        <input type="text" class="form-control" placeholder="入驻时间止" name="end">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="btn-actions">
+                                                                    <button type="button" class="btn btn-primary btn-search" feresh-table="settledTable" data-form="waitForm">&nbsp;&nbsp;
+                                                                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;
+                                                                    </button>
+                                                                    <!--<a href="{:url('/etprs/Etprs/exportEtprs')}">-->
+                                                                    <button type="button" class="btn btn-info btn-export" data-form="waitForm" data-status="4">&nbsp;&nbsp;
+                                                                        <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table class="table table-bordered text-center" id="settledTable" data-side-pagination="server" data-toggle="table" data-url="{:url('/etprs/Etprs/getEtprsList',array('status'=>'4'))}"
+                                                data-show-refresh="false" data-show-toggle="false" data-show-columns="false"
+                                                data-toolbar="#waitToolbar" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]"
+                                                data-striped="true">
+                                                <thead>
+                                                    <tr>
+                                                        <!--<th data-field="isCheck" data-checkbox="true"></th>-->
+                                                        <th data-field="name" data-formatter="nameFormatter" class="text-center">客户名称
+                                                        </th>
+                                                        <th data-field="addtime" class="text-center">申请时间</th>
+                                                        <th data-field="contact" class="text-center">联系人</th>
+                                                        <th data-field="mobile" class="text-center">联系电话</th>
+                                                        <th data-field="status" class="text-center" data-formatter="actionFormatter" data-events="actionEvents">操作
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsTwo" role="tabpanel">
+                                            <div class="row row-lg" id="settledTbar">
+                                                <div class="col-md-12">
+                                                    <div class="example">
+                                                        <form action="" id="settledForm">
+                                                            <div class="form-group col-md-3 padding-left-0">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">客户名称</span>
+                                                                    <input name="name" type="text" class="form-control" placeholder="请输入客户名称或电话">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">
+                                                                            <i class="icon wb-calendar"></i>
+                                                                        </span>
+                                                                        <input type="text" class="form-control" placeholder="入驻时间始" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">至</span>
+                                                                        <input type="text" class="form-control" placeholder="入驻时间止" name="end">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="btn-actions">
+                                                                    <button type="button" class="btn btn-primary btn-search" feresh-table="settledTable2" data-form="settledForm">&nbsp;&nbsp;
+                                                                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;
+                                                                    </button>
+                                                                    <!--<button type="button" class="btn btn-info btn-clear"-->
+                                                                    <!--data-form="settledForm"-->
+                                                                    <!--feresh-table="settledTable2">&nbsp;&nbsp;<i-->
+                                                                    <!--class="fa fa-repeat" aria-hidden="true"></i>&nbsp;重置&nbsp;&nbsp;-->
+                                                                    <!--</button>-->
+                                                                    <button type="button" class="btn btn-info btn-export" data-form="settledForm" data-status="3">&nbsp;&nbsp;
+                                                                        <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;
+                                                                    </button>
+                                                                </div>
+                                                                <!--<div class="btn-actions">
+                                                                    <button type="button" class="btn btn-primary btn-search"  feresh-table="settledTable2" data-form="settledForm">查询</button>
+                                                                    <button type="button" class="btn btn-info btn-clear" data-form="settledForm" feresh-table="settledTable2" >重置</button>
+                                                                </div>-->
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table class="table table-bordered text-center" id="settledTable2" data-side-pagination="server" data-toggle="table" data-url="{:url('/etprs/Etprs/getEtprsList',array('status'=>'3'))}"
+                                                data-search="false" data-show-refresh="false" data-show-toggle="false" data-show-columns="false"
+                                                data-toolbar="#settledTbar" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]"
+                                                data-striped="true">
+                                                <thead>
+                                                    <tr>
+                                                        <!--<th data-field="isCheck" data-checkbox="true"></th>-->
+                                                        <th data-field="name" class="text-center" data-formatter="nameFormatter">客户名称
+                                                        </th>
+                                                        <th data-field="pact_start" class="text-center">合同开始时间</th>
+                                                        <th data-field="pact_end" class="text-center">合结束始时间</th>
+                                                        <th data-field="contact" class="text-center">联系人</th>
+                                                        <th data-field="mobile" class="text-center">联系电话</th>
+                                                        <th data-field="roomInfo" class="text-center">入驻房间</th>
+                                                        <th class="text-center" data-formatter="actionFormatter" data-events="actionEvents">操作
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left" id="exampleTabsThree" role="tabpanel">
+                                            <div class="row row-lg">
+                                                <div class="col-md-12" id="quitBar">
+                                                    <div class="example">
+                                                        <form action="" id="quitForm">
+                                                            <div class="form-group col-md-3 padding-left-0">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">客户名称</span>
+                                                                    <input name="name" type="text" class="form-control" placeholder="请输入客户名称或电话">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN" title="创建时间">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">
+                                                                            <i class="icon wb-calendar"></i>
+                                                                        </span>
+                                                                        <input type="text" class="form-control" placeholder="入驻时间始" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">至</span>
+                                                                        <input type="text" class="form-control" placeholder="入驻时间止" name="end">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="btn-actions">
+                                                                    <button type="button" class="btn btn-primary btn-search" feresh-table="settledTable3" data-form="quitForm">&nbsp;&nbsp;
+                                                                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;
+                                                                    </button>
+                                                                    <!--<button type="button" class="btn btn-info btn-clear"-->
+                                                                    <!--data-form="quitForm"-->
+                                                                    <!--feresh-table="settledTable3">&nbsp;&nbsp;<i-->
+                                                                    <!--class="fa fa-repeat" aria-hidden="true"></i>&nbsp;重置&nbsp;&nbsp;-->
+                                                                    <!--</button>-->
+                                                                    <button type="button" class="btn btn-info btn-export" data-form="quitForm" data-status="2">
+                                                                        &nbsp;&nbsp;
+                                                                        <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;
+                                                                    </button>
+                                                                </div>
+                                                                <!-- <div class="btn-actions">
+                                                                     <span type="button btn-search" class="btn btn-primary btn-search" id="" feresh-table="settledTable3" data-form="quitForm">查询</span>
+                                                                     <button type="button" class="btn btn-info btn-clear" data-form="quitForm" feresh-table="settledTable3" >重置</button>
+                                                                 </div>-->
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table class="table table-bordered text-center" id="settledTable3" data-toggle="table" data-url="{:url('/etprs/Etprs/getEtprsList',array('status'=>'2'))}"
+                                                data-search="false" data-show-refresh="false" data-show-toggle="false" data-side-pagination="server"
+                                                data-show-columns="false" data-toolbar="#quitBar" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]"
+                                                data-striped="true">
+                                                <thead>
+                                                    <tr>
+                                                        <!--<th data-field="isCheck" data-checkbox="true"></th>-->
+                                                        <th data-field="name" class="text-center" data-formatter="nameFormatter">客户名称
+                                                        </th>
+                                                        <th data-field="pact_start" class="text-center">合同开始时间</th>
+                                                        <th data-field="pact_end" class="text-center">合结束始时间</th>
+                                                        <th data-field="contact" class="text-center">联系人</th>
+                                                        <th data-field="mobile" class="text-center">联系电话</th>
+                                                        <!--<th data-field="roomInfo" class="text-center">入驻房间</th>-->
+                                                        <th data-field="quitTime" class="text-center">退出时间</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left " id="allStatusTabs" role="tabpanel">
+                                            <div class="row row-lg" id="allStatus2">
+                                                <div class="col-md-12">
+                                                    <div class="example">
+                                                        <form action="" id="allForm2">
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">客户名称</span>
+                                                                    <input type="text" class="form-control" name="name" placeholder="请输入客户名称或电话">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="input-daterange" data-plugin="datepicker" data-language="zh-CN">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">创建时间</span>
+                                                                        <input type="text" class="form-control" name="start">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon"> 至 </span>
+                                                                        <input type="text" class="form-control" name="end">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-4 padding-left-0">
+                                                                <div class="btn-actions">
+                                                                    <button type="button" class="btn btn-primary btn-search" feresh-table="allstatusTable2" data-form="allForm2">&nbsp;&nbsp;
+                                                                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;查询&nbsp;&nbsp;
+                                                                    </button>
+                                                                    <!--<a href="{:url('/etprs/Etprs/exportEtprs')}">-->
+                                                                    <button type="button" class="btn btn-info btn-export" data-form="allForm2" data-status="1">
+                                                                        &nbsp;&nbsp;
+                                                                        <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;导出&nbsp;&nbsp;
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table class="table table-bordered text-center" id="allstatusTable2" data-side-pagination="server" data-toggle="table" data-url="{:url('/etprs/Etprs/getEtprsList',array('status'=>'1'))}"
+                                                data-show-refresh="false" data-show-toggle="false" data-show-columns="false"
+                                                data-toolbar="#waitToolbar2" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]"
+                                                data-striped="true">
+                                                <thead>
+                                                    <tr>
+                                                        <!--<th data-field="isCheck" data-checkbox="true"></th>-->
+                                                        <th data-field="name" data-formatter="nameFormatter" class="text-center">客户名称
+                                                        </th>
+                                                        <th data-field="contact" class="text-center">联系人</th>
+                                                        <th data-field="mobile" class="text-center">联系电话</th>
+                                                        <th data-field="statusName" class="text-center">客户状态</th>
+                                                        <th data-field="" class="text-center" data-formatter="actionFormatter" data-events="actionEvents">操作
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane animation-slide-left " id="picTable" role="tabpanel">
+                                            <div class="page animation-fade page-forms">
+                                                <div class="page-content">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <style>
+                                                                .panel0 {
+                                                                    border: 1px solid #d6d6d8;
+                                                                }
+
+                                                                .panel0 h4 span {
+                                                                    color: #2f84c5;
+                                                                }
+
+                                                                .customerkind {
+                                                                    width: 20%;
+                                                                    overflow: hidden;
+                                                                }
+
+                                                                .customerkind .panel-body {
+                                                                    padding: 15px;
+                                                                }
+
+                                                                .customerkind .panel-body>p {
+                                                                    margin-bottom: 15px;
+                                                                    color: #FFF;
+                                                                }
+
+                                                                .customerkind .col-md-9 p {
+                                                                    color: #FFF;
+                                                                    line-height: 40px;
+                                                                }
+
+                                                                .customerkind p span {
+                                                                    color: #FFF;
+                                                                    font-size: 36px;
+                                                                    font-weight: bold;
+                                                                }
+                                                            </style>
+                                                            <div class="panel panel0">
+                                                                <h4 class="padding-top-10 margin-0">
+                                                                    <span>▋</span> 客户状态</h4>
+                                                                <div class="panel-body">
+                                                                    <div class="col-md-12 padding-0 customerStatus">
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 入驻管理数据模拟 -->
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="panel panel0">
+                                                                <h4 class="padding-top-10 margin-0">
+                                                                    <span>▋</span> 入驻管理</h4>
+                                                                <div class="panel-body height-300" id="enter">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="index@public/footer"}

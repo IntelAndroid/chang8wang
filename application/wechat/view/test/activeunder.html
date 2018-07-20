@@ -1,0 +1,145 @@
+{include file="wechat@public/header"}
+<style>
+	a{text-decoration: none;}
+	a:visited{text-decoration: none;}
+	a:hover {text-decoration: none;}
+	a:active{text-decoration:none;} 
+	.weui-cell__hd .weui-label{color:#595757;font-size:15px;}
+	.weui-cell__bd{color:#878787;font-size:15px;text-align:right;}
+	.weui-input{text-align:right;}
+	.weui-select{direction: rtl;color:#878787;}
+
+
+	/*轮播*/
+	.swiper-container {width: 100%;}
+	.swiper-container img {display: block;width: 100%;}
+	/*单选框*/
+	.weui-cells_checkbox{margin-top:0;text-align:right;}
+	.weui-cells_checkbox .weui-check__label{display:inline-block;padding-right:0;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__hd{display:inline-block;}
+	.weui-cells_checkbox .weui-check__label .weui-cell__bd{display:inline-block;}
+	.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color:#0193e8;}
+	.weui-cells:after{border-bottom:none;}
+</style>
+</head>
+<body ontouchstart>
+<script>
+    $(function(){
+        /*活动信息*/
+        var url="{:url('activity/activity/getActinfo')}";
+        var actId=session('actId');
+//		alert(actId);
+        cstmpost('',url,{id:actId},function(res){
+            $('#detail').html(res.data.detail);//详情框要放html
+            $('#poster').attr('src','__PUBLIC__/'+res.data.poster);
+            //如果人数为0 显示无限制
+            if(res.data.total==0){
+                res.data.total='无上限';
+            }
+            delete res.data.detail;
+            assign(res);
+            /*不收费隐藏单价*/
+            if(res.data.free==7002001){
+                $(".price").hide();
+            }
+        })
+    })
+</script>
+<div class="navbox">
+	<a href="javascript:history.back(-1)"><div class="left"><i class="icon iconfont icon-back"></i></div></a>
+	<div class="center">活动详情</div>
+</div>
+<div class="choosebox first-header">
+    <div class="weui-row weui-no-gutter">
+	    <div class="weui-col-50 active">
+	      	<a href="">活动详情</a> 
+	    </div>
+	    <div class="weui-col-50">
+            <a id="signBtn" href="{:url('wechat/test/enrollmanage')}">报名信息</a>
+	    </div>
+    </div>
+</div>   
+<div class="swiper-container">
+	<!-- Additional required wrapper -->
+	<div class="swiper-wrapper">
+		<!-- Slides -->
+		<div class="swiper-slide" ><img id="poster"  /></div>
+	</div>
+	<!-- If we need pagination -->
+	<div class="swiper-pagination"></div>
+</div>
+<div class="weui-cells weui-cells_form" style="margin-top:0;">
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">活动名称</label></div>
+        <div class="weui-cell__bd">
+        	<p  id="name"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">活动地点</label></div>
+        <div class="weui-cell__bd">
+          	<p  id="districtId"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">详细地址</label></div>
+        <div class="weui-cell__bd">
+            <p  id="address"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">活动开始时间</label>
+        </div>
+        <div class="weui-cell__bd">
+        	<p id="starttime"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">活动结束时间</label>
+        </div>
+        <div class="weui-cell__bd">
+            <p id="endtime"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">活动人数</label></div>
+        <div class="weui-cell__bd">
+          	<span><p id="total"></p></span>
+        </div>
+    </div>
+</div>
+<div class="weui-cells weui-cells_form">
+	<div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">是否免费</label></div>
+        <div class="weui-cell__bd">
+          	<p id="freeText"></p>
+       </div>
+   </div>
+    <div class="weui-cell price">
+        <div class="weui-cell__hd"><label class="weui-label">单价(元/人)</label></div>
+        <div class="weui-cell__bd">
+            <p id="price"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">是否发布</label></div>
+        <div class="weui-cell__bd">
+          	<p id="publishText">是</p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">是否审核</label></div>
+        <div class="weui-cell__bd">
+          	<p id="auditText"></p>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">主办方联系方式</label></div>
+        <div class="weui-cell__bd">
+            <p id="model"></p>
+        </div>
+    </div>
+</div>
+{include file="wechat@public/footer"}

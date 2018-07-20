@@ -1,0 +1,172 @@
+{include file="index@public/header"}
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/sysDict.js"></script>
+
+<script>
+    $(document).ready(function () {
+        assign()
+        // 保存房间
+        $("#saveRoom").on("click", function () {
+            var url = "{:url('/room/Room/roomAddSave')}";
+            var data = new Array();
+            $(".tbody").find("tr").each(function () {
+                var rowData = {};
+                rowData.buildName = $(this).find("#buildName").val();
+                rowData.floor = $(this).find("#floor").val();
+                rowData.type = $(this).find("#roomType").val();
+                rowData.roomNo = $(this).find("#roomNo").val();
+                rowData.area = $(this).find("#area").val();
+                rowData.num = $(this).find("#num").val();
+                rowData.price = $(this).find("#price").val();
+                rowData.unit = $(this).find("#unit").val();
+                rowData.total = $(this).find("#total").val();
+                rowData.dection = $(this).find("#dection").val();
+                if ($(this).find("input[name='status']").is(':checked')) {
+                    rowData.status = 3;
+                }
+                data.push(rowData);
+            });
+            cstmpost("#saveRoom", url, { list: data }, function (res) {
+                var jumpurl = "{:url('/room/Room/roomInfo')}";
+                if (res["code"] == '1') {
+                    toastr.success(res["msg"]);
+                    setTimeout(function () {
+                        location.href = jumpurl;
+                    }, 500);
+                } else {
+                    toastr.error(res["msg"]);
+                }
+            });
+        });
+    });
+    // 楼层获取  id   默认值
+    function initBuild(domID, bdefault, floor) {
+        var url = "{:url('/etprs/Etprs/initBuildFloor')}";
+        if ($("." + domID).attr('class') != 'control-label') {
+            bdefault = bdefault ? bdefault : '';
+            var ophtml = '';
+            $.get(url, function (res) {
+                ophtml = res
+                $("." + domID).html(res);
+            });
+            if (domID == 'rqst_floor') {
+                $.get(url, { bd: bdefault }, function (res) {
+                    ophtml = res
+                    $("." + domID).html(res);
+                });
+            }
+        }
+    }
+// 删除时至少保留一条数据
+    function removeCurTr(obj) {
+        if ($(".tbody").find("tr").length == 1) {
+            toastr.warning("至少保留一行数据");
+            return false;
+        }
+        obj.parent("td").parent("tr").remove();
+        // 房间编号循环
+        $.each($('.tbody>tr'), function (i) {
+            $(this).find('p').text(i + 1)
+        })
+    }
+
+</script>
+
+<body>
+    <main class="site-page">
+        <div class="page-container" id="admui-pageContent">
+            <div class="page animation-fade page-forms">
+                <div class="page-header">
+                    <h1 class="page-title">添加房间</h1>
+                </div>
+                <div class="page-content">
+                    <div class="panel">
+                        <div class="panel-body container-fluid">
+                            <table class="table table-bordered text-center cdtable addroomtable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"></th>
+                                        <th class="text-center">楼座</th>
+                                        <th class="text-center"><span class="required">*</span> 楼层</th>
+                                        <th class="text-center"><span class="required">*</span> 房间类型</th>
+                                        <th class="text-center"><span class="required">*</span> 房间/工位编号</th>
+                                        <th class="text-center">面积（㎡）</th>
+                                        <th class="text-center">工位数量（个）</th>
+                                        <th class="text-center"><span class="required">*</span> 单价</th>
+                                        <th class="text-center">月租</th>
+                                        <th class="text-center">装修</th>
+                                        <th class="text-center">是否自用</th>
+                                        <th class="text-center"></th>
+                                    </tr>
+                                </thead>
+                                <form action="" id="roomInfo">
+                                    <tbody class="tbody">
+                                        <tr class="first">
+                                            <td>
+                                                <p>1</p>
+                                            </td>
+                                            <td><input type="text" class="form-control build" name="buildName" id="buildName"
+                                                    placeholder="楼座" autocomplete="off"></td>
+                                            <td><input type="text" class="form-control floor" name="floor" id="floor" placeholder="楼层"
+                                                    autocomplete="off"></td>
+                                            <td class='rtparent'>
+                                                <select class="form-control inline" id="roomType" name="type" onchange="listenType($(this))">
+
+                                        </select>
+                                            </td>
+                                            <td><input type="text" class="form-control number roomNo" name="roomNo" id="roomNo"
+                                                    placeholder="房间/工位编号" autocomplete="off"></td>
+                                            <td><input type="text" class="form-control area" name="area" id="area" placeholder="面积"
+                                                    autocomplete="off" oninput="javascript:this.value=this.value.replace(/[^\d+(\.\d)?$]/g,'')"></td>
+                                            <td><input type="text" class="form-control num" name="num" id="num" placeholder="工位数量"
+                                                    autocomplete="off"  oninput="javascript:this.value=this.value.replace(/[^\d]/g,'')"></td>
+                                            <td class='inlineparent'>
+                                                <div class="form-group padding-0">
+                                                    <div class="col-sm-5 padding-0">
+                                                        <input type="text" class="form-control unit-price price" name="price" id="price" value="" placeholder="单价" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-sm-7 padding-0">
+                                                        <select class="form-control inline unitsel unit" id="unit" name="unit">
+
+                                                </select>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><input type="text" class="form-control monthPay total" name="total" id="total"
+                                                    placeholder="月租" autocomplete="off" disabled='disabled'></td>
+                                            <td>
+                                                <select class="form-control" id="dection" name="dection">
+
+                                        </select>
+                                            </td>
+                                            <td>
+                                                <div class="checkbox-custom checkbox-primary checkbox-inline" id="selfusebak">
+                                                    <div class="checkbox-custom checkbox-primary checkbox-inline">
+                                                        <input type="checkbox" name="status" id="inputUnchecked3" value="3">
+                                                        <label for="inputUnchecked3">&nbsp;</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <i class="icon wb-close" aria-hidden="true" onclick="removeCurTr($(this))"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </form>
+                            </table>
+                            <div class="btn-actions text-right">
+                                <button type="button" class="btn btn-success margin-3" id="addChlidMenu">&nbsp;&nbsp;<i class="fa fa-plus" aria-hidden="true"></i>&nbsp;添加&nbsp;&nbsp;</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-actions text-center">
+                        <button type="button" class="btn btn-primary margin-3" id="saveRoom">&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;保存&nbsp;&nbsp;</button>
+                        <button type="button" class="btn btn-danger margin-3" onClick="javascript :history.back(-1);" id="saveChlidMenu">&nbsp;&nbsp;<i class="fa fa-close" aria-hidden="true"></i>&nbsp;取消&nbsp;&nbsp;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="__PUBLIC__/js/roomPrice.js"></script>
+    {include file="index@public/footer"}

@@ -1,0 +1,192 @@
+{include file="wechat@public/header"}
+<style>
+	a {
+		text-decoration: none;
+	}
+
+	a:visited {
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:active {
+		text-decoration: none;
+	}
+
+	.weui-cell__hd .weui-label {
+		color: #595757;
+		font-size: 15px;
+	}
+
+	.weui-cell__bd {
+		color: #878787;
+		font-size: 15px;
+	}
+
+	.weui-input {
+		text-align: right;
+	}
+
+	.weui-select {
+		direction: rtl;
+		color: #878787;
+	}
+
+</style>
+
+</head>
+
+<body ontouchstart>
+<script>
+	$(function(){
+		// 文本域文字提示
+		$(".weui-textarea").bind('input propertychange',function(){
+			console.log('aaa')
+			$('.textareaLength').html($('.weui-textarea').val().length)
+		})
+		res={data:{reason:''}}
+		assign(res)
+		var cstmstatus=session('cstmstatus');
+		var menuurl = '{:url("customer/Customer/cusNumber")}';
+		cstmpost('', menuurl, '', function (res) {
+			$.each(res.data, function (i) {
+				if (res.data[i].code != ''&& res.data[i].name!='待办') {
+					if (res.data[i].name) {
+						if(res.data[i].code==cstmstatus){
+							var $option = '<option selected value="' + res.data[i].code + '">' + res.data[i].name + '</option>'
+						}else {
+							var $option = '<option value="' + res.data[i].code + '">' + res.data[i].name + '</option>'
+						}
+						$('.optionadd').append($option)
+					}
+				}
+			})
+		})
+
+		//默认显示当前状态的reason radio
+		$("input[name='reason']").not('[value*='+cstmstatus+']').each(function(){
+			if($(this).val()==cstmstatus+'001'){
+				$(this).attr('checked','checked');
+			}
+			$(this).parents('label').hide();
+			$(this).hide();
+			$('input[value='+cstmstatus+'001]').attr('checked','checked');
+		});
+		//状态改变,更改显示的reason
+		$('#cstmstatus').change(function(){
+			var code=$('#cstmstatus').val();
+			$('input[id='+code+'001]').attr('checked','checked');
+			$('input[value*='+code+']').each(function(){
+				$(this).parents('label').show();
+			})
+			$("input").not('[value*='+code+']').each(function(){
+				$(this).attr('checked',false);
+				$(this).parents('label').hide();
+				$(this).hide();
+			})
+		})
+
+		/*保存跟进信息*/
+		$("#addFlow").on("click",function () {
+			var url = "{:url('/customer/Customer/saveFlowInfo')}";
+			var data = serializeData("flowForm");
+			data.etprsId=session('etprsId');
+			$('.weui-textarea').val('');//清空内容
+			cstmpost("#addFlow", url, data, function (data) {
+				if (data["code"] == '1') {
+					$.toptip(data["msg"],'success');
+					$('#desc').val('');
+					setTimeout(function () {
+//						location.href=history.back();
+						location.href="{:url('/wechat/test/flowlist')}";
+					}, 500);
+				} else {
+					data["msg"]=data["msg"].replace(/跟进信息/,'备注');
+					$.toptip(data["msg"],'warning');
+				}
+			});
+		});
+	})
+
+	// 渲染  reason radio
+	function initRadio(fname, code, level, sdefault) {
+		if (!code || code == 0 || code == undefined) {
+			return false;
+		}
+		var selhtml = '';
+			var m = 0;
+			for (var i = 0; i < sysData.length; i++) {
+				if (sysData[i].code &&  sysData[i].code.indexOf(code, 0) === 0 && sysData[i].level == level) {
+					if (m == 0) {
+//						selhtml = selhtml + '<div class="radio-custom radio-primary radio-inline"><input id="' + sysData[i].code + '"type="radio" name="' + fname + '" value="' + sysData[i].code + '" checked><label for="' + sysData[i].code + '">' + sysData[i].name + '</label></div>';
+						selhtml = selhtml + '<label class="weui-cell weui-check__label" for="' + sysData[i].code + '"><div class="weui-cell__bd" ><p>' + sysData[i].name + '</p></div><div class="weui-cell__ft"><input type="radio" class="weui-check" name="reason" id="' + sysData[i].code + '" value="' + sysData[i].code + '" checked="checked"><span class="weui-icon-checked"></span></div></label>';
+						m++;
+					} else {
+						selhtml = selhtml + '<label class="weui-cell weui-check__label" for="' + sysData[i].code + '"><div class="weui-cell__bd" ><p>' + sysData[i].name + '</p></div><div class="weui-cell__ft"><input type="radio" class="weui-check" name="reason" id="' + sysData[i].code + '"   value="' + sysData[i].code + '"><span class="weui-icon-checked"></span></div></label>';
+					}
+				}
+			}
+		return selhtml;
+	}
+</script>
+	<div class="weui-tab">
+		<div class="weui-tab__bd">
+			<div class="weui-tab__bd-item weui-tab__bd-item--active">
+				<div class="navbox">
+					<a href="qzcstmadd.html">
+						<div class="left">
+							<i class="icon iconfont icon-back"></i>
+						</div>
+					</a>
+				</div>
+				<div class="choosebox first-header">
+					<div class="weui-row weui-no-gutter">
+						<div class="weui-col-50">
+							<a href="{:url('wechat/test/qzcstmadd')}" >客户信息</a>
+						</div>
+						<div class="weui-col-50 active">
+							<a href="{:url('wechat/test/addflow')}" >跟进记录</a>
+						</div>
+					</div>
+				</div>
+				<form action="" id="flowForm">
+				<div class="weui-cells weui-cells_radio" style="margin-top:0;">
+					<div class="weui-cells" style="margin-top:0;">
+						<div class="weui-cell weui-cell_select">
+							<div class="weui-cell__bd">
+								<select class="weui-select optionadd" name="cstmstatus" id="cstmstatus" style="direction: ltr;">
+
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="weui-cell__bd" id="reason">
+					</div>
+				</div>
+				<div class="weui-cells__title">备注</div>
+				<div class="weui-cells weui-cells_form">
+					<div class="weui-cell">
+						<div class="weui-cell__bd">
+							<textarea class="weui-textarea" name="desc" placeholder="请输入文本" rows="3"  maxlength="100"></textarea>
+							<div class="weui-textarea-counter">
+								<span class="textareaLength">0</span>/100</div>
+						</div>
+					</div>
+				</div>
+				</form>
+				<div class="choosebox last-footer" style="background:none;margin-top:20px;">
+					<div class="weui-row weui-no-gutter weui-tabbar" id='bottom-color'>
+						<div class="weui-col-50" style="background:none;">
+							<a class="weui-btn" href="javascript:history.back(-1)" style="height:40px;line-height:36px;font-size:16px;background:#0093e7;">取消</a>
+						</div>
+						<div class="weui-col-50" style="background:none;">
+							<a class="weui-btn" id="addFlow" href="javascript:" style="height:40px;line-height:36px;font-size:16px;background:#f39b0f;">保存</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>    
+	{include file="wechat@public/footer"}
